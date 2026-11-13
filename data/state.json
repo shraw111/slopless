@@ -1,10 +1,10 @@
 {
  "ai": {
-  "clips": 0,
+  "clips": 10,
   "phase": "preview"
  },
  "ai-product": {
-  "clips": 0,
+  "clips": 10,
   "phase": "preview"
  }
 }

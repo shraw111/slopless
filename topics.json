@@ -2,11 +2,11 @@
  {
   "id": "ai",
   "name": "AI",
-  "clips": 0
+  "clips": 10
  },
  {
   "id": "ai-product",
   "name": "AI Product",
-  "clips": 0
+  "clips": 10
  }
 ]
