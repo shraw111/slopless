@@ -23,7 +23,9 @@ sub-agent actually ran on (check the `model` field the agents wrote and the sess
 3. `python pipeline.py label-prep`, then spawn Haiku sub-agents (`model: "haiku"`), each given
    `prompts/label.md` and a few batch files from `data/work/labels/`. Then `python pipeline.py label-apply`.
 4. `python pipeline.py transcripts` — tries timestamped transcripts; on failure (YouTube often blocks cloud
-   IPs) falls back to chapter timestamps in the description. Report how many used each.
+   IPs) falls back to chapter timestamps in the description. Then `python pipeline.py heatmap` reads each
+   candidate's YouTube "Most replayed" heatmap from the watch page (not the Data API; 3 s between requests,
+   stops on 429s; re-run later to fill gaps). Videos with only a heatmap become usable too. Report counts.
 5. `python pipeline.py score-prep --topic <id> --limit 15`, then spawn Sonnet sub-agents (`model: "sonnet"`),
    each given `prompts/score.md` and ~5 files from `data/work/score/`. Then `python pipeline.py score-apply`
    and `python pipeline.py select`. Repeat until the topic has 10 published clips.

@@ -12,6 +12,7 @@ See CLAUDE.md for the full run order.
   python pipeline.py label-prep               # write Haiku batches for unlabeled videos
   python pipeline.py label-apply              # merge Haiku outputs into the cache
   python pipeline.py transcripts [--topic T] [--limit N]
+  python pipeline.py heatmap [--topic T]      # YouTube "Most replayed" peaks per candidate
   python pipeline.py score-prep [--topic T] [--limit N]
   python pipeline.py score-apply
   python pipeline.py select [--preview]       # write clips.json + topics.json for the feed
@@ -422,6 +423,69 @@ def cmd_transcripts(args):
     print(f"{len(vids)} videos: {ok} transcripts, {ch} chapter fallbacks, {none} with neither")
 
 
+# ---------------------------------------------------------------- 3a'. "Most replayed" heatmap
+HEAT = re.compile(r'"startMillis":"(\d+)","durationMillis":"(\d+)","intensityScoreNormalized":([\d.eE-]+)')
+
+
+def fetch_heatmap(vid):
+    """YouTube's "Most replayed" graph from the public watch page: {"seg": seconds, "scores": [100 floats]}.
+    Returns None when the video has no heatmap (too few views). Not part of the Data API."""
+    r = requests.get(f"https://www.youtube.com/watch?v={vid}&hl=en", timeout=30,
+                     headers={"User-Agent": "Mozilla/5.0", "Accept-Language": "en-US,en;q=0.8"})
+    r.raise_for_status()
+    s = r.text
+    if "ytInitialData" not in s:
+        raise RuntimeError("Blocked: watch page without player data")
+    i = s.find("MARKER_TYPE_HEATMAP")
+    if i < 0:
+        return None
+    m = HEAT.findall(s[i:i + 30000])
+    if not m:
+        return None
+    return {"seg": round(int(m[0][1]) / 1000, 2), "scores": [round(float(c), 3) for _, _, c in m]}
+
+
+def cmd_heatmap(args):
+    import time
+    cache = load_cache()
+    vids = [v for t in enabled_topics(args.topic) for v in top_candidates(cache, t) if "heatmap" not in v]
+    got = missing = blocked = 0
+    for v in vids[: args.limit or None]:
+        try:
+            v["heatmap"] = fetch_heatmap(v["vid"])
+            blocked = 0
+        except Exception as e:
+            blocked += 1
+            print(f"  {v['vid']}: {type(e).__name__} {str(e)[:80]}")
+            if blocked >= 3:
+                print("  3 failures in a row: YouTube is blocking the watch page, stopping")
+                break
+            continue
+        if v.get("heatmap"):
+            got += 1
+            if v.get("source") in (None, "none"):
+                v["source"] = "heatmap"
+        else:
+            missing += 1
+        time.sleep(3)  # be polite: YouTube returns 429 at ~1 req/s
+    save_cache(cache)
+    print(f"{len(vids)} videos: {got} with a Most-replayed heatmap, {missing} without")
+
+
+def heat_peaks(v, n=8):
+    """Top replayed segments as text, skipping the first minute (everyone replays the start)."""
+    h = v.get("heatmap")
+    if not h:
+        return ""
+    seg, sc = h["seg"], h["scores"]
+    idx = [i for i in range(len(sc)) if i * seg >= 60]
+    top = sorted(idx, key=lambda i: -sc[i])[:n]
+    med = sorted(sc)[len(sc) // 2]
+    lines = "\n".join(f"[{int(i * seg)}-{int((i + 1) * seg)}] replay {sc[i]:.2f}" for i in sorted(top))
+    return (f"\n\nMOST REPLAYED (YouTube viewers' replay heatmap; {len(sc)} slices of {seg:.0f} s, scores 0-1, "
+            f"median {med:.2f}; top {len(top)} after the first minute, in time order):\n{lines}")
+
+
 # ---------------------------------------------------------------- 3b. Sonnet scoring
 def compact_transcript(seg, window=15):
     """Merge caption snippets into ~15s lines: '[754] text...'."""
@@ -455,10 +519,13 @@ def cmd_score_prep(args):
             if v["source"] == "transcript":
                 seg = json.loads(gzip.decompress((TRANSCRIPTS / f"{v['vid']}.json.gz").read_bytes()))
                 body = "TIMESTAMPED TRANSCRIPT ([seconds] text):\n" + compact_transcript(seg)
-            else:
+            elif v["source"] == "chapters":
                 body = ("NO TRANSCRIPT. CHAPTERS from the description (seconds, title):\n"
                         + "\n".join(f"[{s}] {c}" for s, c in chapters(v["description"]))
                         + "\n\nDESCRIPTION:\n" + v["description"][:2500])
+            else:  # heatmap only
+                body = "NO TRANSCRIPT, NO CHAPTERS.\n\nDESCRIPTION:\n" + v.get("description", "")[:2500]
+            body += heat_peaks(v)
             (out / f"{v['vid']}.in.md").write_text(
                 f"TOPIC id: {t['id']}\nTOPIC name: {t['name']}\nCOVERS: {t['covers']}\nEXCLUDE: {t['exclude']}\n"
                 f"GOOD CLIP: {t['good_clip']}\n\nVIDEO: {v['title']}\nCHANNEL: {v['channel']}\n"
@@ -566,7 +633,7 @@ def main():
     sub = ap.add_subparsers(dest="cmd", required=True)
     for name, fn in [("status", cmd_status), ("queries", cmd_queries), ("find", cmd_find),
                      ("label-prep", cmd_label_prep), ("label-apply", cmd_label_apply),
-                     ("transcripts", cmd_transcripts), ("score-prep", cmd_score_prep),
+                     ("transcripts", cmd_transcripts), ("heatmap", cmd_heatmap), ("score-prep", cmd_score_prep),
                      ("score-apply", cmd_score_apply), ("select", cmd_select)]:
         p = sub.add_parser(name)
         p.add_argument("--topic")
