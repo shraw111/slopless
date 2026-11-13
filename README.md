@@ -56,7 +56,8 @@ Videos that got a transcript lose their old score, so the normal scoring step pi
 | minimum like/view ratio | 1.5% (skipped when likes are hidden) |
 | candidates scored per topic | top 100 by engagement rank |
 | minimum substance | 7 / 10 (+1 for HN-recommended on `hn_boost` topics, or trusted channels) |
-| max clips per channel | 5 |
+| max videos per channel | 5 (a channel's videos, not clips) |
+| clips per video | up to 20: one per 10 minutes of video, one per chapter without a transcript, each must clear the substance bar |
 | max clips per subject | 2 (Haiku merges near-identical subjects, e.g. every attention explainer) |
 | only clips whose words were seen | yes: transcript or chapters, not heatmap alone |
 | clips per topic | 50 |

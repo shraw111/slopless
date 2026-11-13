@@ -501,6 +501,21 @@ def heat_peaks(v, n=8):
 
 
 # ---------------------------------------------------------------- 3b. Sonnet scoring
+def max_clips(v, t):
+    """How many clips one video may give: one per `minutes_per_clip` of video, at most `max_clips_per_video`.
+    Without a transcript the cuts are guesses, so at most one per chapter."""
+    n = max(1, min(int(t["max_clips_per_video"]), int(v["minutes"] // t["minutes_per_clip"])))
+    if v.get("source") == "chapters":
+        n = min(n, max(1, len(chapters(v.get("description")))))
+    elif v.get("source") != "transcript":
+        n = 1
+    return n
+
+
+def result_clips(r):
+    """A video's clips. Older results were a single clip stored in the result itself."""
+    return r.get("clips") or [r]
+
 def compact_transcript(seg, window=15):
     """Merge caption snippets into ~15s lines: '[754] text...'."""
     lines, cur, start = [], [], None
@@ -545,7 +560,8 @@ def cmd_score_prep(args):
             (out / f"{v['vid']}.in.md").write_text(
                 f"TOPIC id: {t['id']}\nTOPIC name: {t['name']}\nCOVERS: {t['covers']}\nEXCLUDE: {t['exclude']}\n"
                 f"GOOD CLIP: {t['good_clip']}\n\nVIDEO: {v['title']}\nCHANNEL: {v['channel']}\n"
-                f"LENGTH: {v['minutes']} min ({int(v['minutes'] * 60)} s)\nVIDEO ID: {v['vid']}\n\n{body}\n")
+                f"LENGTH: {v['minutes']} min ({int(v['minutes'] * 60)} s)\nVIDEO ID: {v['vid']}\n"
+                f"MAX CLIPS: {max_clips(v, t)}\n\n{body}\n")
             n += 1
             total += 1
     print(f"{total} videos ready to score -> {out} (prompt: prompts/score.md)")
@@ -553,6 +569,7 @@ def cmd_score_prep(args):
 
 def cmd_score_apply(args):
     cache = load_cache()
+    topics = {t["id"]: t for t in enabled_topics()}
     n = bad = 0
     for f in sorted((WORK / "score").glob("*.out.json")):
         r = json.loads(f.read_text())
@@ -560,20 +577,35 @@ def cmd_score_apply(args):
         v = cache.get(vid)
         if not v:
             continue
-        try:
-            s, e = int(r["start_sec"]), int(r["end_sec"])
-            ok = (1 <= int(r["substance"]) <= 10 and 60 <= e - s <= 90 and s >= 0
-                  and e <= v["minutes"] * 60 + 1 and len(r["hook"].split()) < 12)
-        except (KeyError, ValueError, TypeError):
-            ok = False
-        if not ok:
+        t = topics.get(v.get("label", {}).get("topic"))
+        limit = max_clips(v, t) if t else 1
+        good, problems, taken = [], [], []
+        for c in result_clips(r)[:limit]:
+            try:
+                s, e = int(c["start_sec"]), int(c["end_sec"])
+                ok = (1 <= int(c["substance"]) <= 10 and 60 <= e - s <= 90 and s >= 0
+                      and e <= v["minutes"] * 60 + 1 and len(c["hook"].split()) < 12 and c.get("why"))
+                if ok and any(s < b and a < e for a, b in taken):
+                    ok = False  # overlaps another clip of this video
+            except (KeyError, ValueError, TypeError):
+                ok = False
+            if ok:
+                taken.append((s, e))
+                good.append({k: c[k] for k in ("start_sec", "end_sec", "hook", "why", "subject", "substance")
+                             if k in c})
+            else:
+                problems.append(c)
+        if not good or "substance" not in r:
             bad += 1
             print(f"  invalid result for {vid}: {r}")
             continue
-        r["at"] = NOW.isoformat(timespec="seconds")
+        for c in problems:
+            print(f"  {vid}: dropped one invalid clip {c}")
+        res = {"substance": int(r["substance"]), "topic": r.get("topic"), "model": r.get("model"),
+               "clips": sorted(good, key=lambda c: -int(c["substance"])), "at": NOW.isoformat(timespec="seconds")}
         if "result" in v:
             v.setdefault("old_results", []).append(v["result"])
-        v["result"] = r
+        v["result"] = res
         n += 1
         f.unlink()
         (WORK / "score" / f"{vid}.in.md").unlink(missing_ok=True)
@@ -582,27 +614,34 @@ def cmd_score_apply(args):
 
 
 # ---------------------------------------------------------------- 3c. subject groups (Haiku)
+def clip_id(vid, c):
+    return f"{vid}-{int(c['start_sec'])}"
+
+
 def cmd_subjects_prep(args):
     """One file per topic listing eligible clips' subjects, for Haiku to merge near-identical ones."""
     cache = load_cache()
     out = WORK / "subjects"
     out.mkdir(parents=True, exist_ok=True)
+    for f in out.glob("*.out.json"):
+        f.unlink()
     for t in enabled_topics(args.topic):
-        items = [{"vid": v["vid"], "subject": v["result"].get("subject", ""), "hook": v["result"]["hook"],
+        items = [{"id": clip_id(v["vid"], c), "subject": c.get("subject", ""), "hook": c["hook"],
                   "channel": v["channel"]}
                  for v in cache.values() if v.get("result") and v.get("label", {}).get("topic") == t["id"]
-                 and v["result"]["substance"] + 1 >= t["min_substance"]]
+                 for c in result_clips(v["result"]) if int(c["substance"]) + 1 >= t["min_substance"]]
         jsave(out / f"{t['id']}.in.json", {"topic": t["name"], "clips": items})
         print(f"{t['id']}: {len(items)} clips -> {out / (t['id'] + '.in.json')} (prompt: prompts/subjects.md)")
 
 
 def cmd_subjects_apply(args):
     cache = load_cache()
+    by_id = {clip_id(v["vid"], c): c for v in cache.values() if v.get("result") for c in result_clips(v["result"])}
     n = 0
     for f in (WORK / "subjects").glob("*.out.json"):
-        for vid, g in json.loads(f.read_text())["groups"].items():
-            if vid in cache and cache[vid].get("result"):
-                cache[vid]["result"]["subject_group"] = g.strip().lower()
+        for cid, g in json.loads(f.read_text())["groups"].items():
+            if cid in by_id:
+                by_id[cid]["subject_group"] = g.strip().lower()
                 n += 1
     save_cache(cache)
     print(f"applied {n} subject groups")
@@ -625,20 +664,22 @@ def cmd_select(args):
             if t["require_seen_content"] and v.get("source") not in ("transcript", "chapters"):
                 continue  # Sonnet never saw what is said in this clip (heatmap only)
             boost = 1 if ((t["hn_boost"] and v.get("hn")) or v["channel"].lower() in trusted) else 0
-            adj = min(10, int(r["substance"]) + boost)
-            if adj >= t["min_substance"]:
-                pool.append((adj, v["rank"], v, r, boost))
-        pool.sort(key=lambda x: (-x[0], -x[1]))
-        per_chan, per_subj, chosen = {}, {}, []
+            for c in result_clips(r)[:max_clips(v, t)]:
+                adj = min(10, int(c["substance"]) + boost)
+                if adj >= t["min_substance"]:
+                    pool.append((adj, v["rank"], v, c, boost))
+        pool.sort(key=lambda x: (-x[0], -x[1], x[3]["start_sec"]))
+        per_chan, per_subj, chosen = {}, {}, []   # per_chan: channel -> set of its videos used
         limit = 10 if st["phase"] == "preview" else t["clips_per_topic"]
         for adj, _, v, r, boost in pool:
-            if per_chan.get(v["channel_id"], 0) >= t["max_clips_per_channel"]:
+            vids = per_chan.setdefault(v["channel_id"], set())
+            if v["vid"] not in vids and len(vids) >= t["max_videos_per_channel"]:
                 continue
             subj = (r.get("subject_group") or r.get("subject") or v["vid"]).strip().lower()
             if per_subj.get(subj, 0) >= t["max_clips_per_subject"]:
                 continue
             per_subj[subj] = per_subj.get(subj, 0) + 1
-            per_chan[v["channel_id"]] = per_chan.get(v["channel_id"], 0) + 1
+            vids.add(v["vid"])
             chosen.append({"id": f"{v['vid']}-{r['start_sec']}", "vid": v["vid"], "topic": tid,
                            "start": int(r["start_sec"]), "end": int(r["end_sec"]), "hook": r["hook"],
                            "why": r["why"], "substance": adj, "boosted": bool(boost), "title": v["title"],

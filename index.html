@@ -106,7 +106,7 @@ const ICON = {
 const fmtTime = (s) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
 const fmtViews = (n) => n >= 1e6 ? (n / 1e6).toFixed(1).replace(/\.0$/, "") + "M" : n >= 1e3 ? Math.round(n / 1e3) + "K" : String(n);
 
-let topics = [], clips = [], seen = new Set(store.get("seen", []).map((x) => String(x).slice(0, 11))), selected = store.get("selected", null);
+let topics = [], clips = [], seen = new Set(store.get("seen", []).map(String)), selected = store.get("selected", null);
 
 async function load() {
   const [t, c] = await Promise.all([
@@ -115,16 +115,28 @@ async function load() {
   ]);
   topics = t.filter((x) => c.some((k) => k.topic === x.id));
   clips = c;
+  bestOf = {};
+  for (const k of clips) if (!bestOf[k.vid] || k.substance > bestOf[k.vid].substance) bestOf[k.vid] = k;
   const ids = topics.map((x) => x.id);
   selected = (selected || ids).filter((id) => ids.includes(id));
   if (!selected.length) selected = ids;
   renderChips(); renderFeed();
 }
 
+function isSeen(c) {
+  if (seen.has(c.id)) return true;
+  if (seen.has(c.vid) && c === bestOf[c.vid]) return true;   // old history: one clip per video
+  for (const s of seen) {
+    if (s.length > 12 && s.slice(0, 11) === c.vid && Math.abs(+s.slice(12) - c.start) < 90) return true;
+  }
+  return false;
+}
+let bestOf = {};   // video id -> its highest-scoring clip
+
 // ---------- chips: "Mix" = every topic interleaved; tap a topic to focus it, tap more to mix them
 function renderChips() {
   const all = selected.length === topics.length;
-  const count = (id) => clips.filter((c) => c.topic === id && !seen.has(c.vid)).length;
+  const count = (id) => clips.filter((c) => c.topic === id && !isSeen(c)).length;
   $("#chips").innerHTML = (topics.length > 1 ? `<button class="chip" data-id="*" aria-pressed="${all}">Mix</button>` : "") +
     topics.map((t) => `<button class="chip" data-id="${esc(t.id)}" aria-pressed="${!all && selected.includes(t.id)}">
       ${esc(t.name)}<span class="n">${count(t.id)}</span></button>`).join("");
@@ -141,17 +153,55 @@ $("#chips").addEventListener("click", (e) => {
 });
 
 // ---------- feed: round-robin across selected topics, unseen first, best substance first
+const GAP = 6;   // cards between two clips of the same video
 function buildOrder() {
-  const lanes = selected.map((id) => clips.filter((c) => c.topic === id && !seen.has(c.vid))
+  const lanes = selected.map((id) => clips.filter((c) => c.topic === id && !isSeen(c))
     .sort((a, b) => b.substance - a.substance));
   const out = [];
   for (let i = 0; lanes.some((l) => l.length); i++) {
-    const l = lanes[i % lanes.length]; if (l.length) out.push(l.shift());
+    const l = lanes[i % lanes.length]; if (!l.length) continue;
+    const recent = new Set(out.slice(-GAP).map((c) => c.vid));
+    const j = l.findIndex((c) => !recent.has(c.vid));
+    out.push(l.splice(j < 0 ? 0 : j, 1)[0]);
   }
   return out;
 }
+// Unseen clips from the same video that are not right after this card.
+const moreFrom = (i) => order.filter((c, k) => k > i + 1 && c.vid === order[i].vid);
 
 let order = [];
+const topicName = () => Object.fromEntries(topics.map((t) => [t.id, t.name]));
+function cardHTML(c, i, name) {
+  const more = moreFrom(i).length;
+  return `
+    <article class="card" data-i="${i}">
+      <div class="bg" style="background-image:url('https://i.ytimg.com/vi/${esc(c.vid)}/hqdefault.jpg')"></div>
+      <div class="meta-top"><span class="tag">${esc(name[c.topic])}</span><span>·</span><span>${fmtTime(c.end - c.start)}</span></div>
+      <h2 class="hook">${esc(c.hook)}</h2>
+      <div class="stage" style="background-image:url('https://i.ytimg.com/vi/${esc(c.vid)}/hqdefault.jpg')">
+        <div class="slot"></div>
+        <div class="poster" style="background-image:url('https://i.ytimg.com/vi/${esc(c.vid)}/hqdefault.jpg')"></div>
+        <button class="tap" aria-label="Tap for sound or pause"><span class="paused-icon">${ICON.play}</span></button>
+        <div class="pill">${ICON.muted}Tap for sound</div>
+        <div class="bar"><i></i></div>
+      </div>
+      <div class="src"><b>${esc(c.channel)}</b> · ${esc(c.title)}</div>
+      <p class="why">${esc(c.why)}</p>
+      <div class="actions">
+        <a class="btn" href="https://www.youtube.com/watch?v=${esc(c.vid)}&t=${c.start}s" target="_blank" rel="noopener">${ICON.yt}Watch full video</a>
+        ${more ? `<button class="btn ghost more" data-i="${i}">More from this video · ${more}</button>` : ""}
+      </div>
+    </article>`;
+}
+const endCardHTML = () => `
+    <div class="empty card"><h2>You're caught up</h2><p>${clips.filter(isSeen).length} clips watched. New clips land when the pipeline runs.</p>
+      <button class="btn ghost" id="reset">Watch them again</button>
+      <p style="font-size:12px">HN picks via <a href="https://hackertube.org">HackerTube</a> (ODC-By)</p></div>`;
+function wireTail() {
+  $("#reset").onclick = () => { seen.clear(); store.set("seen", []); renderChips(); renderFeed(); };
+  document.querySelectorAll(".card[data-i]").forEach((el) => io.observe(el));
+}
+
 function renderFeed() {
   destroyPlayer();
   order = buildOrder();
@@ -161,31 +211,30 @@ function renderFeed() {
     feed.innerHTML = `<div class="empty"><h2>No clips yet</h2><p>Run the pipeline to fill the feed.</p></div>`;
     return;
   }
-  const name = Object.fromEntries(topics.map((t) => [t.id, t.name]));
-  feed.innerHTML = order.map((c, i) => `
-    <article class="card" data-i="${i}">
-      <div class="bg" style="background-image:url('https://i.ytimg.com/vi/${esc(c.vid)}/hqdefault.jpg')"></div>
-      <div class="meta-top"><span class="tag">${esc(name[c.topic])}</span><span>·</span><span>${fmtTime(c.end - c.start)}</span></div>
-      <h2 class="hook">${esc(c.hook)}</h2>
-      <div class="stage" style="background-image:url('https://i.ytimg.com/vi/${esc(c.vid)}/hqdefault.jpg')">
-        <div class="slot"></div>
-        <div class="poster" style="background-image:url('https://i.ytimg.com/vi/${esc(c.vid)}/hqdefault.jpg')"></div>
-        <button class="tap" aria-label="Tap to unmute or pause"><span class="paused-icon">${ICON.play}</span></button>
-        <div class="pill">${ICON.muted}Tap for sound</div>
-        <div class="bar"><i></i></div>
-      </div>
-      <div class="src"><b>${esc(c.channel)}</b> · ${esc(c.title)}</div>
-      <p class="why">${esc(c.why)}</p>
-      <div class="actions">
-        <a class="btn" href="https://www.youtube.com/watch?v=${esc(c.vid)}&t=${c.start}s" target="_blank" rel="noopener">${ICON.yt}Watch full video</a>
-      </div>
-    </article>`).join("") + `
-    <div class="empty card"><h2>You're caught up</h2><p>${clips.filter((c) => seen.has(c.vid)).length} clips watched. New clips land when the pipeline runs.</p>
-      <button class="btn ghost" id="reset">Watch them again</button>
-      <p style="font-size:12px">HN picks via <a href="https://hackertube.org">HackerTube</a> (ODC-By)</p></div>`;
-  $("#reset").onclick = () => { seen.clear(); store.set("seen", []); renderChips(); renderFeed(); };
-  feed.querySelectorAll(".card[data-i]").forEach((el) => io.observe(el));
+  const name = topicName();
+  feed.innerHTML = order.map((c, i) => cardHTML(c, i, name)).join("") + endCardHTML();
+  wireTail();
 }
+
+// "More from this video": move that video's next clip right after this card, and rebuild the cards below.
+function playMore(i) {
+  const next = moreFrom(i).sort((a, b) => a.start - b.start).find((c) => c.start > order[i].start) || moreFrom(i)[0];
+  if (!next) return;
+  order.splice(order.indexOf(next), 1);
+  order.splice(i + 1, 0, next);
+  for (const k of [...players.keys()]) if (k > i) dropPlayer(k);
+  document.querySelectorAll(".card").forEach((el) => { if (!el.dataset.i || +el.dataset.i > i) { io.unobserve(el); el.remove(); } });
+  const name = topicName();
+  $("#feed").insertAdjacentHTML("beforeend", order.slice(i + 1).map((c, k) => cardHTML(c, i + 1 + k, name)).join("") + endCardHTML());
+  const cur = cardAt(i).querySelector(".more");   // refresh this card's count
+  if (cur) { const n = moreFrom(i).length; n ? (cur.textContent = `More from this video · ${n}`) : cur.remove(); }
+  wireTail();
+  if (activeIdx === i) ensurePlayer(i + 1);
+  $("#feed").scrollTo({ top: cardAt(i + 1).offsetTop, behavior: "smooth" });
+}
+$("#feed").addEventListener("click", (e) => {
+  const b = e.target.closest(".more"); if (b) playMore(+b.dataset.i);
+});
 
 // ---------- players: the visible clip plays; the next one is loaded in advance so a swipe starts instantly
 const players = new Map();   // card index -> { player, ready }
@@ -293,7 +342,7 @@ async function activate(card) {
   seenTimer = setTimeout(() => markSeen(c), 4000);
 }
 
-function markSeen(c) { if (!seen.has(c.vid)) { seen.add(c.vid); store.set("seen", [...seen]); } }
+function markSeen(c) { if (!seen.has(c.id)) { seen.add(c.id); store.set("seen", [...seen]); } }
 
 // When a clip ends, glide to the next one (like Shorts' auto-scroll). The last clip loops instead.
 let advancedFrom = -1;
