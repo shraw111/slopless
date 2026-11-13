@@ -84,6 +84,11 @@
   .sum[aria-expanded="true"] .points { display: block; }
   .sum[aria-expanded="true"] .sum-more { display: none; }
   .actions { display: flex; gap: 10px; flex-wrap: wrap; }
+  .src-row { display: flex; align-items: center; gap: 10px; }
+  .src-row .src { flex: 1; min-width: 0; }
+  .yt { flex: none; padding: 5px 10px; border-radius: 999px; background: rgba(255,255,255,.12);
+    color: var(--text); font-size: 13px; font-weight: 600; text-decoration: none; white-space: nowrap; }
+  .pill-btn { padding: 7px 13px; border-radius: 999px; background: rgba(255,255,255,.12); font-size: 13px; font-weight: 600; }
   .card[data-i] { touch-action: pan-y; }   /* vertical swipes scroll; horizontal ones are ours */
   .chip.hist { margin-left: auto; }
   .chip.hist[aria-pressed="true"] { background: var(--accent); color: var(--accent-text); }
@@ -240,16 +245,17 @@ function cardHTML(c, i, name) {
         <div class="pill">${ICON.muted}Tap for sound</div>
         <div class="bar"><i></i></div>
       </div>
-      <div class="src"><b>${esc(c.channel)}</b> · ${esc(c.title)}</div>
+      <div class="src-row">
+        <div class="src"><b>${esc(c.channel)}</b> · ${esc(c.title)}</div>
+        <a class="yt" href="https://www.youtube.com/watch?v=${esc(c.vid)}&t=${c.start}s" target="_blank" rel="noopener"
+           aria-label="Watch the full video on YouTube">Full video ↗</a>
+      </div>
       ${c.summary ? `<button class="sum" aria-expanded="false">
           <span class="sum-text">${esc(c.summary)}</span>
           ${(c.points || []).length ? `<ul class="points">${c.points.map((x) => `<li>${esc(x)}</li>`).join("")}</ul>
           <span class="sum-more">Key points</span>` : ""}
         </button>` : `<p class="why">${esc(c.why)}</p>`}
-      <div class="actions">
-        <a class="btn" href="https://www.youtube.com/watch?v=${esc(c.vid)}&t=${c.start}s" target="_blank" rel="noopener">${ICON.yt}Watch full video</a>
-        ${more ? `<button class="btn ghost more" data-i="${i}">More from this video · ${more}</button>` : ""}
-      </div>
+      ${more ? `<div class="actions"><button class="pill-btn more" data-i="${i}">More from this video · ${more}</button></div>` : ""}
     </article>`;
 }
 const endCardHTML = () => `
@@ -288,7 +294,7 @@ function playMore(i) {
   const name = topicName();
   $("#feed").insertAdjacentHTML("beforeend", order.slice(i + 1).map((c, k) => cardHTML(c, i + 1 + k, name)).join("") + endCardHTML());
   const cur = cardAt(i).querySelector(".more");   // refresh this card's count
-  if (cur) { const n = moreFrom(i).length; n ? (cur.textContent = `More from this video · ${n}`) : cur.remove(); }
+  if (cur) { const n = moreFrom(i).length; n ? (cur.textContent = `More from this video · ${n}`) : cur.parentElement.remove(); }
   wireTail();
   if (activeIdx === i) ensurePlayer(i + 1);
   $("#feed").scrollTo({ top: cardAt(i + 1).offsetTop, behavior: "smooth" });
