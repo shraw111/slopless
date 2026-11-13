@@ -95,7 +95,6 @@ const fmtTime = (s) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}
 const fmtViews = (n) => n >= 1e6 ? (n / 1e6).toFixed(1).replace(/\.0$/, "") + "M" : n >= 1e3 ? Math.round(n / 1e3) + "K" : String(n);
 
 let topics = [], clips = [], seen = new Set(store.get("seen", [])), selected = store.get("selected", null);
-let soundOn = false;
 
 async function load() {
   const [t, c] = await Promise.all([
@@ -158,7 +157,7 @@ function renderFeed() {
       <div class="stage" style="background-image:url('https://i.ytimg.com/vi/${esc(c.vid)}/hqdefault.jpg')">
         <div class="slot"></div>
         <button class="tap" aria-label="Tap to unmute or pause"><span class="paused-icon">${ICON.play}</span></button>
-        <div class="pill">${ICON.muted}Tap to unmute</div>
+        <div class="pill">${ICON.muted}Tap for sound</div>
         <div class="bar"><i></i></div>
       </div>
       <div class="src"><b>${esc(c.channel)}</b> · ${esc(c.title)}</div>
@@ -203,11 +202,16 @@ function destroyPlayer() {   // used when the feed is rebuilt
   player = null; activeCard = null; activeIdx = -1;
 }
 
-// Start muted (always allowed), then turn sound on once it is actually playing. If the phone refuses
-// sound without a tap, go back to muted so the clip keeps playing and show "Tap to unmute" again.
+// Every clip plays with sound. Phones refuse sound until the person has tapped the page once; if this
+// clip is refused, it plays muted with "Tap for sound", and after that first tap every swipe has sound.
 function startPlayback(entry, c, stage) {
   const p = entry.player;
-  p.mute(); p.seekTo(c.start, true); p.playVideo();
+  p.unMute(); p.setVolume(100); p.seekTo(c.start, true); p.playVideo();
+  setTimeout(() => {
+    if (players.get(activeIdx) !== entry) return;
+    if (p.getPlayerState?.() !== YT.PlayerState.PLAYING) { p.mute(); p.playVideo(); }   // sound refused: play muted
+    stage.classList.toggle("sound", !p.isMuted());
+  }, 800);
   clearTimeout(blockedTimer);
   blockedTimer = setTimeout(() => {   // still not playing: auto-play is blocked (e.g. Low Power Mode)
     if (p.getPlayerState?.() !== YT.PlayerState.PLAYING) stage.classList.add("paused");
@@ -224,24 +228,14 @@ function ensurePlayer(i) {
   players.set(i, entry);
   entry.player = new YT.Player(host, {
     host: "https://www.youtube-nocookie.com", videoId: c.vid,
-    playerVars: { start: c.start, end: c.end, autoplay: 0, mute: 1, playsinline: 1, controls: 0, rel: 0,
+    playerVars: { start: c.start, end: c.end, autoplay: 0, mute: 0, playsinline: 1, controls: 0, rel: 0,
       modestbranding: 1, iv_load_policy: 3, disablekb: 1, fs: 0 },
     events: {
-      onReady: () => { entry.ready = true; entry.player.mute(); if (activeIdx === i) startPlayback(entry, c, stage); },
+      onReady: () => { entry.ready = true; if (activeIdx === i) startPlayback(entry, c, stage); },
       onStateChange: (e) => {
         if (activeIdx !== i) { if (e.data === YT.PlayerState.PLAYING) e.target.pauseVideo(); return; }
         if (e.data === YT.PlayerState.ENDED) { e.target.seekTo(c.start, true); e.target.playVideo(); return; } // loop
-        if (e.data === YT.PlayerState.PLAYING) {
-          stage.classList.remove("paused");
-          if (soundOn && e.target.isMuted()) {
-            e.target.unMute(); e.target.setVolume(100); stage.classList.add("sound");
-            setTimeout(() => {   // the phone paused it for having sound: fall back to muted
-              if (activeIdx === i && e.target.getPlayerState() !== YT.PlayerState.PLAYING) {
-                e.target.mute(); stage.classList.remove("sound"); e.target.playVideo();
-              }
-            }, 700);
-          }
-        }
+        if (e.data === YT.PlayerState.PLAYING) { stage.classList.remove("paused"); stage.classList.toggle("sound", !e.target.isMuted()); }
         if (e.data === YT.PlayerState.PAUSED) stage.classList.add("paused");
       },
     },
@@ -252,7 +246,8 @@ function ensurePlayer(i) {
 async function activate(card) {
   await ytReady;
   const i = +card.dataset.i;
-  if (players.get(activeIdx)?.ready) players.get(activeIdx).player.pauseVideo();
+  const prev = players.get(activeIdx);
+  if (prev?.ready) prev.player.pauseVideo();
   clearInterval(tick); clearTimeout(seenTimer);
   activeCard = card; activeIdx = i;
   for (const k of [...players.keys()]) if (k < i - 1 || k > i + 1) dropPlayer(k);   // keep memory low
@@ -272,10 +267,8 @@ async function activate(card) {
 $("#feed").addEventListener("click", (e) => {
   const tap = e.target.closest(".tap"); if (!tap || !player || !activeCard?.contains(tap)) return;
   const stage = tap.closest(".stage");
-  const state = player.getPlayerState?.();
-  if (state !== YT.PlayerState.PLAYING) {   // blocked or paused: a tap is a user gesture, so sound is allowed
-    player.unMute(); player.setVolume(100); soundOn = true; stage.classList.add("sound"); player.playVideo();
-  } else if (player.isMuted()) { player.unMute(); player.setVolume(100); soundOn = true; stage.classList.add("sound"); }
+  if (player.isMuted()) { player.unMute(); player.setVolume(100); stage.classList.add("sound"); player.playVideo(); }
+  else if (player.getPlayerState?.() !== YT.PlayerState.PLAYING) player.playVideo();
   else player.pauseVideo();
 });
 document.addEventListener("visibilitychange", () => { if (document.hidden) player?.pauseVideo?.(); });
