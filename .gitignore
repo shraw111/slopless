@@ -3,3 +3,5 @@
 __pycache__/
 data/hackertube/
 data/work/
+.venv/
+.DS_Store
