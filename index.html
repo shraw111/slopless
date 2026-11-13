@@ -154,6 +154,9 @@
       aspect-ratio: auto; border-radius: 0; box-shadow: none; background-size: contain; background-color: #000; }
     .stage .poster { background-size: contain; }
   }
+  .cc { position: absolute; z-index: 3; top: 10px; right: 58px; padding: 4px 8px; border-radius: 999px;
+    background: rgba(0,0,0,.6); font-size: 12px; font-weight: 800; letter-spacing: .02em; opacity: .75; }
+  .cc[aria-pressed="true"] { background: var(--accent); color: var(--accent-text); opacity: 1; }
   .speed { position: absolute; z-index: 3; top: 10px; right: 10px; padding: 4px 9px; border-radius: 999px;
     background: rgba(0,0,0,.6); font-size: 12.5px; font-weight: 700; }
   .burst { position: absolute; z-index: 4; left: 50%; top: 50%; width: 90px; height: 90px; margin: -45px 0 0 -45px;
@@ -415,6 +418,7 @@ function cardHTML(c, i, name) {
         <div class="poster" style="background-image:url('https://i.ytimg.com/vi/${esc(c.vid)}/hqdefault.jpg')"></div>
         <button class="tap" aria-label="Tap for sound or pause, double-tap to save"><span class="paused-icon">${ICON.play}</span></button>
         <button class="speed" aria-label="Playback speed">${rate}×</button>
+        <button class="cc" aria-label="Captions" aria-pressed="${captions}">CC</button>
         <button class="fs" aria-label="Full screen">${document.body.classList.contains("immersive") ? ICON.shrink : ICON.expand}</button>
         <span class="burst">${ICON.heart}</span>
         <div class="pill">${ICON.muted}Tap for sound</div>
@@ -534,15 +538,22 @@ function trySound(p, stage) {
     stage.classList.toggle("sound", !p.isMuted());
   }, 700);
 }
-// Captions: shown while the clip is muted, so it still makes sense silently; hidden once sound is on.
+// Captions: on by default and they stay on with sound. The CC button turns them off (remembered).
+let captions = store.get("captions", true);
 const ccState = new WeakMap();
 function syncCaptions(p) {
-  const muted = p?.isMuted?.(); if (muted == null || ccState.get(p) === muted) return;
-  ccState.set(p, muted);
+  if (!p?.getPlayerState || ccState.get(p) === captions) return;
   try {
-    if (muted) { p.loadModule("captions"); p.setOption("captions", "track", { languageCode: "en" }); }
+    if (captions) { p.loadModule("captions"); p.setOption("captions", "track", { languageCode: "en" }); }
     else p.unloadModule("captions");
+    ccState.set(p, captions);
   } catch {}
+}
+function setCaptions(on) {
+  captions = on; store.set("captions", on);
+  document.querySelectorAll(".cc").forEach((b) => b.setAttribute("aria-pressed", on));
+  for (const { player: pl, ready } of players.values()) if (ready) syncCaptions(pl);
+  toast(on ? "Captions on" : "Captions off");
 }
 function startPlayback(entry, c, stage) {
   const p = entry.player;
@@ -572,7 +583,7 @@ function ensurePlayer(i) {
     videoId: c.vid,
     playerVars: { start: c.start, end: c.end, autoplay: 0, mute: 1, playsinline: 1, controls: 0, rel: 0,
       modestbranding: 1, iv_load_policy: 3, disablekb: 1, fs: 0,
-      cc_load_policy: 1, cc_lang_pref: "en", hl: "en" },   // captions on while muted (see syncCaptions)
+      cc_load_policy: captions ? 1 : 0, cc_lang_pref: "en", hl: "en" },   // captions (see syncCaptions)
     events: {
       onReady: () => { entry.ready = true; if (activeIdx === i) startPlayback(entry, c, stage); },
       onStateChange: (e) => {
@@ -1066,6 +1077,7 @@ $("#feed").addEventListener("click", (e) => {
   if (e.target.closest(".flag") && card) { askBadCut(card); return; }
   const ch = e.target.closest(".ch"); if (ch) { openChannel(ch.dataset.ch); return; }
   if (e.target.closest(".fs")) { toggleImmersive(); return; }
+  if (e.target.closest(".cc")) { setCaptions(!captions); return; }
   if (e.target.closest(".speed")) {
     rate = RATES[(RATES.indexOf(rate) + 1) % RATES.length]; store.set("rate", rate);
     document.querySelectorAll(".speed").forEach((b) => (b.textContent = `${rate}×`));
