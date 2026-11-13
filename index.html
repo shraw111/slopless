@@ -157,6 +157,7 @@
   .cc { position: absolute; z-index: 3; top: 10px; right: 58px; padding: 4px 8px; border-radius: 999px;
     background: rgba(0,0,0,.6); font-size: 12px; font-weight: 800; letter-spacing: .02em; opacity: .75; }
   .cc[aria-pressed="true"] { background: var(--accent); color: var(--accent-text); opacity: 1; }
+  .stage.no-cc .cc { background: rgba(0,0,0,.6); color: rgba(255,255,255,.55); text-decoration: line-through; opacity: .8; }
   .speed { position: absolute; z-index: 3; top: 10px; right: 10px; padding: 4px 9px; border-radius: 999px;
     background: rgba(0,0,0,.6); font-size: 12.5px; font-weight: 700; }
   .burst { position: absolute; z-index: 4; left: 50%; top: 50%; width: 90px; height: 90px; margin: -45px 0 0 -45px;
@@ -612,20 +613,35 @@ function trySound(p, stage) {
   }, 700);
 }
 // Captions: on by default and they stay on with sound. The CC button turns them off (remembered).
+// YouTube's player ignores caption commands until it is playing and its captions module has loaded, so the
+// request is repeated every tick until the video's caption list shows up. If the module answers with an empty
+// list, this video simply has no captions and the CC button says so.
 let captions = store.get("captions", true);
-const ccState = new WeakMap();
-function syncCaptions(p) {
-  if (!p?.getPlayerState || ccState.get(p) === captions) return;
+const ccState = new WeakMap();   // player -> { want, done, tries }
+const CC_TRIES = 48;             // about 12 seconds of playing
+function syncCaptions(p, stage) {
+  if (!p?.getPlayerState) return;
+  let s = ccState.get(p);
+  if (!s || s.want !== captions) { s = { want: captions, done: false, tries: 0 }; ccState.set(p, s); }
+  if (s.done) return;
+  s.tries++;
   try {
-    if (captions) { p.loadModule("captions"); p.setOption("captions", "track", { languageCode: "en" }); }
-    else p.unloadModule("captions");
-    ccState.set(p, captions);
+    if (!captions) { p.unloadModule("captions"); s.done = true; stage?.classList.remove("no-cc"); return; }
+    p.loadModule("captions");
+    const list = p.getOption("captions", "tracklist");
+    if (Array.isArray(list) && list.length) {
+      const pick = list.find((t) => /^en/i.test(t.languageCode || "")) || list[0];
+      p.setOption("captions", "track", { languageCode: pick.languageCode });
+      s.done = true; stage?.classList.remove("no-cc");
+    } else if (Array.isArray(list) && s.tries >= CC_TRIES) { s.done = true; stage?.classList.add("no-cc"); }   // nothing to show
+    else if (s.tries >= CC_TRIES * 2) s.done = true;   // the module never answered: stop trying
   } catch {}
 }
 function setCaptions(on) {
   captions = on; store.set("captions", on);
   document.querySelectorAll(".cc").forEach((b) => b.setAttribute("aria-pressed", on));
-  for (const { player: pl, ready } of players.values()) if (ready) syncCaptions(pl);
+  const stage = activeCard?.querySelector(".stage");
+  for (const { player: pl, ready } of players.values()) if (ready) syncCaptions(pl, pl === player ? stage : null);
   toast(on ? "Captions on" : "Captions off");
 }
 function startPlayback(entry, c, stage) {
@@ -695,8 +711,8 @@ async function activate(card) {
     if (player.getPlayerState?.() === YT.PlayerState.PLAYING) {
       watched = Math.max(watched, t - c.start);   // speed-proof
       addWatchTime(0.25);
+      syncCaptions(player, stage);
     }
-    syncCaptions(player);
     bar.style.width = Math.max(0, Math.min(100, ((t - c.start) / (c.end - c.start)) * 100)) + "%";
     if (t >= c.end - 0.25) advance(i);
   }, 250);
@@ -1347,7 +1363,10 @@ $("#feed").addEventListener("click", (e) => {
   if (e.target.closest(".flag") && card) { askBadCut(card); return; }
   const ch = e.target.closest(".ch"); if (ch) { openChannel(ch.dataset.ch); return; }
   if (e.target.closest(".fs")) { toggleImmersive(); return; }
-  if (e.target.closest(".cc")) { setCaptions(!captions); return; }
+  if (e.target.closest(".cc")) {
+    if (captions && e.target.closest(".stage")?.classList.contains("no-cc")) { toast("This video has no captions"); return; }
+    setCaptions(!captions); return;
+  }
   if (e.target.closest(".speed")) {
     rate = RATES[(RATES.indexOf(rate) + 1) % RATES.length]; store.set("rate", rate);
     document.querySelectorAll(".speed").forEach((b) => (b.textContent = `${rate}×`));
