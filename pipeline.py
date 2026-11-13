@@ -567,7 +567,9 @@ def cmd_score_prep(args):
     for t in enabled_topics(args.topic):
         n = 0  # --limit applies per topic
         for v in top_candidates(cache, t):
-            if ("result" in v and not args.rescore) or v.get("source") in (None, "none"):
+            if args.flagged and not v.get("flags"):
+                continue
+            if ("result" in v and not (args.rescore or args.flagged)) or v.get("source") in (None, "none"):
                 continue
             if t["require_seen_content"] and v["source"] == "heatmap":  # would not be published anyway
                 continue
@@ -583,6 +585,9 @@ def cmd_score_prep(args):
             else:  # heatmap only
                 body = "NO TRANSCRIPT, NO CHAPTERS.\n\nDESCRIPTION:\n" + v.get("description", "")[:2500]
             body += heat_peaks(v)
+            if v.get("flags"):
+                body += ("\n\nVIEWER FLAGS (do not reuse these cuts; pick better ones, or fewer clips):\n"
+                         + "\n".join(f"[{f['start']}-{f['end']}] {f['reason']}" for f in v["flags"]))
             (out / f"{v['vid']}.in.md").write_text(
                 f"TOPIC id: {t['id']}\nTOPIC name: {t['name']}\nCOVERS: {t['covers']}\nEXCLUDE: {t['exclude']}\n"
                 f"GOOD CLIP: {t['good_clip']}\n\nVIDEO: {v['title']}\nCHANNEL: {v['channel']}\n"
@@ -632,11 +637,36 @@ def cmd_score_apply(args):
         if "result" in v:
             v.setdefault("old_results", []).append(v["result"])
         v["result"] = res
+        if v.get("flags"):   # the re-cut answers them
+            v.setdefault("flags_resolved", []).extend(v.pop("flags"))
         n += 1
         f.unlink()
         (WORK / "score" / f"{vid}.in.md").unlink(missing_ok=True)
     save_cache(cache)
     print(f"applied {n} scores ({bad} invalid, left in place to redo)")
+
+
+# ---------------------------------------------------------------- 3b'. "Bad cut" flags from viewers
+def cmd_flags_apply(args):
+    """Read viewer flags ({"flags": [{"id": "<vid>-<start>", "reason": "..."}]}) from a file or stdin.
+    Flagged clips stop being published at once; `score-prep --flagged` then re-cuts those videos."""
+    raw = Path(args.topic).read_text() if args.topic and args.topic != "-" else sys.stdin.read()
+    flags = json.loads(raw[raw.index("{"): raw.rindex("}") + 1])["flags"]
+    cache = load_cache()
+    n = 0
+    for fl in flags:
+        vid, start = fl["id"][:11], int(fl["id"][12:] or 0)
+        v = cache.get(vid)
+        if not v or not v.get("result"):
+            continue
+        for c in result_clips(v["result"]):
+            if abs(int(c["start_sec"]) - start) < 90:
+                c["flagged"] = fl.get("reason", "flagged")
+                v.setdefault("flags", []).append({"start": c["start_sec"], "end": c["end_sec"],
+                                                  "reason": c["flagged"], "at": NOW.isoformat(timespec="seconds")})
+                n += 1
+    save_cache(cache)
+    print(f"applied {n} of {len(flags)} flags; run `score-prep --flagged` to re-cut those videos")
 
 
 # ---------------------------------------------------------------- 3c. subject groups (Haiku)
@@ -719,6 +749,36 @@ def cmd_summaries_apply(args):
     print(f"applied {n} summaries")
 
 
+# ---------------------------------------------------------------- 3c''. recall questions (Haiku)
+def cmd_quiz_prep(args):
+    """Published clips with a summary but no recall question -> data/work/quiz/batch_NNN.in.json."""
+    cache = load_cache()
+    out = WORK / "quiz"
+    out.mkdir(parents=True, exist_ok=True)
+    for f in out.glob("*.json"):
+        f.unlink()
+    published = {k["id"] for k in json.loads((ROOT / "clips.json").read_text())}
+    items = [{"id": clip_id(v["vid"], c), "hook": c["hook"], "summary": c["summary"], "points": c.get("points", [])}
+             for v in cache.values() if v.get("result") for c in result_clips(v["result"])
+             if clip_id(v["vid"], c) in published and c.get("summary") and "quiz" not in c]
+    for i in range(0, len(items), 40):
+        jsave(out / f"batch_{i // 40:03d}.in.json", {"clips": items[i:i + 40]})
+    print(f"{len(items)} clips need a recall question in {math.ceil(len(items) / 40)} batches -> {out} (prompt: prompts/quiz.md)")
+
+
+def cmd_quiz_apply(args):
+    cache = load_cache()
+    by_id = {clip_id(v["vid"], c): c for v in cache.values() if v.get("result") for c in result_clips(v["result"])}
+    n = 0
+    for f in sorted((WORK / "quiz").glob("*.out.json")):
+        for cid, q in json.loads(f.read_text())["quiz"].items():
+            if cid in by_id and q.get("q") and q.get("a"):
+                by_id[cid]["quiz"] = {"q": q["q"].strip(), "a": q["a"].strip()}
+                n += 1
+    save_cache(cache)
+    print(f"applied {n} recall questions")
+
+
 # ---------------------------------------------------------------- 3d. select + build feed data
 def cmd_select(args):
     cache = load_cache()
@@ -737,6 +797,8 @@ def cmd_select(args):
                 continue  # Sonnet never saw what is said in this clip (heatmap only)
             boost = 1 if ((t["hn_boost"] and v.get("hn")) or v["channel"].lower() in trusted) else 0
             for c in result_clips(r)[:max_clips(v, t)]:
+                if c.get("flagged"):
+                    continue
                 adj = min(10, int(c["substance"]) + boost)
                 bar = t["min_substance"] if v.get("source") == "transcript" else t["min_substance_no_transcript"]
                 if adj >= bar:
@@ -759,7 +821,8 @@ def cmd_select(args):
                            "channel": v["channel"], "published": v["published"][:10], "views": v["views"],
                            "minutes": v["minutes"], "hn": bool(v.get("hn")), "source": v.get("source"),
                            "subject": subj,
-                           **({"summary": r["summary"], "points": r.get("points", [])} if r.get("summary") else {})})
+                           **({"summary": r["summary"], "points": r.get("points", [])} if r.get("summary") else {}),
+                           **({"quiz": r["quiz"]} if r.get("quiz") else {})})
             if len(chosen) >= limit:
                 break
         st["clips"] = len(chosen)
@@ -804,15 +867,17 @@ def main():
                      ("transcripts", cmd_transcripts), ("heatmap", cmd_heatmap), ("score-prep", cmd_score_prep),
                      ("score-apply", cmd_score_apply), ("subjects-prep", cmd_subjects_prep),
                      ("subjects-apply", cmd_subjects_apply), ("summaries-prep", cmd_summaries_prep),
-                     ("summaries-apply", cmd_summaries_apply), ("select", cmd_select)]:
+                     ("summaries-apply", cmd_summaries_apply), ("quiz-prep", cmd_quiz_prep),
+                     ("quiz-apply", cmd_quiz_apply), ("select", cmd_select)]:
         p = sub.add_parser(name)
         p.add_argument("--topic")
         p.add_argument("--limit", type=int, default=0)
         p.add_argument("--retry", action="store_true", help="transcripts: retry videos that fell back")
         p.add_argument("--rescore", action="store_true", help="score-prep: include already-scored videos")
+        p.add_argument("--flagged", action="store_true", help="score-prep: re-cut videos viewers flagged")
         p.add_argument("--refresh", action="store_true", help="find: weekly run, new uploads since the last run")
         p.set_defaults(fn=fn)
-    for name, fn in [("approve-queries", cmd_approve), ("promote", cmd_promote)]:
+    for name, fn in [("approve-queries", cmd_approve), ("promote", cmd_promote), ("flags-apply", cmd_flags_apply)]:
         p = sub.add_parser(name)
         p.add_argument("topic")
         p.set_defaults(fn=fn)

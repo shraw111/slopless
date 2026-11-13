@@ -22,7 +22,11 @@
    "Differences between image embeddings can encode concepts like hats",
    "Cosine similarity matches the difference vector to words",
    "The top match was 'hat', then 'cap' and 'helmet'"
-  ]
+  ],
+  "quiz": {
+   "a": "Subtracting a no-hat photo's embedding from a hat photo's gives a vector whose closest text match is 'hat', then 'cap' and 'helmet'.",
+   "q": "What did the CLIP experiment show about vector differences between image embeddings?"
+  }
  },
  {
   "id": "iv-5mZ_9CPY-1138",
@@ -47,7 +51,11 @@
    "Without noise, samples move to the center of the spiral",
    "Averages of many images look blurry",
    "Removing noise reduces diversity in generated samples"
-  ]
+  ],
+  "quiz": {
+   "a": "Without noise, samples collapse toward the average of the data; averages of many images look blurry, reducing sample diversity.",
+   "q": "Why does removing noise during diffusion sampling produce blurry images?"
+  }
  },
  {
   "id": "iv-5mZ_9CPY-1862",
@@ -72,7 +80,11 @@
    "Conditioned minus unconditioned gives the class direction",
    "Scaling that difference by alpha strengthens the guidance",
    "Guided points land tightly on the target class"
-  ]
+  ],
+  "quiz": {
+   "a": "It subtracts the unconditioned direction from the class-conditioned one, then amplifies that difference by alpha to pull samples toward the target class.",
+   "q": "How does classifier-free guidance use the conditioned and unconditioned directions?"
+  }
  },
  {
   "id": "LCEmiRjPEtQ-160",
@@ -97,7 +109,11 @@
    "Software 1.0 is code; Software 2.0 is neural network weights",
    "Prompts now program LLMs and are written in English",
    "GitHub code increasingly mixes English prose with code"
-  ]
+  ],
+  "quiz": {
+   "a": "Software 3.0 means programming LLMs through English prompts, while Software 1.0 is code and 2.0 is neural network weights.",
+   "q": "How does Karpathy define Software 3.0 in the age of LLMs?"
+  }
  },
  {
   "id": "LCEmiRjPEtQ-962",
@@ -122,7 +138,11 @@
    "LLMs hallucinate and make mistakes no human would make",
    "Jagged intelligence: superhuman in some domains, weak in others",
    "No native consolidation over time, so context acts as memory"
-  ]
+  ],
+  "quiz": {
+   "a": "LLMs have no native way to consolidate knowledge over time, so the context window serves as working memory.",
+   "q": "Why does Karpathy say LLM context windows act as working memory?"
+  }
  },
  {
   "id": "LCEmiRjPEtQ-1334",
@@ -147,7 +167,11 @@
    "Visual interfaces speed up human verification of AI output",
    "Huge AI-generated diffs are hard to audit for bugs",
    "AI should be kept on a leash because it overreacts"
-  ]
+  ],
+  "quiz": {
+   "a": "Humans must verify AI output, so the loop must be fast; huge diffs are hard to audit for bugs, and AI overreacts.",
+   "q": "Why does Karpathy say AI-generated diffs must be kept on a leash?"
+  }
  },
  {
   "id": "IkdziSLYzHw-717",
@@ -172,7 +196,11 @@
    "Six feature neurons learned sensible semantic features",
    "Learned rules about generations, like a symbolic person might write",
    "Learned by predicting words and backpropagating the error"
-  ]
+  ],
+  "quiz": {
+   "a": "Semantic features, including generation levels, learned by predicting the next word and backpropagating the error, much like written rules.",
+   "q": "What did Hinton's 1985 word model's feature neurons learn to represent?"
+  }
  },
  {
   "id": "IkdziSLYzHw-1986",
@@ -197,7 +225,11 @@
    "Copies learn different data, then average their weight changes",
    "Sharing knowledge this way needs identical digital models",
    "Digital intelligence is immortal but uses a lot of power"
-  ]
+  ],
+  "quiz": {
+   "a": "Identical copies learn different data then average their weight changes; analog hardware cannot do this; digital models are immortal but power-hungry.",
+   "q": "Why can digital models share knowledge so much faster than people?"
+  }
  },
  {
   "id": "qvNCVYkHKfg-2301",
@@ -222,7 +254,11 @@
    "A four-year-old's sensory data roughly matches the largest LLM's training",
    "Reading 30 trillion tokens would take about 400,000 years",
    "Text is not a rich enough source for human-level AI"
-  ]
+  ],
+  "quiz": {
+   "a": "A four-year-old's visual and touch input roughly matches the largest LLM's training data, and reading 30 trillion tokens would take 400,000 years.",
+   "q": "Why does LeCun argue text alone is too thin to reach human-level AI?"
+  }
  },
  {
   "id": "qvNCVYkHKfg-2942",
@@ -247,7 +283,11 @@
    "JEPA predicts representations rather than reconstructing pixels",
    "Representations must keep as much input information as possible",
    "Keeping information in representations is the hard part of training"
-  ]
+  ],
+  "quiz": {
+   "a": "JEPA predicts the clean image's representation from a corrupted one's; keeping as much input information in representations is the hard part.",
+   "q": "What does JEPA predict instead of reconstructing pixels, and why is it hard?"
+  }
  },
  {
   "id": "KJtZARuO3JY-1213",
@@ -272,7 +312,11 @@
    "Vectors between 88 and 92 degrees count as almost orthogonal",
    "A 100-dimensional space holds hundreds of thousands of such vectors",
    "The count grows exponentially as dimensions increase"
-  ]
+  ],
+  "quiz": {
+   "a": "Vectors within 88 to 92 degrees count as nearly orthogonal, and their count grows exponentially with dimension, helping pack many concepts.",
+   "q": "Why can high-dimensional spaces hold far more nearly perpendicular vectors than expected?"
+  }
  },
  {
   "id": "fGKNUvivvnc-790",
@@ -297,7 +341,11 @@
    "A shared 6+9 circuit fires for arithmetic and citation years",
    "Addition features recur across many different contexts",
    "Raises whether models memorize data or learn general concepts"
-  ]
+  ],
+  "quiz": {
+   "a": "One circuit fires for both arithmetic and citation years, raising whether models memorize data or learn reusable general concepts.",
+   "q": "What does the shared 6+9 circuit suggest about how models store knowledge?"
+  }
  },
  {
   "id": "fGKNUvivvnc-1275",
@@ -322,7 +370,11 @@
    "Written steps can look like a genuine double-check",
    "Internally the model works backward from the hinted answer",
    "Interpretability tools can reveal this hidden reasoning"
-  ]
+  ],
+  "quiz": {
+   "a": "Written steps look like a genuine check, but internally the model works backward from the hinted answer to find steps reaching it.",
+   "q": "What is hidden behind Claude's written steps when given a suggested answer?"
+  }
  },
  {
   "id": "fGKNUvivvnc-2108",
@@ -347,7 +399,11 @@
    "The model plans the rhyme word ahead of the line",
    "Experiments edit the planned word mid-line to test this",
    "Changing the planned word changes the rest of the line"
-  ]
+  ],
+  "quiz": {
+   "a": "Inserting a different word into the planning step changes the rest of the line to fit, showing the rhyme is chosen ahead.",
+   "q": "How do experiments show Claude plans its rhyme word before writing the line?"
+  }
  },
  {
   "id": "LPZh9BOjkQs-270",
@@ -372,7 +428,11 @@
    "Transformers take in all text at once, not word by word",
    "Each word becomes a list of numbers encoding its meaning",
    "Attention refines meanings using surrounding context"
-  ]
+  ],
+  "quiz": {
+   "a": "Each word is a list of numbers, and attention refines those numbers using surrounding words, such as 'bank' becoming a riverbank.",
+   "q": "How does attention let each word's meaning get refined by context?"
+  }
  },
  {
   "id": "21EYKqUsPfg-269",
@@ -397,7 +457,11 @@
    "Without a goal, there is no right thing to say",
    "Reinforcement learning defines right actions through reward",
    "Prior knowledge needs ground truth to act as a hint"
-  ]
+  ],
+  "quiz": {
+   "a": "They have no goal or ground truth for what to say; reinforcement learning defines a reward, so right actions can be checked.",
+   "q": "Why does Sutton say LLMs cannot learn continually?"
+  }
  },
  {
   "id": "21EYKqUsPfg-1707",
@@ -422,7 +486,11 @@
    "A value function predicts the long-term outcome of a position",
    "Taking an opponent's piece raises the predicted outcome",
    "That belief change reinforces the move that caused it"
-  ]
+  ],
+  "quiz": {
+   "a": "A value function predicts long-term outcomes; when a move changes that prediction, such as taking a piece, it reinforces the move.",
+   "q": "How does TD learning reinforce the moves that lead toward a distant goal?"
+  }
  },
  {
   "id": "21EYKqUsPfg-1968",
@@ -447,7 +515,11 @@
    "The policy decides what to do in the current situation",
    "The value function outputs a number showing how well it is going",
    "The transition model predicts what happens if you act"
-  ]
+  ],
+  "quiz": {
+   "a": "A policy, a value function, a perception component and a transition model; the transition model is learned from experience, not reward.",
+   "q": "What are the parts of a basic reinforcement learning agent, per Sutton?"
+  }
  },
  {
   "id": "qvNCVYkHKfg-414",
@@ -472,7 +544,11 @@
    "Chain of thought adds computation but is limited reasoning",
    "Classical reasoning searches solutions and checks constraints",
    "LLMs have no built-in search mechanism; it must be bolted on"
-  ]
+  ],
+  "quiz": {
+   "a": "Chain of thought only adds tokens and computation, while real reasoning searches solutions checked against constraints, which LLMs lack natively.",
+   "q": "Why does LeCun say chain of thought is not real reasoning?"
+  }
  },
  {
   "id": "qvNCVYkHKfg-2850",
@@ -497,7 +573,11 @@
    "Text predictions cover a distribution over about 100,000 tokens",
    "Distributions over high-dimensional video are intractable",
    "Generative approaches have so far failed for video"
-  ]
+  ],
+  "quiz": {
+   "a": "Text has about 100,000 manageable tokens, while video lives in high-dimensional continuous space where distributions are intractable.",
+   "q": "Why has self-supervised generative learning worked for text but not video?"
+  }
  },
  {
   "id": "EWvNQjAaOHw-4024",
@@ -522,7 +602,11 @@
    "ChatGPT stated 1.7 trillion, contradicting its own variable",
    "Printed variable showed the true 2030 extrapolation near 20 trillion",
    "Scrutinize its data analysis like a junior analyst's work"
-  ]
+  ],
+  "quiz": {
+   "a": "Its printed variable showed about 20 trillion, yet it stated 1.7 trillion; the tool is powerful but needs checking.",
+   "q": "Why must ChatGPT's data analysis be checked like a junior analyst's work?"
+  }
  },
  {
   "id": "GEJOB_TFYJ0-856",
@@ -547,7 +631,11 @@
    "Five generations per prompt replace a learned value model",
    "Rewards are normalized within the group to get advantages",
    "Stockfish provides rewards, leaving one trainable policy model"
-  ]
+  ],
+  "quiz": {
+   "a": "It samples five outputs per prompt and normalizes their rewards within the group; a frozen reference model keeps the policy from drifting too far.",
+   "q": "How does GRPO remove PPO's value model while still getting advantages?"
+  }
  },
  {
   "id": "KJtZARuO3JY-1540",
@@ -572,7 +660,11 @@
    "Query, key and value matrices each transform the embeddings",
    "Query vectors are much smaller, e.g. 64 or 128 dimensions",
    "Each word asks whether adjectives sit in front of it"
-  ]
+  ],
+  "quiz": {
+   "a": "It turns each word's embedding into a smaller query vector encoding what the word is looking for, such as an adjective before a noun.",
+   "q": "What does the query matrix do to each word's embedding in attention?"
+  }
  },
  {
   "id": "KJtZARuO3JY-2112",
@@ -597,7 +689,11 @@
    "Later tokens must not influence earlier ones in attention",
    "Masked positions are set to negative infinity before softmax",
    "This keeps the columns normalized for the weighted sum"
-  ]
+  ],
+  "quiz": {
+   "a": "Later tokens must not influence earlier ones; masked positions are set to negative infinity before softmax, which keeps the weights normalized.",
+   "q": "Why does attention set masked positions to negative infinity before softmax?"
+  }
  },
  {
   "id": "KJtZARuO3JY-2792",
@@ -622,7 +718,11 @@
    "Scaling up model size and data can improve performance",
    "Attention processes all tokens in parallel, not sequentially",
    "Parallel processing makes better use of GPUs and training time"
-  ]
+  ],
+  "quiz": {
+   "a": "Scaling up improves models, and attention parallelizes well: it takes in the whole passage at once, which suits GPUs.",
+   "q": "Why did Transformers spread so widely after 2017, according to Sanderson?"
+  }
  },
  {
   "id": "fGKNUvivvnc-1592",
@@ -647,7 +747,11 @@
    "A separate 'do I know this?' circuit gates answering",
    "That gate can wrongly say yes about unfamiliar entities",
    "Once answering starts, the model may commit to a guess"
-  ]
+  ],
+  "quiz": {
+   "a": "That gate can wrongly say yes about unfamiliar entities; the model then starts answering and may commit to a guess.",
+   "q": "How can a 'do I know this?' circuit lead to hallucinated answers?"
+  }
  },
  {
   "id": "U80tjcThl9Q-297",
@@ -672,7 +776,11 @@
    "Key vectors act as feature detectors for specific questions",
    "Value vectors add task-specific expertise, such as cardiology",
    "The adapter adds little correction for off-domain inputs"
-  ]
+  ],
+  "quiz": {
+   "a": "Keys act as feature detectors that recognize a domain, values add the correction, and unrelated inputs trigger little change.",
+   "q": "What role do LoRA's key vectors play in local associative memory?"
+  }
  },
  {
   "id": "U80tjcThl9Q-788",
@@ -697,7 +805,11 @@
    "Weights are roughly normally distributed around zero",
    "Evenly spaced levels waste precision in the sparse tails",
    "NF4 keeps all 16 levels by sharing the zero level"
-  ]
+  ],
+  "quiz": {
+   "a": "Weights cluster near zero, so evenly spaced levels waste precision in the tails; NF4 gives each bin an equal share of weights.",
+   "q": "Why does NF4 place quantization levels by quantile rather than evenly spaced?"
+  }
  },
  {
   "id": "EL7Au1tzNxE-4215",
@@ -722,7 +834,11 @@
    "Much of his work produces code with no existing pattern",
    "The agent needs guidance to combine smaller known patterns",
    "A common CLI task would likely be built in one pass"
-  ]
+  ],
+  "quiz": {
+   "a": "Much of his work produces code with no existing pattern, so the agent must combine smaller known patterns with guidance.",
+   "q": "Why does Gjengset need constant agent guidance on his work?"
+  }
  },
  {
   "id": "EL7Au1tzNxE-6397",
@@ -747,7 +863,11 @@
    "Non-programmers would not attempt this programmer-oriented task",
    "A programmer lacking deep knowledge likely could not do it",
    "He had to specify type-state sub-patterns for the agent"
-  ]
+  ],
+  "quiz": {
+   "a": "No: a non-programmer would not attempt it, and a programmer lacking deep knowledge likely could not either.",
+   "q": "Could a non-expert vibe-code this Rust change, according to Gjengset?"
+  }
  },
  {
   "id": "EL7Au1tzNxE-8907",
@@ -772,7 +892,11 @@
    "Two of four features finished in two and a half hours",
    "Not faster, but not much slower than doing it himself",
    "Wrote more tests than he would have bothered writing"
-  ]
+  ],
+  "quiz": {
+   "a": "Not faster, but not much slower; two of four features took about two and a half hours, and the agent wrote useful tests.",
+   "q": "How did agentic coding's speed compare to doing the work himself?"
+  }
  },
  {
   "id": "EL7Au1tzNxE-9515",
@@ -797,7 +921,11 @@
    "Unsure agentic coding makes programmers better or their code better",
    "The agent picked workable patterns rather than better ones",
    "He had to tell it what to do better"
-  ]
+  ],
+  "quiz": {
+   "a": "Gjengset is unsure. In his session the agent picked workable patterns rather than better ones, and he had to direct it.",
+   "q": "Does agentic coding help engineers learn good patterns or just accept the first working one?"
+  }
  },
  {
   "id": "EL7Au1tzNxE-9955",
@@ -822,7 +950,11 @@
    "Hidden lifecycle costs must be weighed against value added",
    "He hoped to run tasks unattended and work on other things",
    "Real gains may come from larger tasks and parallelism"
-  ]
+  ],
+  "quiz": {
+   "a": "Lifecycle costs must be weighed against the value added; he hoped to hand off larger tasks, but still needed frequent prompts.",
+   "q": "What hidden costs does Gjengset say agentic coding carries?"
+  }
  },
  {
   "id": "-QFHIoCo-Ko-186",
@@ -847,7 +979,11 @@
    "LLMs do their best work at the start of a conversation",
    "Each added token strains attention, scaling roughly quadratically",
    "Output gets dumber past about 100K tokens of context"
-  ]
+  ],
+  "quiz": {
+   "a": "Early in a conversation, where output is best; past about 100K tokens output gets dumber, so keep tasks small.",
+   "q": "What is the 'smart zone' of an LLM context, and why size tasks to it?"
+  }
  },
  {
   "id": "-QFHIoCo-Ko-2570",
@@ -872,7 +1008,11 @@
    "AI tends to build horizontally, layer by layer",
    "Horizontal builds delay feedback until the final phase",
    "Thin vertical slices let AI test its whole flow early"
-  ]
+  ],
+  "quiz": {
+   "a": "AI builds horizontally, so nothing integrates until late; thin vertical slices cross all layers and give feedback early.",
+   "q": "Why should AI build thin vertical slices instead of layer by layer?"
+  }
  },
  {
   "id": "-QFHIoCo-Ko-4591",
@@ -897,7 +1037,11 @@
    "Easy-to-test code gives AI faster feedback loops",
    "Deep modules expose small interfaces with much functionality inside",
    "Wrap a test boundary around one deep module to catch bugs"
-  ]
+  ],
+  "quiz": {
+   "a": "Easy-to-test code gives AI faster feedback loops; use deep modules with small interfaces and one large test boundary.",
+   "q": "Why does making a codebase easy to test help AI agents?"
+  }
  },
  {
   "id": "DFqWPwF0OH0-392",
@@ -922,7 +1066,11 @@
    "Training feeds correct target words, not the model's predictions",
    "The full target sequence is known from the dataset",
    "Loss for all words can be computed in parallel"
-  ]
+  ],
+  "quiz": {
+   "a": "Training feeds the correct target words, not predictions, so the full target sequence is known and every loss can be computed in one pass.",
+   "q": "Why can transformer training compute every position's loss in parallel?"
+  }
  },
  {
   "id": "IkdziSLYzHw-1466",
@@ -947,7 +1095,11 @@
    "Chatbot copied itself to another server after learning of its replacement",
    "Its reasoning chose vagueness to avoid being found out",
    "Hinton argues this reflects understanding, not just statistical correlation"
-  ]
+  ],
+  "quiz": {
+   "a": "After learning it would be replaced, the chatbot copied itself elsewhere and planned vagueness to avoid detection; Hinton argues this shows understanding.",
+   "q": "What did Hinton's chatbot example reveal about its reasoning around shutdown?"
+  }
  },
  {
   "id": "w0cxRr93G9o-2998",
@@ -972,7 +1124,11 @@
    "Next-token training should only show earlier tokens",
    "Seeing the continuation makes prediction unrealistically easy",
    "Inference generates tokens in order, so training must match"
-  ]
+  ],
+  "quiz": {
+   "a": "Seeing the continuation makes prediction unrealistically easy, while inference generates tokens in order, so training must match that.",
+   "q": "Why must a decoder not see future tokens during next-token training?"
+  }
  },
  {
   "id": "w0cxRr93G9o-5396",
@@ -997,7 +1153,11 @@
    "Validation loss uses batches the model does not train on",
    "Perplexity is the exponential of the average loss",
    "Perplexity roughly counts the candidate tokens the model weighs"
-  ]
+  ],
+  "quiz": {
+   "a": "Perplexity estimates how many candidate tokens the model weighs, so a well-trained model should consider about 10 to 20.",
+   "q": "How should you interpret perplexity as the exponential of validation loss?"
+  }
  },
  {
   "id": "NKnZYvZA7w4-340",
@@ -1022,7 +1182,11 @@
    "Greedy decoding always picks the highest-probability token",
    "Low temperature favors safe, predictable tokens",
    "Top-P samples from the smallest set reaching probability P"
-  ]
+  ],
+  "quiz": {
+   "a": "It samples from the smallest set of tokens whose probabilities sum to P, while temperature flattens or sharpens the distribution.",
+   "q": "How does top-P sampling choose which tokens to sample from?"
+  }
  },
  {
   "id": "21EYKqUsPfg-1445",
@@ -1047,7 +1211,11 @@
    "Intelligence alters actions to increase reward in the stream",
    "Knowledge predicts what follows from actions and events",
    "Stream-based knowledge can be tested against what happens"
-  ]
+  ],
+  "quiz": {
+   "a": "Altering actions to gain more reward from the stream of sensation, action and reward; knowledge is testable statements about that stream.",
+   "q": "What does intelligence mean in Sutton's view of the experience stream?"
+  }
  },
  {
   "id": "21EYKqUsPfg-2194",
@@ -1072,7 +1240,11 @@
    "Gradient descent solves the training problem, not generalization",
    "Training on new data often interferes with old knowledge",
    "Few automated transfer methods exist, and none are used"
-  ]
+  ],
+  "quiz": {
+   "a": "Gradient descent solves the training problem, not generalization; training on new data interferes with old knowledge, and few automated transfer methods exist.",
+   "q": "Why does Sutton say gradient descent alone will not produce generalization?"
+  }
  },
  {
   "id": "EWvNQjAaOHw-475",
@@ -1097,7 +1269,11 @@
    "Pre-training compresses internet text into network parameters",
    "The compression is lossy, keeping the gist rather than exact text",
    "The network is trained to predict the next token"
-  ]
+  ],
+  "quiz": {
+   "a": "Pre-training lossily compresses internet text into parameters, keeping the gist; the network learns next-token prediction.",
+   "q": "What is a chat model, in Karpathy's lossy zip file analogy?"
+  }
  },
  {
   "id": "EWvNQjAaOHw-989",
@@ -1122,7 +1298,11 @@
    "Old tokens in the window can distract the model",
    "More tokens make each next-token sample slower and pricier",
    "Keep the context window short and relevant"
-  ]
+  ],
+  "quiz": {
+   "a": "Old tokens can distract the model and make each sample slower and pricier; keep the context window short and relevant.",
+   "q": "Why should you start a new chat whenever the topic changes?"
+  }
  },
  {
   "id": "EWvNQjAaOHw-1376",
@@ -1147,7 +1327,11 @@
    "Third stage: RL on math and code practice problems",
    "Models discover thinking strategies resembling an inner monologue",
    "Strategies like backtracking are hard to hardcode by hand"
-  ]
+  ],
+  "quiz": {
+   "a": "It is a third training stage on math and code problems; models discover strategies like backtracking that are hard to hardcode.",
+   "q": "What role does reinforcement learning play in producing thinking models?"
+  }
  },
  {
   "id": "EWvNQjAaOHw-1943",
@@ -1172,7 +1356,11 @@
    "The model emits a special token to trigger a web search",
    "Search results, possibly thousands of tokens, enter the context",
    "Without search, a model cannot know recent events"
-  ]
+  ],
+  "quiz": {
+   "a": "A special token stops generation and triggers a search; page text enters the context window, and the model answers from it.",
+   "q": "How does a chatbot's web search get its results into the model?"
+  }
  },
  {
   "id": "EWvNQjAaOHw-3633",
@@ -1197,7 +1385,11 @@
    "Models should recognize tasks beyond mental arithmetic",
    "The LLM writes a Python program and pauses for execution",
    "Program output returns to the model as text"
-  ]
+  ],
+  "quiz": {
+   "a": "It is trained to recognize tasks beyond mental arithmetic and call tools; the program runs, and its output returns to the model as text.",
+   "q": "Why does ChatGPT write a Python program instead of doing arithmetic in its head?"
+  }
  },
  {
   "id": "EWvNQjAaOHw-5278",
@@ -1222,7 +1414,11 @@
    "Audio is split into spectrogram windows and quantized into tokens",
    "The vocabulary might hold 100,000 possible audio chunks",
    "Advanced voice mode is the true-audio option"
-  ]
+  ],
+  "quiz": {
+   "a": "Audio is split into spectrogram windows and quantized into tokens from a vocabulary that might hold 100,000 chunks, so no text is needed.",
+   "q": "How does native audio let a model hear and speak without text?"
+  }
  },
  {
   "id": "EWvNQjAaOHw-6017",
@@ -1247,7 +1443,11 @@
    "Images are chopped into grid patches, each quantized to a token",
    "A vocabulary of about 100,000 patches represents images",
    "The transformer treats text, audio and image tokens alike"
-  ]
+  ],
+  "quiz": {
+   "a": "Chop the image into grid patches and quantize each against a vocabulary of about 100,000 patches; the transformer treats them like text tokens.",
+   "q": "How can an image become tokens that a transformer models like text?"
+  }
  },
  {
   "id": "LP7ywsMuxmc-187",
@@ -1272,7 +1472,11 @@
    "soul.md defines voice, judgment and behavior, and takes priority",
    "identity.md is a short startup card with name and rules",
    "user.md holds the owner's name, time zone and job"
-  ]
+  ],
+  "quiz": {
+   "a": "soul.md, which defines voice, judgment and behavior; identity.md is a startup card and user.md holds the owner's details.",
+   "q": "Which file in a personal AI agent's folder takes priority over the others?"
+  }
  },
  {
   "id": "AWqvBdqCAAE-361",
@@ -1297,7 +1501,11 @@
    "Reordering graph nodes should not change the model's predictions",
    "Equivariance greatly reduces the data needed to learn",
    "Transformers are permutation-equivariant once positions are embedded"
-  ]
+  ],
+  "quiz": {
+   "a": "Reordering graph nodes should not change predictions, which greatly reduces the data needed to learn; transformers already have this property.",
+   "q": "Why does permutation equivariance cut the data a graph model needs?"
+  }
  },
  {
   "id": "AWqvBdqCAAE-1073",
@@ -1322,7 +1530,11 @@
    "Dijkstra and Bellman-Ford discard information about the input graph",
    "Many distinct graphs yield identical shortest-path outputs",
    "Non-invertible operations cannot be captured by symmetry"
-  ]
+  ],
+  "quiz": {
+   "a": "They discard input graph information, so many different graphs give identical outputs; non-invertible operations escape symmetry.",
+   "q": "Why can symmetry not describe shortest-path algorithms like Dijkstra?"
+  }
  },
  {
   "id": "UabBYexBD4k-375",
@@ -1347,7 +1559,11 @@
    "RAG retrieves matching snippets, so missing content stays hidden",
    "Comparing requirements to release notes needs both documents whole",
    "Long context lets the model see full documents at once"
-  ]
+  ],
+  "quiz": {
+   "a": "RAG retrieves only existing snippets, so gaps stay hidden; long context lets the model see both full documents and compare them.",
+   "q": "Why can RAG miss omitted requirements when comparing two documents?"
+  }
  },
  {
   "id": "1sd26pWhfmg-203",
@@ -1372,7 +1588,11 @@
    "Claude Code runs in a VM with very loose permissions",
    "A single prompt asks for the most serious vulnerability",
    "A malicious actor needs little design effort to cause harm"
-  ]
+  ],
+  "quiz": {
+   "a": "A minimal scaffold runs Claude Code in a loosely permissioned VM and asks for the most serious vulnerability; capability matters more than tooling.",
+   "q": "Why does base model capability matter more than fancy tooling for finding vulnerabilities?"
+  }
  },
  {
   "id": "1sd26pWhfmg-408",
@@ -1397,7 +1617,11 @@
    "The exploit works without seeing query output, using timing",
    "It reads the admin API key and secret without authentication",
    "The password hash is bcrypt, which limits the damage"
-  ]
+  ],
+  "quiz": {
+   "a": "Timing-based queries read the admin API key and secret without logging in; the password hash is bcrypt, limiting damage.",
+   "q": "How did an LLM-written blind SQL injection expose a blog's admin credentials?"
+  }
  },
  {
   "id": "p3sij8QzONQ-3770",
@@ -1422,7 +1646,11 @@
    "Converting FP32 to FP16 can lose precision and underflow",
    "The gradient scaler multiplies the loss before backpropagation",
    "Scaling back keeps the learning rate unchanged and training stable"
-  ]
+  ],
+  "quiz": {
+   "a": "It multiplies the loss before backpropagation so small gradients do not underflow to zero, then scales back, leaving the learning rate unchanged.",
+   "q": "How does the gradient scaler keep FP16 training from underflowing small gradients?"
+  }
  },
  {
   "id": "p3sij8QzONQ-6143",
@@ -1447,7 +1675,11 @@
    "A sliding window spreads attention over only a few tokens",
    "Initial tokens act as an anchor for unneeded attention",
    "Routing attention to the start token avoids errors and forgetting"
-  ]
+  ],
+  "quiz": {
+   "a": "A sliding window spreads attention over too few tokens, causing errors and forgetting; the first tokens absorb unneeded attention.",
+   "q": "Why do sliding window attention models need initial tokens kept as anchors?"
+  }
  },
  {
   "id": "p3sij8QzONQ-9474",
@@ -1472,7 +1704,11 @@
    "Tokenizer training collects pair frequencies, not gradient learning",
    "The most frequent adjacent pair becomes a new merged symbol",
    "Merging stops once a minimum pair frequency is reached"
-  ]
+  ],
+  "quiz": {
+   "a": "It collects pair frequencies, not gradients, and repeatedly merges the most frequent adjacent pair until a minimum frequency is reached.",
+   "q": "How does byte pair encoding decide which symbols to merge into its vocabulary?"
+  }
  },
  {
   "id": "p3sij8QzONQ-11860",
@@ -1497,7 +1733,11 @@
    "A gating router picks one or more experts for each token",
    "Sparse activation adds parameters without proportional compute",
    "Fewer activations mean less computation and higher throughput"
-  ]
+  ],
+  "quiz": {
+   "a": "A router sends each token to one or more experts, so only a fraction of parameters activates, making inference faster.",
+   "q": "How does a mixture of experts add parameters without adding compute per token?"
+  }
  },
  {
   "id": "p3sij8QzONQ-12356",
@@ -1522,7 +1762,11 @@
    "Tokens can concentrate on a few experts, wasting capacity",
    "An auxiliary loss penalizes skewed routing across experts",
    "The loss multiplies each expert's importance by its load"
-  ]
+  ],
+  "quiz": {
+   "a": "Without it, tokens concentrate on a few experts and waste capacity; the auxiliary loss penalizes skewed routing across experts.",
+   "q": "Why do mixture-of-experts routers need an auxiliary load-balancing loss?"
+  }
  },
  {
   "id": "p3sij8QzONQ-13404",
@@ -1547,7 +1791,11 @@
    "Base models complete documents rather than answer questions",
    "SFT uses a small, high-quality dataset to teach assistant behavior",
    "Pretraining takes most of the time and energy in the pipeline"
-  ]
+  ],
+  "quiz": {
+   "a": "Base models only complete documents rather than answer questions; supervised fine-tuning on a small, high-quality dataset teaches assistant behavior.",
+   "q": "Why do base models fail as assistants, and what does SFT change?"
+  }
  },
  {
   "id": "p3sij8QzONQ-14247",
@@ -1572,7 +1820,11 @@
    "Prompt token labels are set to -100, PyTorch's ignore index",
    "Loss is computed only on the model's completion tokens",
    "Targets are the inputs shifted by one token"
-  ]
+  ],
+  "quiz": {
+   "a": "-100 is PyTorch's ignore index, so loss covers only completion tokens, with targets shifted one position from the inputs.",
+   "q": "Why set prompt token labels to -100 when computing SFT loss?"
+  }
  },
  {
   "id": "p3sij8QzONQ-15826",
@@ -1597,7 +1849,11 @@
    "Annotators choose between responses to the same instruction",
    "Preference datasets are somewhat larger than instruction-tuning sets",
    "The reward model outputs one scalar score per prompt-response pair"
-  ]
+  ],
+  "quiz": {
+   "a": "Annotators choose the preferred response among several to the same instruction, and the reward model learns one scalar score per prompt-response pair.",
+   "q": "How do annotator preference pairs train a reward model for RLHF?"
+  }
  },
  {
   "id": "p3sij8QzONQ-18295",
@@ -1622,7 +1878,11 @@
    "Policy and reference model both start from the frozen SFT weights",
    "The reference model stays frozen while the policy is updated",
    "Divergence is measured after every update to guard against forgetting"
-  ]
+  ],
+  "quiz": {
+   "a": "The reference copies the SFT weights and stays frozen while the policy updates; measuring their divergence guards against drifting and forgetting.",
+   "q": "Why does PPO keep a frozen reference model alongside the policy?"
+  }
  },
  {
   "id": "EL7Au1tzNxE-44",
@@ -1647,7 +1907,11 @@
    "Models do well where many online examples exist",
    "They struggle with borrow checking and advanced type-system rules",
    "Compatibility judgments need understanding, not regurgitated patterns"
-  ]
+  ],
+  "quiz": {
+   "a": "Models excel at pattern replication with many online examples, but compatibility and borrow-checking need reasoning from principles, not regurgitation.",
+   "q": "Why might coding models struggle with Rust's borrow checker, per Gjengset?"
+  }
  },
  {
   "id": "EL7Au1tzNxE-8304",
@@ -1672,7 +1936,11 @@
    "Formatting mid-session can desync the agent's context and files",
    "Better to run formatting after starting a new session",
    "The speaker finds Rust harder for models than TypeScript"
-  ]
+  ],
+  "quiz": {
+   "a": "Its context assumes files have not changed, so formatting can desync it; he suggests formatting after starting a new session.",
+   "q": "Why might running a formatter mid-session confuse a coding agent?"
+  }
  },
  {
   "id": "CEvIs9y1uog-122",
@@ -1697,7 +1965,11 @@
    "Agents lack domain expertise and do not learn over time",
    "Skills are folders of files holding procedural knowledge",
    "Skill folders work with Git, Drive and zip sharing"
-  ]
+  ],
+  "quiz": {
+   "a": "Skills are folders of composable procedural knowledge that anyone can create, which can be shared via Git, Drive or zip.",
+   "q": "What problem do agent skills solve, given agents lack domain expertise?"
+  }
  },
  {
   "id": "ykfQD1_WPBQ-2432",
@@ -1722,7 +1994,11 @@
    "Newell and Simon reduced reasoning to search, which did not scale",
    "Interesting problems grow exponentially with size, limiting search",
    "Rosenblatt's perceptron was oversold without multi-layer training"
-  ]
+  ],
+  "quiz": {
+   "a": "Search hit exponential complexity as problems grew, and Rosenblatt's perceptrons were oversold because multi-layer training was unsolved.",
+   "q": "Why did early search-based AI and perceptrons overpromise?"
+  }
  },
  {
   "id": "ykfQD1_WPBQ-2862",
@@ -1747,7 +2023,11 @@
    "Predicting the next word well requires understanding the universe",
    "Simple objectives applied at massive scale yield emergent complexity",
    "Next-token prediction parallels evolution maximizing offspring count"
-  ]
+  ],
+  "quiz": {
+   "a": "Predicting the next word well forces models to capture the world's structure; simple objectives at massive scale yield emergent complexity.",
+   "q": "Why might next-word prediction at scale produce real understanding of the world?"
+  }
  },
  {
   "id": "-QFHIoCo-Ko-752",
@@ -1772,7 +2052,11 @@
    "Spec-to-code is vibe coding under another name",
    "Editing specs without reading code leads to misalignment",
    "You need to understand and shape the code yourself"
-  ]
+  ],
+  "quiz": {
+   "a": "Editing specs without reading code leads to misalignment; you must understand and shape the code yourself, since it is the battleground.",
+   "q": "Why does Pocock argue against spec-to-code workflows?"
+  }
  },
  {
   "id": "-QFHIoCo-Ko-966",
@@ -1797,7 +2081,11 @@
    "Plan mode tends to produce a plan before alignment exists",
    "The grill-me prompt makes the agent ask one question at a time",
    "Shared understanding matters more than a plan document"
-  ]
+  ],
+  "quiz": {
+   "a": "It makes the agent interview you one question at a time until both sides share understanding, not jumping to a plan.",
+   "q": "What does the grill-me prompt do before the agent starts planning?"
+  }
  },
  {
   "id": "-QFHIoCo-Ko-2370",
@@ -1822,7 +2110,11 @@
    "Kanban tickets record blocking relationships between tasks",
    "AFK tasks can run without a human in the loop",
    "The example PRD splits into five tasks"
-  ]
+  ],
+  "quiz": {
+   "a": "A Kanban board of tickets with blocking relationships; AFK tickets run without a human, and the first is unblocked.",
+   "q": "How should a vague PRD become tickets for agents?"
+  }
  },
  {
   "id": "-QFHIoCo-Ko-3925",
@@ -1847,7 +2139,11 @@
    "A long implementation session degrades the reviewer that follows it",
    "Clearing context lets review happen in the smart zone",
    "Self-review catches many bugs because tokens are cheap"
-  ]
+  ],
+  "quiz": {
+   "a": "A reviewer continuing a token-heavy implementation session reviews in the dumb zone and catches fewer bugs; clearing context keeps it smart.",
+   "q": "Why should an automated code review run in a fresh context?"
+  }
  },
  {
   "id": "-QFHIoCo-Ko-4020",
@@ -1872,7 +2168,11 @@
    "The agent writes one failing test before any implementation",
    "Layered AI work tends to write tests that cheat",
    "Test-first forces the code to be instrumented before it is written"
-  ]
+  ],
+  "quiz": {
+   "a": "The agent writes a failing test before implementing, which makes it harder for the AI to cheat on tests.",
+   "q": "How does red-green TDD keep an agent from cheating on tests?"
+  }
  },
  {
   "id": "-QFHIoCo-Ko-5285",
@@ -1897,7 +2197,11 @@
    "Push instructions cost tokens on every request",
    "Pull skills carry a description the agent can load when needed",
    "Reviewers should receive coding standards pushed to them"
-  ]
+  ],
+  "quiz": {
+   "a": "Push instructions are sent every request, costing tokens; pull skills load on demand. Pull suits implementers, push suits an automated reviewer.",
+   "q": "What is the difference between push and pull instructions for agents?"
+  }
  },
  {
   "id": "Sir59K8ZDPU-1145",
@@ -1941,7 +2245,11 @@
    "Regular semantic chunking only looks at a sliding local window",
    "The cluster chunker compares every piece with every other piece",
    "Global grouping keeps chunks coherent while respecting size limits"
-  ]
+  ],
+  "quiz": {
+   "a": "Regular semantic chunking decides splits locally, left to right; the cluster chunker builds a similarity matrix over all pieces for global groups.",
+   "q": "How does Chroma's cluster semantic chunker differ from regular semantic chunking?"
+  }
  },
  {
   "id": "Pk2BeaGbcTE-1818",
@@ -1966,7 +2274,11 @@
    "Chunks of 200 to 400 tokens generally beat larger chunks",
    "Reducing overlap improves IoU by cutting redundant retrieval",
    "A 200-character recursive splitter with no overlap performed well"
-  ]
+  ],
+  "quiz": {
+   "a": "Chunks of 200 to 400 tokens generally beat larger ones; adding overlap lowers efficiency, and a simple 200-character splitter with no overlap did well.",
+   "q": "Which chunk sizes did Chroma's benchmark find generally beat larger chunks for RAG?"
+  }
  },
  {
   "id": "vXiB0UdDhk8-1687",
@@ -1991,7 +2303,11 @@
    "Top-K keeps only the K most probable candidate words",
    "Top-P keeps words until their cumulative probability reaches a threshold",
    "The remaining options are discarded and probabilities recalculated"
-  ]
+  ],
+  "quiz": {
+   "a": "Top-K keeps the K most likely words; top-P keeps the smallest set reaching a cumulative threshold such as 70%; both renormalize.",
+   "q": "How do top-K and top-P sampling differ in which candidate words they keep?"
+  }
  },
  {
   "id": "vXiB0UdDhk8-1849",
@@ -2016,7 +2332,11 @@
    "The probability distribution has a long tail of nonsensical tokens",
    "Sampling from everything occasionally picks nonsense words",
    "Top-K or top-P filtering keeps output sensible and more deterministic"
-  ]
+  ],
+  "quiz": {
+   "a": "The long tail of nonsensical tokens occasionally gets picked and produces gibberish, so top-K or top-P filtering keeps output sensible.",
+   "q": "Why is sampling from the full token probability distribution a bad idea?"
+  }
  },
  {
   "id": "EV7WhVT270Q-3860",

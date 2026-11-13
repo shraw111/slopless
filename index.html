@@ -165,6 +165,60 @@
   .empty p { margin: 0; color: var(--muted); max-width: 32ch; }
   @media (min-width: 700px) { .card { padding-left: calc(50% - 280px); padding-right: calc(50% - 280px); }
     .stage { width: 100%; margin: 0; border-radius: 14px; } }
+  /* Desktop: video on the left, everything to read on the right, key points open, shortcuts shown */
+  @media (min-width: 1000px) and (min-height: 560px) {
+    .card[data-i] { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(320px, 1fr);
+      grid-auto-rows: min-content; align-content: center; column-gap: 40px; row-gap: 14px;
+      padding: var(--top) 48px 48px; max-width: 1500px; margin: 0 auto; }
+    .card[data-i] > .stage { grid-column: 1; grid-row: 1 / span 6; align-self: center; }
+    .card[data-i] > :not(.stage):not(.bg) { grid-column: 2; }
+    .card[data-i] .hook { font-size: 30px; }
+    .card[data-i] .sum .points { display: block; }
+    .card[data-i] .sum .sum-more { display: none; }
+    .card[data-i] .sum-text { -webkit-line-clamp: unset; }
+    html #keys { display: block; }
+  }
+  #keys { display: none; position: fixed; z-index: 5; left: 16px; bottom: 12px; font-size: 12px; color: rgba(255,255,255,.45); }
+  /* sheet: Browse, channel pages, Recall */
+  #sheet { position: fixed; z-index: 15; inset: 0; overflow-y: auto; background: var(--bg);
+    padding: calc(var(--top) + 4px) 16px calc(env(safe-area-inset-bottom) + 32px); }
+  #sheet[hidden] { display: none; }
+  .sheet-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 6px; }
+  .sheet-head h2 { margin: 0; font-size: 22px; }
+  .sheet-x { width: 36px; height: 36px; border-radius: 50%; background: var(--chip); font-weight: 800; }
+  .play-list.btn { margin: 4px 0 16px; }
+  .play-list svg, .h-actions svg, .pill-btn svg { width: 16px; height: 16px; fill: currentColor; }
+  .b-topic { margin: 22px 0 8px; font-size: 13px; letter-spacing: .06em; text-transform: uppercase; color: var(--accent); }
+  .b-group { margin: 0 0 18px; }
+  .b-head { display: flex; justify-content: space-between; width: 100%; padding: 6px 0; font-weight: 700; font-size: 15px; text-transform: capitalize; }
+  .b-head .n { color: var(--muted); font-weight: 600; text-transform: none; }
+  .b-row { display: grid; grid-auto-flow: column; grid-auto-columns: 46%; gap: 10px; overflow-x: auto; scrollbar-width: none; padding-bottom: 4px; }
+  .b-row::-webkit-scrollbar { display: none; }
+  @media (min-width: 700px) { .b-row { grid-auto-columns: 220px; } }
+  .b-tile { position: relative; display: grid; gap: 6px; text-align: left; font-size: 13px; line-height: 1.3; }
+  .b-tile img { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; border-radius: 8px; background: #222; }
+  .b-tile span { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+  .b-tile i { position: absolute; top: 6px; right: 6px; font-style: normal; font-size: 12px; font-weight: 800;
+    background: rgba(0,0,0,.7); border-radius: 999px; padding: 2px 7px; }
+  .ch { font-weight: 700; color: var(--text); text-decoration: underline; text-decoration-color: transparent; }
+  .ch:active, .ch:hover { text-decoration-color: currentColor; }
+  .flag-menu { display: flex; flex-wrap: wrap; gap: 8px; width: 100%; }
+  .flag-menu button { padding: 7px 12px; border-radius: 999px; background: rgba(255,255,255,.16); font-size: 13px; font-weight: 600; }
+  .flag-menu button:last-child { background: none; color: var(--muted); }
+  .pill-btn.flag { padding: 7px 10px; color: rgba(255,255,255,.7); }
+  .h-actions { display: flex; flex-wrap: wrap; gap: 10px; margin: 0 0 14px; }
+  .stats-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 12px; }
+  .stats-row .stats { margin: 0; }
+  #recall-pill { position: fixed; z-index: 21; right: 16px; top: calc(env(safe-area-inset-top) + 62px);
+    display: inline-flex; align-items: center; gap: 6px; padding: 7px 12px; border-radius: 999px;
+    background: var(--accent); color: var(--accent-text); font-weight: 700; font-size: 13px; box-shadow: 0 6px 20px rgba(0,0,0,.4); }
+  #recall-pill[hidden] { display: none; }
+  #recall-pill svg { width: 16px; height: 16px; fill: currentColor; }
+  .rq-q { font-size: 24px; line-height: 1.25; margin: 6px 0 18px; text-wrap: balance; }
+  .rq-a p { font-size: 17px; line-height: 1.45; margin: 0 0 10px; }
+  .rq-a .rq-src { font-size: 14px; color: var(--muted); }
+  .rq-watch { color: var(--accent); font-weight: 700; margin-left: 6px; }
+  .rq-grade { display: flex; gap: 10px; margin-top: 16px; }
   @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
 </style>
 </head>
@@ -175,6 +229,9 @@
 <div id="mode" hidden></div>
 <section id="history" hidden aria-label="History"></section>
 <section id="search" class="panel" hidden aria-label="Search"></section>
+<section id="sheet" hidden></section>
+<button id="recall-pill" hidden></button>
+<div id="keys" aria-hidden="true">↑ ↓ next · Space pause · M sound · S save · X remove · / search · B browse · R recall</div>
 <div id="toast" role="status"></div>
 
 <script>
@@ -185,6 +242,9 @@ const store = {
   set(k, v) { try { localStorage.setItem("ss:" + k, JSON.stringify(v)); } catch {} },
 };
 const ICON = {
+  grid: '<svg viewBox="0 0 24 24"><path d="M4 4h7v7H4V4zm9 0h7v7h-7V4zM4 13h7v7H4v-7zm9 0h7v7h-7v-7z"/></svg>',
+  flag: '<svg viewBox="0 0 24 24"><path d="M5 3h2v18H5V3zm3 1h10l-2 4 2 4H8V4z"/></svg>',
+  brain: '<svg viewBox="0 0 24 24"><path d="M9 3a3 3 0 0 0-3 3 3 3 0 0 0-2 5 3 3 0 0 0 2 5 3 3 0 0 0 3 3 3 3 0 0 0 3-1V4a3 3 0 0 0-3-1zm6 0a3 3 0 0 0-3 1v15a3 3 0 0 0 3 1 3 3 0 0 0 3-3 3 3 0 0 0 2-5 3 3 0 0 0-2-5 3 3 0 0 0-3-3z"/></svg>',
   bookmark: '<svg viewBox="0 0 24 24"><path d="M6 3h12a1 1 0 0 1 1 1v17l-7-4-7 4V4a1 1 0 0 1 1-1zm1 2v12.6l5-2.9 5 2.9V5H7z"/></svg>',
   bookmarkOn: '<svg viewBox="0 0 24 24"><path d="M6 3h12a1 1 0 0 1 1 1v17l-7-4-7 4V4a1 1 0 0 1 1-1z"/></svg>',
   share: '<svg viewBox="0 0 24 24"><path d="M12 3l5 5-1.4 1.4L13 6.8V15h-2V6.8L8.4 9.4 7 8l5-5zM5 13h2v6h10v-6h2v6a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-6z"/></svg>',
@@ -217,6 +277,7 @@ async function load() {
   $("#mode").addEventListener("click", () => { renderFeed(); renderChips(); });
   if (!(shared && playFirst({ id: shared, vid: shared.slice(0, 11), start: +shared.slice(12) }))) renderFeed();
   if (shared) window.history.replaceState(null, "", location.pathname);
+  updateRecallPill();
 }
 
 function isSeen(c) {
@@ -258,7 +319,9 @@ function markNew() {
   store.set("known", ids); store.set("fresh", [...fresh]);
 }
 const isNew = (c) => fresh.has(c.id) && !isSeen(c);
-const available = (c) => !isSeen(c) && !removed.has(c.vid) && (skips[c.id] || 0) < SKIP_LIMIT;
+let flags = store.get("flags", {});                // clip id -> { reason, at, sent, snap } ("Bad cut")
+let recall = store.get("recall", {});              // clip id -> { box, due } for daily recall
+const available = (c) => !isSeen(c) && !removed.has(c.vid) && !flags[c.id] && (skips[c.id] || 0) < SKIP_LIMIT;
 
 function logHistory(c, kind) {
   history = [{ kind, id: c.id, vid: c.vid, hook: c.hook, title: c.title, channel: c.channel, topic: c.topic,
@@ -269,20 +332,23 @@ function logHistory(c, kind) {
 
 // ---------- chips: "Mix" = every topic interleaved; tap a topic to focus it, tap more to mix them
 function renderChips() {
-  const all = selected.length === topics.length && !historyOpen && !searchOpen;
+  const all = selected.length === topics.length && !historyOpen && !searchOpen && !sheetOpen;
   const count = (id) => clips.filter((c) => c.topic === id && available(c)).length;
   $("#chips").innerHTML = (topics.length > 1 ? `<button class="chip" data-id="*" aria-pressed="${all}">Mix</button>` : "") +
-    topics.map((t) => `<button class="chip" data-id="${esc(t.id)}" aria-pressed="${!historyOpen && !searchOpen && !all && selected.includes(t.id) && selected.length < topics.length}">
+    topics.map((t) => `<button class="chip" data-id="${esc(t.id)}" aria-pressed="${!historyOpen && !searchOpen && !sheetOpen && !all && selected.includes(t.id) && selected.length < topics.length}">
       ${esc(t.name)}<span class="n">${count(t.id)}</span></button>`).join("") +
-    `<button class="chip hist" data-id="search" aria-pressed="${searchOpen}" aria-label="Search">${ICON.search}</button>` +
+    `<button class="chip hist" data-id="browse" aria-pressed="${sheetOpen === "browse"}" aria-label="Browse">${ICON.grid}</button>` +
+    `<button class="chip icon" data-id="search" aria-pressed="${searchOpen}" aria-label="Search">${ICON.search}</button>` +
     `<button class="chip" data-id="history" aria-pressed="${historyOpen}">History</button>`;
 }
 $("#chips").addEventListener("click", (e) => {
   const b = e.target.closest(".chip"); if (!b) return;
   if (b.dataset.id === "history") { historyOpen ? closeHistory() : openHistory(); return; }
   if (b.dataset.id === "search") { searchOpen ? closeSearch() : openSearch(); return; }
+  if (b.dataset.id === "browse") { sheetOpen === "browse" ? closeSheet() : openBrowse(); return; }
   if (historyOpen) closeHistory(false);
   if (searchOpen) closeSearch(false);
+  if (sheetOpen) closeSheet(false);
   const id = b.dataset.id, all = selected.length === topics.length, ids = topics.map((t) => t.id);
   if (id === "*") selected = ids;
   else if (all) selected = [id];
@@ -332,7 +398,7 @@ function cardHTML(c, i, name) {
         <div class="pill">${ICON.muted}Tap for sound</div>
         <div class="bar"><i></i></div>
       </div>
-      <div class="src"><b>${esc(c.channel)}</b> · <a class="title-link" href="https://www.youtube.com/watch?v=${esc(c.vid)}&t=${c.start}s"
+      <div class="src"><button class="ch" data-ch="${esc(c.channel)}">${esc(c.channel)}</button> · <a class="title-link" href="https://www.youtube.com/watch?v=${esc(c.vid)}&t=${c.start}s"
         target="_blank" rel="noopener" title="Watch the full video on YouTube">${esc(c.title)}</a></div>
       ${c.summary ? `<button class="sum" aria-expanded="false">
           <span class="sum-text">${esc(c.summary)}</span>
@@ -342,6 +408,7 @@ function cardHTML(c, i, name) {
       <div class="actions">
         <button class="pill-btn save" aria-pressed="${isSaved(c)}">${isSaved(c) ? ICON.bookmarkOn : ICON.bookmark}<span>${isSaved(c) ? "Saved" : "Save"}</span></button>
         <button class="pill-btn share">${ICON.share}<span>Share</span></button>
+        <button class="pill-btn flag" aria-label="Bad cut">${ICON.flag}</button>
         ${more ? `<button class="pill-btn more" data-i="${i}">More from this video · ${more}</button>` : ""}
       </div>
     </article>`;
@@ -587,6 +654,9 @@ function removeVideo(card) {
   const c = order[+card.dataset.i]; if (!c) return;
   removed.add(c.vid); store.set("removed", [...removed]);
   logHistory(c, "removed");
+  animateOut(card, (x) => x.vid === c.vid, () => toast("Removed from your feed", "Undo", () => restoreVideo(c.vid, c.id)));
+}
+function animateOut(card, match, after) {
   if (activeCard === card) { clearInterval(tick); watchedClip = null; }
   const hint = $("#swipe-hint");
   card.classList.remove("springback"); card.classList.add("leaving");
@@ -597,7 +667,7 @@ function removeVideo(card) {
     const feed = $("#feed");
     document.querySelectorAll(".card[data-i]").forEach((el) => {
       const k = +el.dataset.i;
-      if (order[k]?.vid === c.vid) { dropPlayer(k); io.unobserve(el); el.remove(); }
+      if (order[k] && match(order[k])) { dropPlayer(k); io.unobserve(el); el.remove(); }
     });
     if (activeCard && !activeCard.isConnected) { activeCard = null; activeIdx = -1; player = null; }
     const now = [...document.querySelectorAll(".card")].find((el) => Math.abs(el.offsetTop - feed.scrollTop) < feed.clientHeight / 2);
@@ -607,7 +677,7 @@ function removeVideo(card) {
       activate(now);
     }
     renderChips();
-    toast("Removed from your feed", "Undo", () => restoreVideo(c.vid, c.id));
+    after?.();
   }, 320);
 }
 function restoreVideo(vid, focusId) {
@@ -634,6 +704,8 @@ let historyOpen = false, historyTab = "watched";
 const ago = (t) => { const m = Math.round((Date.now() - t) / 60000);
   return m < 1 ? "just now" : m < 60 ? `${m} min ago` : m < 1440 ? `${Math.round(m / 60)} h ago` : `${Math.round(m / 1440)} d ago`; };
 function openHistory() {
+  if (searchOpen) closeSearch(false);
+  if (sheetOpen) closeSheet(false);
   historyOpen = true; player?.pauseVideo?.();
   $("#history").hidden = false; renderHistory(); renderChips();
 }
@@ -642,29 +714,42 @@ function closeHistory(rerender = true) {
   if (rerender) { renderChips(); }
 }
 function renderHistory() {
-  const list = historyTab === "saved" ? saved : history.filter((h) => h.kind === historyTab);
-  const n = (k) => (k === "saved" ? saved.length : history.filter((h) => h.kind === k).length);
+  const flagged = Object.entries(flags).map(([id, f]) => ({ ...(f.snap || { id }), id, at: f.at, reason: f.reason, sent: f.sent }))
+    .sort((a, b) => b.at - a.at);
+  const list = historyTab === "saved" ? saved : historyTab === "flagged" ? flagged : history.filter((h) => h.kind === historyTab);
+  const n = (k) => (k === "saved" ? saved.length : k === "flagged" ? flagged.length : history.filter((h) => h.kind === k).length);
   const w = weekStats();
   $("#history").innerHTML = `
-    <p class="stats">This week: <b>${w.n}</b> clip${w.n === 1 ? "" : "s"} · <b>${w.min}</b> min</p>
+    <div class="stats-row"><p class="stats">This week: <b>${w.n}</b> clip${w.n === 1 ? "" : "s"} · <b>${w.min}</b> min</p>
+      <button class="pill-btn h-recall">${ICON.brain}Recall</button></div>
     <div class="h-tabs">
       <button data-tab="watched" aria-pressed="${historyTab === "watched"}">Watched · ${n("watched")}</button>
       <button data-tab="saved" aria-pressed="${historyTab === "saved"}">Saved · ${n("saved")}</button>
       <button data-tab="removed" aria-pressed="${historyTab === "removed"}">Removed · ${n("removed")}</button>
+      ${n("flagged") ? `<button data-tab="flagged" aria-pressed="${historyTab === "flagged"}">Flagged · ${n("flagged")}</button>` : ""}
     </div>
     ${list.length ? `<ul class="h-list">${list.map((h) => `
       <li class="h-item" data-id="${esc(h.id)}" data-vid="${esc(h.vid)}">
         <img src="https://i.ytimg.com/vi/${esc(h.vid)}/mqdefault.jpg" alt="" loading="lazy">
-        <div class="h-meta"><b>${esc(h.hook)}</b><span>${esc(h.channel)} · ${ago(h.at)}</span></div>
+        <div class="h-meta"><b>${esc(h.hook)}</b><span>${historyTab === "flagged" ? `${esc(h.reason)}${h.sent ? " · sent" : ""}` : `${esc(h.channel)} · ${ago(h.at)}`}</span></div>
         ${historyTab === "removed" ? `<button class="btn ghost h-restore">Restore</button>` : ""}
         ${historyTab === "saved" ? `<button class="btn ghost h-unsave">Unsave</button>` : ""}
+        ${historyTab === "flagged" ? `<button class="btn ghost h-unflag">Show again</button>` : ""}
       </li>`).join("")}</ul>`
       : `<p class="h-empty">${{ watched: "Clips you watch past halfway show up here.",
           saved: "Tap Save on a clip, or double-tap the video, to keep it here.",
-          removed: "Swipe a clip left to remove its video. It shows up here so you can bring it back." }[historyTab]}</p>`}
+          removed: "Swipe a clip left to remove its video. It shows up here so you can bring it back.",
+          flagged: "" }[historyTab]}</p>`}
     ${historyTab === "watched" && list.length ? `<button class="btn ghost h-clear">Clear watch history</button>` : ""}`;
   if (historyTab === "saved" && list.length)
-    $("#history .h-tabs").insertAdjacentHTML("afterend", `<button class="btn play-saved">${ICON.play}Play saved · ${list.length}</button>`);
+    $("#history .h-tabs").insertAdjacentHTML("afterend", `<div class="h-actions"><button class="btn play-saved">${ICON.play}Play saved · ${list.length}</button>
+      <button class="btn ghost export-saved">Copy as notes</button></div>`);
+  if (historyTab === "flagged" && list.length) {
+    const unsent = list.filter((x) => !x.sent).length;
+    $("#history .h-tabs").insertAdjacentHTML("afterend", `<p class="h-empty">Flagged clips are hidden for you. Send them to the pipeline
+      and the next run re-cuts those videos (it opens a pre-filled GitHub issue on your repo).</p>
+      ${unsent ? `<div class="h-actions"><button class="btn send-flags">Send ${unsent} flag${unsent === 1 ? "" : "s"} to the pipeline</button></div>` : ""}`);
+  }
 }
 $("#history").addEventListener("click", (e) => {
   const tab = e.target.closest("[data-tab]");
@@ -672,6 +757,10 @@ $("#history").addEventListener("click", (e) => {
   const item = e.target.closest(".h-item");
   if (e.target.closest(".h-restore") && item) { restoreVideo(item.dataset.vid, item.dataset.id); toast("Back in your feed"); return; }
   if (e.target.closest(".h-unsave") && item) { unsave(item.dataset.id); renderHistory(); return; }
+  if (e.target.closest(".h-unflag") && item) { delete flags[item.dataset.id]; store.set("flags", flags); renderHistory(); renderChips(); return; }
+  if (e.target.closest(".export-saved")) { exportSaved(); return; }
+  if (e.target.closest(".send-flags")) { sendFlags(); return; }
+  if (e.target.closest(".h-recall")) { openRecall(); return; }
   if (e.target.closest(".play-saved")) {   // your saved clips, newest first, as their own swipe feed
     const list = saved.map(findClip).filter(Boolean);
     if (!list.length) { toast("Those clips are no longer in the feed"); return; }
@@ -682,7 +771,7 @@ $("#history").addEventListener("click", (e) => {
     history = history.filter((h) => h.kind !== "watched"); store.set("history", history);
     seen.clear(); store.set("seen", []); renderHistory(); renderChips(); return;
   }
-  if (item && historyTab !== "removed") {   // replay: this clip first, then the normal feed
+  if (item && historyTab !== "removed" && historyTab !== "flagged") {   // replay: this clip first, then the normal feed
     const h = (historyTab === "saved" ? saved : history).find((x) => x.id === item.dataset.id);
     closeHistory(); renderChips();
     playFirst(h);
@@ -732,10 +821,173 @@ async function shareClip(c) {
   }
 }
 
+// ---------- Sheet: one full-screen panel used by Browse, channel pages and Recall
+let sheetOpen = null;
+function openSheet(kind, title, html) {
+  if (historyOpen) closeHistory(false);
+  if (searchOpen) closeSearch(false);
+  sheetOpen = kind; player?.pauseVideo?.();
+  const s = $("#sheet"); s.hidden = false; s.scrollTop = 0;
+  s.innerHTML = `<div class="sheet-head"><h2>${title}</h2><button class="sheet-x" aria-label="Close">✕</button></div>${html}`;
+  renderChips();
+}
+function closeSheet(rerender = true) { sheetOpen = null; $("#sheet").hidden = true; if (rerender) renderChips(); }
+const itemHTML = (c) => `
+  <li class="h-item" data-id="${esc(c.id)}">
+    <img src="https://i.ytimg.com/vi/${esc(c.vid)}/mqdefault.jpg" alt="" loading="lazy">
+    <div class="h-meta"><b>${esc(c.hook)}</b><span>${esc(c.channel)} · ${fmtTime(c.end - c.start)}${isSeen(c) ? " · watched" : ""}</span></div>
+  </li>`;
+let sheetLists = {};   // play-all lists for the open sheet
+
+// ---------- Channel pages: every clip from one channel
+function openChannel(name) {
+  const list = clips.filter((c) => c.channel === name && !removed.has(c.vid)).sort((a, b) => b.substance - a.substance);
+  sheetLists = { all: list };
+  openSheet("channel", esc(name), `
+    <p class="stats">${list.length} clip${list.length === 1 ? "" : "s"} · ${new Set(list.map((c) => c.vid)).size} video${new Set(list.map((c) => c.vid)).size === 1 ? "" : "s"}</p>
+    <button class="btn play-list" data-list="all">${ICON.play}Play all · ${list.length}</button>
+    <ul class="h-list">${list.map(itemHTML).join("")}</ul>`);
+}
+
+// ---------- Browse: every clip, by topic and subject
+function openBrowse() {
+  const name = topicName();
+  sheetLists = {};
+  const sections = topics.map((t) => {
+    const groups = new Map();
+    for (const c of clips) if (c.topic === t.id && !removed.has(c.vid)) {
+      const g = c.subject || "other"; if (!groups.has(g)) groups.set(g, []); groups.get(g).push(c);
+    }
+    const sorted = [...groups].sort((a, b) => b[1].length - a[1].length || a[0].localeCompare(b[0]));
+    return `<h3 class="b-topic">${esc(name[t.id])}</h3>` + sorted.map(([g, list]) => {
+      const key = `${t.id}::${g}`; sheetLists[key] = list.sort((a, b) => b.substance - a.substance);
+      return `<section class="b-group">
+        <button class="b-head play-list" data-list="${esc(key)}"><span>${esc(g)}</span><span class="n">${list.length} ▶</span></button>
+        <div class="b-row">${list.map((c) => `
+          <button class="b-tile" data-id="${esc(c.id)}">
+            <img src="https://i.ytimg.com/vi/${esc(c.vid)}/mqdefault.jpg" alt="" loading="lazy">
+            <span>${esc(c.hook)}</span>${isSeen(c) ? `<i>✓</i>` : ""}
+          </button>`).join("")}</div>
+      </section>`;
+    }).join("");
+  }).join("");
+  openSheet("browse", "Browse", sections);
+}
+
+// ---------- Export saved clips as notes (paste into Notes, Notion, Obsidian…)
+function savedAsNotes() {
+  const lines = [`# Saved clips · Signal Shorts`, ``];
+  for (const s of saved) {
+    const c = findClip(s) || s;
+    lines.push(`## ${c.hook}`, `${c.channel} · ${c.title}`);
+    if (c.summary) lines.push(``, c.summary);
+    for (const pt of c.points || []) lines.push(`- ${pt}`);
+    lines.push(``, `▶ https://www.youtube.com/watch?v=${c.vid}&t=${c.start}s (${fmtTime(c.start)})`, ``);
+  }
+  return lines.join("\n");
+}
+async function exportSaved() {
+  const text = savedAsNotes();
+  try {
+    if (navigator.share) { await navigator.share({ title: "Saved clips", text }); return; }
+    await navigator.clipboard.writeText(text); toast(`Copied ${saved.length} clips as notes`);
+  } catch (e) { if (e?.name !== "AbortError") prompt("Copy your notes:", text); }
+}
+
+// ---------- Bad cut: hide the clip now; send flags to the pipeline as a GitHub issue to re-cut them
+const REASONS = ["Starts mid-sentence", "Cuts off the point", "Not worth a minute"];
+function askBadCut(card) {
+  const c = order[+card.dataset.i]; if (!c) return;
+  const row = card.querySelector(".actions");
+  row.querySelector(".flag-menu")?.remove();
+  row.insertAdjacentHTML("beforeend", `<div class="flag-menu">${REASONS.map((r) => `<button data-r="${esc(r)}">${esc(r)}</button>`).join("")}
+    <button data-r="">Cancel</button></div>`);
+  row.querySelector(".flag-menu").addEventListener("click", (e) => {
+    const b = e.target.closest("button"); if (!b) return;
+    e.stopPropagation(); row.querySelector(".flag-menu").remove();
+    if (!b.dataset.r) return;
+    flags[c.id] = { reason: b.dataset.r, at: Date.now(), sent: false, snap: snapshot(c) }; store.set("flags", flags);
+    animateOut(card, (x) => x.id === c.id, () => toast("Thanks, hidden. Send flags from History", "Undo", () => {
+      delete flags[c.id]; store.set("flags", flags); renderChips(); renderFeed(); }));
+  });
+}
+function sendFlags() {
+  const open_ = Object.entries(flags).filter(([, f]) => !f.sent);
+  if (!open_.length) { toast("Nothing new to send"); return; }
+  const body = "Bad cuts flagged in the Signal Shorts feed. Claude: run `flags-apply` on this and re-cut them.\n\n```json\n" +
+    JSON.stringify({ flags: open_.map(([id, f]) => ({ id, reason: f.reason, hook: f.snap?.hook })) }, null, 1) + "\n```\n";
+  open(`https://github.com/shraw111/slopless/issues/new?title=${encodeURIComponent(`Bad cuts (${open_.length})`)}&body=${encodeURIComponent(body)}`, "_blank", "noopener");
+  for (const [, f] of open_) f.sent = true;
+  store.set("flags", flags); renderHistory();
+}
+
+// ---------- Daily recall: 3 clips you saved or watched come back as a question (spaced repetition)
+const DAYS = [1, 3, 7, 14, 30];
+const today = () => new Date().toISOString().slice(0, 10);
+function recallQueue() {
+  const pool = [...saved, ...history.filter((h) => h.kind === "watched")].map(findClip)
+    .filter((c, k, a) => c && c.quiz && a.findIndex((x) => x && x.id === c.id) === k);
+  const savedIds = new Set(saved.map((s) => s.id));
+  return pool.filter((c) => (recall[c.id]?.due || 0) <= Date.now())
+    .sort((a, b) => (savedIds.has(b.id) - savedIds.has(a.id)) || ((recall[a.id]?.due || 0) - (recall[b.id]?.due || 0)))
+    .slice(0, 3);
+}
+let rq = [], rqi = 0;
+function openRecall() {
+  rq = recallQueue(); rqi = 0;
+  if (!rq.length) {
+    openSheet("recall", "Daily recall", `<p class="h-empty">${clips.some((c) => c.quiz) ? "Nothing due. Watch or save a few clips with summaries, and they'll come back here as questions." : "No recall questions yet."}</p>`);
+    return;
+  }
+  openSheet("recall", "Daily recall", `<div id="rq"></div>`); showQuestion();
+}
+function showQuestion() {
+  const box = $("#rq");
+  if (rqi >= rq.length) {
+    store.set("recallDay", today()); $("#recall-pill").hidden = true;
+    box.innerHTML = `<div class="rq-done"><h3>Done for today ✓</h3><p class="h-empty">Ideas you missed come back tomorrow; the ones you knew come back later and later.</p>
+      <button class="btn sheet-close">Back to the feed</button></div>`; return;
+  }
+  const c = rq[rqi];
+  box.innerHTML = `<p class="stats">Question ${rqi + 1} of ${rq.length}</p>
+    <h3 class="rq-q">${esc(c.quiz.q)}</h3>
+    <button class="btn rq-show">Show answer</button>
+    <div class="rq-a" hidden>
+      <p>${esc(c.quiz.a)}</p>
+      <p class="rq-src">From <b>${esc(c.hook)}</b> · ${esc(c.channel)} <button class="rq-watch" data-id="${esc(c.id)}">Rewatch ▶</button></p>
+      <div class="rq-grade"><button class="btn ghost" data-g="0">Not quite</button><button class="btn" data-g="1">I knew it</button></div>
+    </div>`;
+}
+function gradeRecall(knew) {
+  const c = rq[rqi], r = recall[c.id] || { box: 0 };
+  r.box = knew ? Math.min(r.box + 1, DAYS.length - 1) : 0;
+  r.due = Date.now() + DAYS[knew ? r.box : 0] * 864e5;
+  recall[c.id] = r; store.set("recall", recall);
+  rqi++; showQuestion();
+}
+function updateRecallPill() {
+  const due = store.get("recallDay", "") !== today() && recallQueue().length > 0;
+  $("#recall-pill").hidden = !due;
+  if (due) $("#recall-pill").innerHTML = `${ICON.brain}Recall · ${recallQueue().length}`;
+}
+$("#recall-pill").addEventListener("click", openRecall);
+
+$("#sheet").addEventListener("click", (e) => {
+  if (e.target.closest(".sheet-x") || e.target.closest(".sheet-close")) { closeSheet(); return; }
+  const pl = e.target.closest(".play-list");
+  if (pl) { const list = sheetLists[pl.dataset.list]; const t = pl.dataset.list === "all" ? $("#sheet h2").textContent : pl.querySelector("span").textContent;
+            closeSheet(); renderFeed(list, `${t} · ${list.length}`); return; }
+  const it = e.target.closest(".h-item, .b-tile, .rq-watch");
+  if (it) { closeSheet(); playFirst({ id: it.dataset.id }); return; }
+  if (e.target.closest(".rq-show")) { e.target.closest(".rq-show").hidden = true; $(".rq-a").hidden = false; return; }
+  const g = e.target.closest("[data-g]"); if (g) gradeRecall(g.dataset.g === "1");
+});
+
 // ---------- Search: hooks, summaries, key points, titles, channels and subjects
 let searchOpen = false;
 function openSearch() {
   if (historyOpen) closeHistory(false);
+  if (sheetOpen) closeSheet(false);
   searchOpen = true; player?.pauseVideo?.();
   const s = $("#search"); s.hidden = false;
   s.innerHTML = `<input id="q" type="search" placeholder="Search clips: RAG, Karpathy, pricing…" autocomplete="off" enterkeyhint="search">
@@ -767,6 +1019,8 @@ $("#feed").addEventListener("click", (e) => {
   const card = e.target.closest(".card[data-i]"), c = card && order[+card.dataset.i];
   if (e.target.closest(".save") && c) { toggleSave(c); return; }
   if (e.target.closest(".share") && c) { shareClip(c); return; }
+  if (e.target.closest(".flag") && card) { askBadCut(card); return; }
+  const ch = e.target.closest(".ch"); if (ch) { openChannel(ch.dataset.ch); return; }
   if (e.target.closest(".speed")) {
     rate = RATES[(RATES.indexOf(rate) + 1) % RATES.length]; store.set("rate", rate);
     document.querySelectorAll(".speed").forEach((b) => (b.textContent = `${rate}×`));
@@ -798,6 +1052,10 @@ document.addEventListener("visibilitychange", () => {
 });
 document.addEventListener("keydown", (e) => {
   if (searchOpen || e.target.closest?.("input")) { if (e.key === "Escape") closeSearch(); return; }
+  if (e.key === "Escape") { if (sheetOpen) closeSheet(); if (historyOpen) closeHistory(); return; }
+  if (e.key === "/") { e.preventDefault(); openSearch(); return; }
+  if (e.key === "b") { openBrowse(); return; }
+  if (e.key === "r") { openRecall(); return; }
   const feed = $("#feed");
   if (e.key === "ArrowDown" || e.key === "j") { e.preventDefault(); feed.scrollBy({ top: innerHeight, behavior: "smooth" }); }
   if (e.key === "ArrowUp" || e.key === "k") { e.preventDefault(); feed.scrollBy({ top: -innerHeight, behavior: "smooth" }); }

@@ -54,7 +54,12 @@ stopping for approval. Topics in `phase: preview` (new topics) are skipped: thos
    score (Sonnet; ~5 files per agent, larger transcripts fewer), subjects (Haiku), summaries (Haiku).
    Transcripts are usually blocked from cloud servers; new clips then use chapters (bar 6) until the user
    runs `python pipeline.py transcripts --retry` on their own computer.
-4. `python pipeline.py select`, commit `clips.json`, `topics.json` and `data/` (not `data/work/`,
+4. Bad cuts: list open GitHub issues on `shraw111/slopless` titled "Bad cuts" (sent from the feed's
+   History → Flagged tab). Save each issue body to a file, `python pipeline.py flags-apply <file>`, then
+   `score-prep --flagged` + Sonnet + `score-apply` to re-cut those videos, then `quiz-prep`/`summaries-prep`
+   for the new cuts. Comment on each issue with what changed and close it.
+5. Recall questions: `python pipeline.py quiz-prep`, Haiku with `prompts/quiz.md`, `python pipeline.py quiz-apply`.
+6. `python pipeline.py select`, commit `clips.json`, `topics.json` and `data/` (not `data/work/`,
    `data/hackertube/`) with a message like "Weekly refresh: +N clips", and push to `main`.
-5. End with a short report: new videos found, clips added per topic, API units used, sub-agent models.
+7. End with a short report: new videos found, clips added per topic, API units used, sub-agent models.
    If nothing new qualified, say so and change nothing.
