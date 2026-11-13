@@ -5,7 +5,8 @@ defaults:
   clips_per_topic: 50
   min_minutes: 8
   max_age_months: 24
-  min_substance: 6          # 6 while clips come from chapters (no transcript costs 1 point); back to 7 with transcripts
+  min_substance: 7
+  min_substance_no_transcript: 6   # clips placed from chapters already lose 1 point for uncertainty
   max_videos_per_channel: 5  # at most 5 different videos from one channel per topic
   max_clips_per_video: 20    # a great long talk can give many clips...
   minutes_per_clip: 10       # ...but at most one per 10 minutes of video (and one per chapter without a transcript)

@@ -629,7 +629,7 @@ def cmd_subjects_prep(args):
         items = [{"id": clip_id(v["vid"], c), "subject": c.get("subject", ""), "hook": c["hook"],
                   "channel": v["channel"]}
                  for v in cache.values() if v.get("result") and v.get("label", {}).get("topic") == t["id"]
-                 for c in result_clips(v["result"]) if int(c["substance"]) + 1 >= t["min_substance"]]
+                 for c in result_clips(v["result"]) if int(c["substance"]) + 1 >= t["min_substance_no_transcript"]]
         jsave(out / f"{t['id']}.in.json", {"topic": t["name"], "clips": items})
         print(f"{t['id']}: {len(items)} clips -> {out / (t['id'] + '.in.json')} (prompt: prompts/subjects.md)")
 
@@ -666,7 +666,8 @@ def cmd_select(args):
             boost = 1 if ((t["hn_boost"] and v.get("hn")) or v["channel"].lower() in trusted) else 0
             for c in result_clips(r)[:max_clips(v, t)]:
                 adj = min(10, int(c["substance"]) + boost)
-                if adj >= t["min_substance"]:
+                bar = t["min_substance"] if v.get("source") == "transcript" else t["min_substance_no_transcript"]
+                if adj >= bar:
                     pool.append((adj, v["rank"], v, c, boost))
         pool.sort(key=lambda x: (-x[0], -x[1], x[3]["start_sec"]))
         per_chan, per_subj, chosen = {}, {}, []   # per_chan: channel -> set of its videos used
@@ -691,7 +692,8 @@ def cmd_select(args):
         st["clips"] = len(chosen)
         clips += chosen
         topics_out.append({"id": tid, "name": t["name"], "clips": len(chosen)})
-        print(f"{tid}: {len(pool)} clips >= substance {t['min_substance']}, published {len(chosen)} "
+        print(f"{tid}: {len(pool)} clips over the bar ({t['min_substance']} with transcript, "
+              f"{t['min_substance_no_transcript']} without), published {len(chosen)} "
               f"(phase={st['phase']}, limit={limit})")
     jsave(STATE, state)
     (ROOT / "clips.json").write_text(json.dumps(clips, indent=1, ensure_ascii=False) + "\n")
