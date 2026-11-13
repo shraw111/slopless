@@ -175,8 +175,9 @@ function renderFeed() {
   feed.querySelectorAll(".card[data-i]").forEach((el) => io.observe(el));
 }
 
-// ---------- one live player at a time, on the card that fills the screen
-let player = null, activeCard = null, tick = null, seenTimer = null;
+// ---------- players: the visible clip plays; the next one is loaded in advance so a swipe starts instantly
+const players = new Map();   // card index -> { player, ready }
+let player = null, activeCard = null, activeIdx = -1, tick = null, seenTimer = null, blockedTimer = null;
 const io = new IntersectionObserver((entries) => {
   for (const e of entries) if (e.isIntersecting && e.intersectionRatio > 0.6 && e.target !== activeCard) activate(e.target);
 }, { root: document.getElementById("feed"), threshold: [0.6] });
@@ -186,37 +187,84 @@ const ytReady = new Promise((res) => {
   const s = document.createElement("script"); s.src = "https://www.youtube.com/iframe_api"; document.head.appendChild(s);
 });
 
-function destroyPlayer() {
-  clearInterval(tick); clearTimeout(seenTimer);
-  if (player) { try { player.destroy(); } catch {} player = null; }
-  if (activeCard) { activeCard.querySelector(".stage").classList.remove("sound", "paused"); activeCard.querySelector(".slot").innerHTML = ""; }
-  activeCard = null;
+const cardAt = (i) => document.querySelector(`.card[data-i="${i}"]`);
+
+function dropPlayer(i) {
+  const p = players.get(i); if (!p) return;
+  try { p.player.destroy(); } catch {}
+  players.delete(i);
+  const card = cardAt(i);
+  if (card) { card.querySelector(".stage").classList.remove("sound", "paused"); card.querySelector(".slot").innerHTML = ""; }
 }
 
-async function activate(card) {
-  destroyPlayer();
-  activeCard = card;
-  const c = order[+card.dataset.i], stage = card.querySelector(".stage"), bar = card.querySelector(".bar i");
+function destroyPlayer() {   // used when the feed is rebuilt
+  clearInterval(tick); clearTimeout(seenTimer); clearTimeout(blockedTimer);
+  for (const i of [...players.keys()]) dropPlayer(i);
+  player = null; activeCard = null; activeIdx = -1;
+}
+
+// Start muted (always allowed), then turn sound on once it is actually playing. If the phone refuses
+// sound without a tap, go back to muted so the clip keeps playing and show "Tap to unmute" again.
+function startPlayback(entry, c, stage) {
+  const p = entry.player;
+  p.mute(); p.seekTo(c.start, true); p.playVideo();
+  clearTimeout(blockedTimer);
+  blockedTimer = setTimeout(() => {   // still not playing: auto-play is blocked (e.g. Low Power Mode)
+    if (p.getPlayerState?.() !== YT.PlayerState.PLAYING) stage.classList.add("paused");
+  }, 2500);
+}
+
+function ensurePlayer(i) {
+  if (players.has(i) || !order[i]) return players.get(i);
+  const card = cardAt(i); if (!card) return;
+  const c = order[i], stage = card.querySelector(".stage");
   const host = document.createElement("div"); host.className = "player";
   card.querySelector(".slot").appendChild(host);
-  await ytReady;
-  if (activeCard !== card) return;
-  player = new YT.Player(host, {
+  const entry = { player: null, ready: false };
+  players.set(i, entry);
+  entry.player = new YT.Player(host, {
     host: "https://www.youtube-nocookie.com", videoId: c.vid,
-    playerVars: { start: c.start, end: c.end, autoplay: 1, mute: 1, playsinline: 1, controls: 0, rel: 0,
+    playerVars: { start: c.start, end: c.end, autoplay: 0, mute: 1, playsinline: 1, controls: 0, rel: 0,
       modestbranding: 1, iv_load_policy: 3, disablekb: 1, fs: 0 },
     events: {
-      onReady: (e) => { e.target.mute(); if (soundOn) { e.target.unMute(); stage.classList.add("sound"); } e.target.playVideo(); },
+      onReady: () => { entry.ready = true; entry.player.mute(); if (activeIdx === i) startPlayback(entry, c, stage); },
       onStateChange: (e) => {
-        if (e.data === YT.PlayerState.ENDED) { e.target.seekTo(c.start, true); e.target.playVideo(); } // loop the clip
-        stage.classList.toggle("paused", e.data === YT.PlayerState.PAUSED);
+        if (activeIdx !== i) { if (e.data === YT.PlayerState.PLAYING) e.target.pauseVideo(); return; }
+        if (e.data === YT.PlayerState.ENDED) { e.target.seekTo(c.start, true); e.target.playVideo(); return; } // loop
+        if (e.data === YT.PlayerState.PLAYING) {
+          stage.classList.remove("paused");
+          if (soundOn && e.target.isMuted()) {
+            e.target.unMute(); e.target.setVolume(100); stage.classList.add("sound");
+            setTimeout(() => {   // the phone paused it for having sound: fall back to muted
+              if (activeIdx === i && e.target.getPlayerState() !== YT.PlayerState.PLAYING) {
+                e.target.mute(); stage.classList.remove("sound"); e.target.playVideo();
+              }
+            }, 700);
+          }
+        }
+        if (e.data === YT.PlayerState.PAUSED) stage.classList.add("paused");
       },
     },
   });
+  return entry;
+}
+
+async function activate(card) {
+  await ytReady;
+  const i = +card.dataset.i;
+  if (players.get(activeIdx)?.ready) players.get(activeIdx).player.pauseVideo();
+  clearInterval(tick); clearTimeout(seenTimer);
+  activeCard = card; activeIdx = i;
+  for (const k of [...players.keys()]) if (k < i - 1 || k > i + 1) dropPlayer(k);   // keep memory low
+  const entry = ensurePlayer(i);
+  ensurePlayer(i + 1);                                                                 // preload the next clip
+  player = entry.player;
+  const c = order[i], stage = card.querySelector(".stage"), bar = card.querySelector(".bar i");
+  if (entry.ready) startPlayback(entry, c, stage);
   tick = setInterval(() => {
-    const t = player?.getCurrentTime?.(); if (t == null) return;
+    const t = player?.getCurrentTime?.(); if (t == null || activeIdx !== i) return;
     bar.style.width = Math.max(0, Math.min(100, ((t - c.start) / (c.end - c.start)) * 100)) + "%";
-    if (t >= c.end - 0.25) { player.seekTo(c.start, true); }
+    if (t >= c.end - 0.25) player.seekTo(c.start, true);
   }, 250);
   seenTimer = setTimeout(() => { seen.add(c.id); store.set("seen", [...seen]); }, 4000);
 }
@@ -224,9 +272,11 @@ async function activate(card) {
 $("#feed").addEventListener("click", (e) => {
   const tap = e.target.closest(".tap"); if (!tap || !player || !activeCard?.contains(tap)) return;
   const stage = tap.closest(".stage");
-  if (player.isMuted()) { player.unMute(); player.setVolume(100); soundOn = true; stage.classList.add("sound"); player.playVideo(); }
-  else if (player.getPlayerState() === YT.PlayerState.PLAYING) player.pauseVideo();
-  else player.playVideo();
+  const state = player.getPlayerState?.();
+  if (state !== YT.PlayerState.PLAYING) {   // blocked or paused: a tap is a user gesture, so sound is allowed
+    player.unMute(); player.setVolume(100); soundOn = true; stage.classList.add("sound"); player.playVideo();
+  } else if (player.isMuted()) { player.unMute(); player.setVolume(100); soundOn = true; stage.classList.add("sound"); }
+  else player.pauseVideo();
 });
 document.addEventListener("visibilitychange", () => { if (document.hidden) player?.pauseVideo?.(); });
 document.addEventListener("keydown", (e) => {
