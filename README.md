@@ -62,6 +62,7 @@ Videos that got a transcript lose their old score, so the normal scoring step pi
 | minimum substance | 7 / 10 (+1 for HN-recommended on `hn_boost` topics, or trusted channels) |
 | max videos per channel | 5 (a channel's videos, not clips) |
 | clips per video | up to 20: one per 10 minutes of video, one per chapter without a transcript, each must clear the substance bar |
+| reserve | clips that clear the bar but are held back by the limits (per subject, per channel, per topic) are still published, flagged `more`. They stay out of the main feed and only appear in "More on this subject", "Whole talk in order", search, Browse and channel pages |
 | max clips per subject | 2 (Haiku merges near-identical subjects, e.g. every attention explainer) |
 | only clips whose words were seen | yes: transcript or chapters, not heatmap alone |
 | clips per topic | 50 |

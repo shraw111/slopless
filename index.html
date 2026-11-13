@@ -222,7 +222,7 @@
   .b-tile span { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
   .b-tile i { position: absolute; top: 6px; right: 6px; font-style: normal; font-size: 12px; font-weight: 800;
     background: rgba(0,0,0,.7); border-radius: 999px; padding: 2px 7px; }
-  .ch { font-weight: 700; color: var(--text); text-decoration: underline; text-decoration-color: transparent; }
+  .ch { cursor: pointer; font-weight: 700; color: var(--text); text-decoration: underline; text-decoration-color: transparent; }
   .ch:active, .ch:hover { text-decoration-color: currentColor; }
   .flag-menu { display: flex; flex-wrap: wrap; gap: 8px; width: 100%; }
   .flag-menu button { padding: 7px 12px; border-radius: 999px; background: rgba(255,255,255,.16); font-size: 13px; font-weight: 600; }
@@ -235,12 +235,50 @@
     display: inline-flex; align-items: center; gap: 6px; padding: 7px 12px; border-radius: 999px;
     background: var(--accent); color: var(--accent-text); font-weight: 700; font-size: 13px; box-shadow: 0 6px 20px rgba(0,0,0,.4); }
   #recall-pill[hidden] { display: none; }
+  #mode:not([hidden]) ~ #recall-pill { top: calc(env(safe-area-inset-top) + 106px); }   /* never cover the banner's ✕ */
   #recall-pill svg { width: 16px; height: 16px; fill: currentColor; }
   .rq-q { font-size: 24px; line-height: 1.25; margin: 6px 0 18px; text-wrap: balance; }
   .rq-a p { font-size: 17px; line-height: 1.45; margin: 0 0 10px; }
   .rq-a .rq-src { font-size: 14px; color: var(--muted); }
   .rq-watch { color: var(--accent); font-weight: 700; margin-left: 6px; }
   .rq-grade { display: flex; gap: 10px; margin-top: 16px; }
+  .chip.today { background: rgba(232,255,107,.16); }
+  .chip.today[aria-pressed="true"] { background: var(--accent); color: var(--accent-text); }
+  /* floats above the buttons, so opening it never changes the card's layout */
+  .more-menu { position: absolute; left: 0; right: 0; bottom: calc(100% + 8px); z-index: 6; display: grid; gap: 2px;
+    padding: 6px; border-radius: 18px; background: rgba(28,28,30,.97); box-shadow: 0 12px 36px rgba(0,0,0,.6);
+    backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); animation: pop .14s ease-out; }
+  @keyframes pop { from { opacity: 0; transform: translateY(6px) scale(.98); } to { opacity: 1; transform: none; } }
+  .more-menu button { text-align: left; padding: 13px 14px; border-radius: 12px; font-size: 14.5px; font-weight: 600; }
+  .more-menu button + button { border-top: 1px solid rgba(255,255,255,.08); border-radius: 0; }
+  .more-menu button:first-child { border-radius: 12px 12px 0 0; }
+  .more-menu button:last-child { border-radius: 0 0 12px 12px; }
+  .more-menu button:only-child { border-radius: 12px; }
+  .more-menu button:active { background: rgba(255,255,255,.12); }
+  .pill-btn.more-toggle[aria-expanded="true"] { background: rgba(255,255,255,.2); }
+  #tips { position: fixed; z-index: 60; inset: 0; display: grid; place-items: center; padding: 22px;
+    background: rgba(0,0,0,.72); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); }
+  #tips[hidden] { display: none; }
+  .tips-card { width: min(420px, 100%); background: #161618; border: 1px solid var(--line); border-radius: 22px; padding: 22px 20px 18px; }
+  .tips-card h2 { margin: 0 0 10px; font-size: 21px; }
+  .tip { display: grid; grid-template-columns: 38px 1fr; gap: 12px; align-items: center; padding: 8px 0; font-size: 15px;
+    line-height: 1.35; color: rgba(255,255,255,.78); }
+  .tip i { font-style: normal; display: grid; place-items: center; width: 38px; height: 38px; border-radius: 11px;
+    background: var(--chip); color: var(--accent); font-weight: 800; font-size: 16px; }
+  .tip b { color: var(--text); }
+  .tips-card .btn { width: 100%; margin-top: 14px; }
+  .h-note { grid-column: 1 / -1; text-align: left; font-size: 14px; color: var(--accent); padding: 2px 0 0; }
+  .h-note.has { display: flex; justify-content: space-between; gap: 12px; color: rgba(255,255,255,.85); font-style: italic; }
+  .h-note.has q { quotes: none; } .h-note.has span { color: var(--accent); font-style: normal; font-weight: 700; flex: none; }
+  .note-edit { grid-column: 1 / -1; display: grid; gap: 8px; }
+  .note-edit textarea, #tx-in, .tx-out { width: 100%; border: 0; border-radius: 12px; padding: 12px; background: var(--chip);
+    color: var(--text); font: inherit; font-size: 15px; resize: vertical; outline: none; }
+  .note-btns { display: flex; gap: 10px; }
+  .h-foot { display: flex; gap: 22px; margin-top: 28px; }
+  .h-link { color: var(--muted); font-size: 13px; text-decoration: underline; text-underline-offset: 3px; }
+  .tx h3 { margin: 22px 0 10px; font-size: 13px; letter-spacing: .06em; text-transform: uppercase; color: var(--accent); }
+  #tx-in { min-height: 110px; margin-bottom: 12px; }
+  .tx-out { min-height: 90px; margin-bottom: 12px; }
   @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
 </style>
 </head>
@@ -249,11 +287,12 @@
 <main id="feed" aria-live="polite"></main>
 <div id="swipe-hint" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 19a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg><span>Remove video</span></div>
 <div id="mode" hidden></div>
+<div id="tips" hidden></div>
 <section id="history" hidden aria-label="History"></section>
 <section id="search" class="panel" hidden aria-label="Search"></section>
 <section id="sheet" hidden></section>
 <button id="recall-pill" hidden></button>
-<div id="keys" aria-hidden="true">↑ ↓ next · Space pause · M sound · F full screen · S save · X remove · / search · B browse · R recall</div>
+<div id="keys" aria-hidden="true">↑ ↓ next · Space pause · M sound · F full screen · T today · S save · X remove · / search · B browse · R recall</div>
 <div id="toast" role="status"></div>
 
 <script>
@@ -302,6 +341,7 @@ async function load() {
   if (!(shared && playFirst({ id: shared, vid: shared.slice(0, 11), start: +shared.slice(12) }))) renderFeed();
   if (shared) window.history.replaceState(null, "", location.pathname);
   updateRecallPill();
+  if (!store.get("tipsSeen", false) && !shared) setTimeout(showTips, 900);
 }
 
 function isSeen(c) {
@@ -345,7 +385,12 @@ function markNew() {
 const isNew = (c) => fresh.has(c.id) && !isSeen(c);
 let flags = store.get("flags", {});                // clip id -> { reason, at, sent, snap } ("Bad cut")
 let recall = store.get("recall", {});              // clip id -> { box, due } for daily recall
-const available = (c) => !isSeen(c) && !removed.has(c.vid) && !flags[c.id] && (skips[c.id] || 0) < SKIP_LIMIT;
+let notes = store.get("notes", {});                // clip id -> your own note on a saved clip
+let fiveState = store.get("five", null);           // { day, ids }: Today's five
+let feedMode = null;                               // null | "today" | "talk" | "list" (a custom feed with a banner)
+// "more" clips are the reserve: cleared the quality bar but held back from the main feed by the per-subject and
+// per-channel limits. They only appear in the deep dives: More on this subject, Whole talk, Search, Browse, channels.
+const available = (c) => !c.more && !isSeen(c) && !removed.has(c.vid) && !flags[c.id] && (skips[c.id] || 0) < SKIP_LIMIT;
 
 function logHistory(c, kind) {
   history = [{ kind, id: c.id, vid: c.vid, hook: c.hook, title: c.title, channel: c.channel, topic: c.topic,
@@ -356,10 +401,10 @@ function logHistory(c, kind) {
 
 // ---------- chips: "Mix" = every topic interleaved; tap a topic to focus it, tap more to mix them
 function renderChips() {
-  const all = selected.length === topics.length && !historyOpen && !searchOpen && !sheetOpen;
+  const all = selected.length === topics.length && !historyOpen && !searchOpen && !sheetOpen && feedMode !== "today";
   const count = (id) => clips.filter((c) => c.topic === id && available(c)).length;
-  $("#chips").innerHTML = (topics.length > 1 ? `<button class="chip" data-id="*" aria-pressed="${all}">Mix</button>` : "") +
-    topics.map((t) => `<button class="chip" data-id="${esc(t.id)}" aria-pressed="${!historyOpen && !searchOpen && !sheetOpen && !all && selected.includes(t.id) && selected.length < topics.length}">
+  $("#chips").innerHTML = todayChip() + (topics.length > 1 ? `<button class="chip" data-id="*" aria-pressed="${all}">Mix</button>` : "") +
+    topics.map((t) => `<button class="chip" data-id="${esc(t.id)}" aria-pressed="${!historyOpen && !searchOpen && !sheetOpen && feedMode !== "today" && !all && selected.includes(t.id) && selected.length < topics.length}">
       ${esc(t.name)}<span class="n">${count(t.id)}</span></button>`).join("") +
     `<button class="chip hist" data-id="browse" aria-pressed="${sheetOpen === "browse"}" aria-label="Browse">${ICON.grid}</button>` +
     `<button class="chip icon" data-id="search" aria-pressed="${searchOpen}" aria-label="Search">${ICON.search}</button>` +
@@ -367,6 +412,7 @@ function renderChips() {
 }
 $("#chips").addEventListener("click", (e) => {
   const b = e.target.closest(".chip"); if (!b) return;
+  if (b.dataset.id === "today") { feedMode === "today" ? (renderFeed(), renderChips()) : openToday(); return; }
   if (b.dataset.id === "history") { historyOpen ? closeHistory() : openHistory(); return; }
   if (b.dataset.id === "search") { searchOpen ? closeSearch() : openSearch(); return; }
   if (b.dataset.id === "browse") { sheetOpen === "browse" ? closeSheet() : openBrowse(); return; }
@@ -403,11 +449,23 @@ function interleave(list) {
 }
 // Unseen clips from the same video that are not right after this card.
 const moreFrom = (i) => order.filter((c, k) => k > i + 1 && c.vid === order[i].vid);
+const clipOk = (x) => !removed.has(x.vid) && !flags[x.id];
+// What the "More" menu can offer for the clip at position i, or null when nothing applies.
+function moreOptions(c, i) {
+  const inTalk = feedMode === "talk";
+  const next = inTalk ? 0 : moreFrom(i).length;
+  const talk = inTalk ? [] : clips.filter((x) => x.vid === c.vid && clipOk(x));
+  const subj = c.subject ? clips.filter((x) => x.subject === c.subject && x.id !== c.id && clipOk(x)) : [];
+  if (!next && talk.length < 2 && !subj.length) return null;
+  return { next,
+           talk: talk.length >= 2 ? { n: talk.length, mins: Math.max(1, Math.round(talk.reduce((a, x) => a + (x.end - x.start), 0) / 60)) } : null,
+           subject: subj.length };
+}
 
 let order = [];
 const topicName = () => Object.fromEntries(topics.map((t) => [t.id, t.name]));
 function cardHTML(c, i, name) {
-  const more = moreFrom(i).length;
+  const hasMore = !!moreOptions(c, i);
   return `
     <article class="card" data-i="${i}">
       <div class="bg" style="background-image:url('https://i.ytimg.com/vi/${esc(c.vid)}/hqdefault.jpg')"></div>
@@ -424,7 +482,7 @@ function cardHTML(c, i, name) {
         <div class="pill">${ICON.muted}Tap for sound</div>
         <div class="bar"><i></i></div>
       </div>
-      <div class="src"><button class="ch" data-ch="${esc(c.channel)}">${esc(c.channel)}</button> · <a class="title-link" href="https://www.youtube.com/watch?v=${esc(c.vid)}&t=${c.start}s"
+      <div class="src"><span class="ch" role="link" tabindex="0" data-ch="${esc(c.channel)}">${esc(c.channel)}</span> · <a class="title-link" href="https://www.youtube.com/watch?v=${esc(c.vid)}&t=${c.start}s"
         target="_blank" rel="noopener" title="Watch the full video on YouTube">${esc(c.title)}</a></div>
       ${c.summary ? `<button class="sum" aria-expanded="false">
           <span class="sum-text">${esc(c.summary)}</span>
@@ -435,21 +493,30 @@ function cardHTML(c, i, name) {
         <button class="pill-btn save" aria-pressed="${isSaved(c)}">${isSaved(c) ? ICON.bookmarkOn : ICON.bookmark}<span>${isSaved(c) ? "Saved" : "Save"}</span></button>
         <button class="pill-btn share">${ICON.share}<span>Share</span></button>
         <button class="pill-btn flag" aria-label="Bad cut">${ICON.flag}</button>
-        ${more ? `<button class="pill-btn more" data-i="${i}">More from this video · ${more}</button>` : ""}
+        ${hasMore ? `<button class="pill-btn more-toggle" data-i="${i}" aria-expanded="false">More ▾</button>` : ""}
       </div>
     </article>`;
 }
-const endCardHTML = () => `
+const endCardHTML = () => feedMode === "today" ? todayEndCard() : feedMode ? listEndCard() : mainEndCard();
+const todayEndCard = () => `
+    <div class="empty card"><h2>Done for today ✓</h2><p>That was today's five. Fresh ones tomorrow, so there's no need to scroll forever.</p>
+      <button class="btn ghost" id="back-feed">Keep scrolling anyway</button></div>`;
+const listEndCard = () => `
+    <div class="empty card"><h2>End of the list</h2><p>That's all of them.</p>
+      <button class="btn ghost" id="back-feed">Back to the feed</button></div>`;
+const mainEndCard = () => `
     <div class="empty card"><h2>You're caught up</h2><p>${clips.filter(isSeen).length} clips watched. New clips land when the pipeline runs.
       Removed videos and your watch history are under <b>History</b>.</p>
       <button class="btn ghost" id="reset">Watch them again</button>
       <p style="font-size:12px">HN picks via <a href="https://hackertube.org">HackerTube</a> (ODC-By)</p></div>`;
 function wireTail() {
-  $("#reset").onclick = () => { seen.clear(); store.set("seen", []); skips = {}; store.set("skips", {}); renderChips(); renderFeed(); };
+  const rs = $("#reset"); if (rs) rs.onclick = () => { seen.clear(); store.set("seen", []); skips = {}; store.set("skips", {}); renderChips(); renderFeed(); };
+  const bf = $("#back-feed"); if (bf) bf.onclick = () => { renderFeed(); renderChips(); };
   document.querySelectorAll(".card[data-i]").forEach((el) => io.observe(el));
 }
 
-function renderFeed(custom, label) {
+function renderFeed(custom, label, mode = null) {
+  feedMode = mode || (label ? "list" : null);
   $("#mode").hidden = !label;
   if (label) $("#mode").innerHTML = `<span>${esc(label)}</span><button aria-label="Back to the feed">✕</button>`;
   leaveClip(true);
@@ -476,14 +543,20 @@ function playMore(i) {
   document.querySelectorAll(".card").forEach((el) => { if (!el.dataset.i || +el.dataset.i > i) { io.unobserve(el); el.remove(); } });
   const name = topicName();
   $("#feed").insertAdjacentHTML("beforeend", order.slice(i + 1).map((c, k) => cardHTML(c, i + 1 + k, name)).join("") + endCardHTML());
-  const cur = cardAt(i).querySelector(".more");   // refresh this card's count
-  if (cur) { const n = moreFrom(i).length; n ? (cur.textContent = `More from this video · ${n}`) : cur.remove(); }
+  const row = cardAt(i).querySelector(".actions"); row.querySelector(".more-menu")?.remove();   // refresh this card's menu
+  row.querySelector(".more-toggle")?.setAttribute("aria-expanded", "false");
+  if (!moreOptions(order[i], i)) row.querySelector(".more-toggle")?.remove();
   wireTail();
   if (activeIdx === i) ensurePlayer(i + 1);
   $("#feed").scrollTo({ top: cardAt(i + 1).offsetTop, behavior: "smooth" });
 }
 $("#feed").addEventListener("click", (e) => {
-  const b = e.target.closest(".more"); if (b) playMore(+b.dataset.i);
+  if (!e.target.closest(".more-toggle, .more-menu"))   // a tap anywhere else closes an open menu
+    document.querySelectorAll(".more-menu").forEach((m) => {
+      m.parentElement.querySelector(".more-toggle")?.setAttribute("aria-expanded", "false"); m.remove();
+    });
+  const mt = e.target.closest(".more-toggle"); if (mt) { toggleMore(mt.closest(".card")); return; }
+  const ma = e.target.closest(".more-menu button"); if (ma) { moreAction(ma.dataset.act, ma.closest(".card")); return; }
   const s = e.target.closest(".sum"); if (s) s.setAttribute("aria-expanded", s.getAttribute("aria-expanded") !== "true");
 });
 
@@ -633,6 +706,7 @@ function markSeen(c) {
   if (seen.has(c.id)) return;
   seen.add(c.id); store.set("seen", [...seen]);
   if (fresh.delete(c.id)) store.set("fresh", [...fresh]);
+  refreshToday();
   logHistory(c, "watched");
 }
 
@@ -766,14 +840,15 @@ function renderHistory() {
         <img src="https://i.ytimg.com/vi/${esc(h.vid)}/mqdefault.jpg" alt="" loading="lazy">
         <div class="h-meta"><b>${esc(h.hook)}</b><span>${historyTab === "flagged" ? `${esc(h.reason)}${h.sent ? " · sent" : ""}` : `${esc(h.channel)} · ${ago(h.at)}`}</span></div>
         ${historyTab === "removed" ? `<button class="btn ghost h-restore">Restore</button>` : ""}
-        ${historyTab === "saved" ? `<button class="btn ghost h-unsave">Unsave</button>` : ""}
+        ${historyTab === "saved" ? `<button class="btn ghost h-unsave">Unsave</button>${noteHTML(h)}` : ""}
         ${historyTab === "flagged" ? `<button class="btn ghost h-unflag">Show again</button>` : ""}
       </li>`).join("")}</ul>`
       : `<p class="h-empty">${{ watched: "Clips you watch past halfway show up here.",
           saved: "Tap Save on a clip, or double-tap the video, to keep it here.",
           removed: "Swipe a clip left to remove its video. It shows up here so you can bring it back.",
           flagged: "" }[historyTab]}</p>`}
-    ${historyTab === "watched" && list.length ? `<button class="btn ghost h-clear">Clear watch history</button>` : ""}`;
+    ${historyTab === "watched" && list.length ? `<button class="btn ghost h-clear">Clear watch history</button>` : ""}
+    <div class="h-foot"><button class="h-link h-transfer">Move to another device</button><button class="h-link h-tips">Show tips</button></div>`;
   if (historyTab === "saved" && list.length)
     $("#history .h-tabs").insertAdjacentHTML("afterend", `<div class="h-actions"><button class="btn play-saved">${ICON.play}Play saved · ${list.length}</button>
       <button class="btn ghost export-saved">Copy as notes</button></div>`);
@@ -787,7 +862,13 @@ function renderHistory() {
 $("#history").addEventListener("click", (e) => {
   const tab = e.target.closest("[data-tab]");
   if (tab) { historyTab = tab.dataset.tab; renderHistory(); return; }
+  if (e.target.closest(".h-transfer")) { openTransfer(); return; }
+  if (e.target.closest(".h-tips")) { closeHistory(false); showTips(); renderChips(); return; }
   const item = e.target.closest(".h-item");
+  if (item && e.target.closest(".note-save")) { saveNote(item); return; }
+  if (item && e.target.closest(".note-cancel")) { renderHistory(); return; }
+  if (item && e.target.closest(".h-note")) { openNoteEditor(item); return; }
+  if (e.target.closest(".note-edit")) return;   // typing in the editor never replays the clip
   if (e.target.closest(".h-restore") && item) { restoreVideo(item.dataset.vid, item.dataset.id); toast("Back in your feed"); return; }
   if (e.target.closest(".h-unsave") && item) { unsave(item.dataset.id); renderHistory(); return; }
   if (e.target.closest(".h-unflag") && item) { delete flags[item.dataset.id]; store.set("flags", flags); renderHistory(); renderChips(); return; }
@@ -840,7 +921,7 @@ function unsave(id) {
 }
 function toggleSave(c) {
   if (isSaved(c)) { unsave(c.id); toast("Removed from Saved"); }
-  else { save(c); toast("Saved · find it in History", "View", () => { historyTab = "saved"; openHistory(); }); }
+  else { save(c); afterSave(c); }
 }
 
 // ---------- Share: a link that opens the feed on this exact clip
@@ -875,6 +956,191 @@ async function toggleImmersive(on = !document.body.classList.contains("immersive
 document.addEventListener("fullscreenchange", () => { if (!document.fullscreenElement) toggleImmersive(false); });
 // Turning the phone keeps you on the same clip.
 addEventListener("orientationchange", () => setTimeout(() => activeCard && $("#feed").scrollTo({ top: activeCard.offsetTop }), 250));
+
+// ---------- More ▾: next clip from this talk · the whole talk in order · more on the same idea
+function toggleMore(card) {
+  const i = +card.dataset.i, c = order[i], row = card.querySelector(".actions"), btn = row.querySelector(".more-toggle");
+  const open_ = row.querySelector(".more-menu");
+  if (open_) { open_.remove(); btn.setAttribute("aria-expanded", "false"); return; }
+  const o = moreOptions(c, i); if (!o) return;
+  row.insertAdjacentHTML("beforeend", `<div class="more-menu">
+    ${o.next ? `<button data-act="next">Next clip from this talk · ${o.next} more</button>` : ""}
+    ${o.talk ? `<button data-act="talk">Whole talk in order · ${o.talk.n} clips · ${o.talk.mins} min</button>` : ""}
+    ${o.subject ? `<button data-act="subject">More on ${esc(c.subject)} · ${o.subject}</button>` : ""}</div>`);
+  btn.setAttribute("aria-expanded", "true");
+}
+function moreAction(act, card) {
+  const i = +card.dataset.i, c = order[i];
+  if (act === "next") { playMore(i); return; }
+  if (act === "talk") {   // every clip of this video, in the order they appear in it
+    const list = clips.filter((x) => x.vid === c.vid && clipOk(x)).sort((a, b) => a.start - b.start);
+    const mins = Math.max(1, Math.round(list.reduce((a, x) => a + (x.end - x.start), 0) / 60));
+    renderFeed(list, `Talk in order · ${list.length} clips · ${mins} min`, "talk"); renderChips(); return;
+  }
+  if (act === "subject") {   // the other clips on the same idea: unseen first, best first
+    const list = clips.filter((x) => x.subject === c.subject && x.id !== c.id && clipOk(x))
+      .sort((a, b) => isSeen(a) - isSeen(b) || b.substance - a.substance);
+    renderFeed(list, `${c.subject} · ${list.length}`); renderChips();
+  }
+}
+
+// ---------- Today's five: the 5 best unseen clips for the day, then "done for today"
+function todaysFive() {
+  if (fiveState?.day === today()) return fiveState.ids.map((id) => clips.find((c) => c.id === id)).filter(Boolean);
+  const cap = selected.length === 1 ? 5 : 3, perTopic = {}, vids = new Set(), subs = new Set(), out = [];
+  const pool = clips.filter((c) => available(c) && selected.includes(c.topic))
+    .sort((a, b) => isNew(b) - isNew(a) || b.substance - a.substance);
+  for (const c of pool) {
+    if (out.length === 5) break;
+    if (vids.has(c.vid) || subs.has(c.subject) || (perTopic[c.topic] || 0) >= cap) continue;
+    out.push(c); vids.add(c.vid); subs.add(c.subject); perTopic[c.topic] = (perTopic[c.topic] || 0) + 1;
+  }
+  fiveState = { day: today(), ids: out.map((c) => c.id) }; store.set("five", fiveState);
+  return out;
+}
+const fiveLeft = () => todaysFive().filter((c) => !isSeen(c) && clipOk(c)).length;
+function todayChip() {
+  if (!clips.length) return "";
+  const left = fiveLeft(), on = feedMode === "today" && !historyOpen && !searchOpen && !sheetOpen;
+  return `<button class="chip today" data-id="today" aria-pressed="${on}">Today${left ? `<span class="n">${left}</span>` : " ✓"}</button>`;
+}
+function openToday() {
+  if (historyOpen) closeHistory(false);
+  if (searchOpen) closeSearch(false);
+  if (sheetOpen) closeSheet(false);
+  const list = todaysFive().filter((c) => !isSeen(c) && clipOk(c));
+  renderFeed(list, list.length ? `Today's five · ${list.length} left` : `Today's five ✓`, "today"); renderChips();
+}
+function refreshToday() {   // after a clip is seen: update the chip and the banner
+  if (!historyOpen && !searchOpen) renderChips();
+  if (feedMode === "today") {
+    const left = fiveLeft(), s = $("#mode span");
+    if (s) s.textContent = left ? `Today's five · ${left} left` : `Today's five ✓`;
+  }
+}
+
+// ---------- First-time tips: the gestures nobody would find on their own
+function showTips() {
+  const touch = matchMedia("(pointer: coarse)").matches;
+  const rows = touch ? [
+    ["↑", "Swipe up", "next clip"], ["←", "Swipe left", "remove this video from your feed"],
+    ["♥", "Double-tap the video", "save the clip"], ["♪", "Tap the video", "sound on, or pause"],
+    ["⤢", "Turn your phone sideways", "full screen"], ["▾", "More ▾ under a clip", "the whole talk in order, or more on the same idea"],
+  ] : [
+    ["↑↓", "Arrow keys or J / K", "next and previous clip"], ["␣", "Space", "pause · M for sound"],
+    ["S", "S", "save the clip · X removes the video"], ["F", "F", "full screen"],
+    ["/", "/ · B · R · T", "search · browse · recall · today's five"],
+  ];
+  $("#tips").innerHTML = `<div class="tips-card" role="dialog" aria-label="Quick tips"><h2>Quick tips</h2>
+    ${rows.map(([ic, a, b]) => `<div class="tip"><i>${ic}</i><div><b>${esc(a)}</b> — ${esc(b)}</div></div>`).join("")}
+    <button class="btn tips-ok">Got it</button></div>`;
+  $("#tips").hidden = false;
+}
+function hideTips() { $("#tips").hidden = true; store.set("tipsSeen", true); }
+$("#tips").addEventListener("click", (e) => { if (e.target.closest(".tips-ok") || e.target.id === "tips") hideTips(); });
+
+// ---------- Notes on saved clips
+const noteHTML = (h) => notes[h.id]
+  ? `<button class="h-note has"><q>${esc(notes[h.id])}</q><span>Edit</span></button>`
+  : `<button class="h-note">+ Add note</button>`;
+function openNoteEditor(item) {
+  const id = item.dataset.id;
+  item.querySelector(".h-note")?.remove();
+  item.insertAdjacentHTML("beforeend", `<div class="note-edit"><textarea maxlength="280" rows="3" placeholder="Your note on this clip…">${esc(notes[id] || "")}</textarea>
+    <div class="note-btns"><button class="btn note-save">Save note</button><button class="btn ghost note-cancel">Cancel</button></div></div>`);
+  const ta = item.querySelector("textarea"); ta.focus(); ta.setSelectionRange(ta.value.length, ta.value.length);
+}
+function saveNote(item) {
+  const id = item.dataset.id, v = item.querySelector("textarea").value.trim();
+  if (v) notes[id] = v; else delete notes[id];
+  store.set("notes", notes); renderHistory(); toast(v ? "Note saved" : "Note removed");
+}
+function afterSave(c) {
+  toast("Saved · find it in History", "Add note", () => {
+    historyTab = "saved"; openHistory();
+    setTimeout(() => { const it = $(`#history .h-item[data-id="${CSS.escape(c.id)}"]`); if (it) { openNoteEditor(it); it.scrollIntoView({ block: "center" }); } }, 30);
+  });
+}
+
+// ---------- Move to another device: one code or file with your history, saves, notes, recall progress, settings
+const TX_KEYS = ["seen", "skips", "removed", "history", "saved", "notes", "rate", "captions", "selected", "watchLog", "flags", "recall", "recallDay"];
+const b64 = (u8) => { let s = ""; for (let i = 0; i < u8.length; i += 0x8000) s += String.fromCharCode.apply(null, u8.subarray(i, i + 0x8000));
+  return btoa(s).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, ""); };
+const unb64 = (s) => { s = s.replace(/-/g, "+").replace(/_/g, "/"); while (s.length % 4) s += "=";
+  const bin = atob(s), u = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) u[i] = bin.charCodeAt(i); return u; };
+const snapshotAll = () => { const data = {}; for (const k of TX_KEYS) { const v = store.get(k, undefined); if (v !== undefined) data[k] = v; }
+  return { app: "signal-shorts", v: 1, at: Date.now(), data }; };
+async function encodeCode(obj) {
+  const bytes = new TextEncoder().encode(JSON.stringify(obj));
+  try {
+    if (typeof CompressionStream !== "undefined")
+      return "SS1." + b64(new Uint8Array(await new Response(new Blob([bytes]).stream().pipeThrough(new CompressionStream("gzip"))).arrayBuffer()));
+  } catch {}
+  return "SS0." + b64(bytes);
+}
+async function decodeCode(text) {
+  const t = text.trim();
+  if (t.startsWith("{")) return JSON.parse(t);   // a saved file
+  const m = t.replace(/\s+/g, "").match(/^SS([01])\.(.+)$/); if (!m) throw new Error("format");
+  let bytes = unb64(m[2]);
+  if (m[1] === "1") bytes = new Uint8Array(await new Response(new Blob([bytes]).stream().pipeThrough(new DecompressionStream("gzip"))).arrayBuffer());
+  return JSON.parse(new TextDecoder().decode(bytes));
+}
+// Merge, never overwrite: watched/removed/saved are combined, counters keep the larger value, local notes win.
+function mergeIn(d) {
+  const cur = (k, def) => store.get(k, def);
+  const union = (a, b) => [...new Set([...(a || []), ...(b || [])])];
+  const byId = (a, b, key = (x) => x.id) => { const m = new Map(); for (const x of [...(b || []), ...(a || [])]) m.set(key(x), x); return [...m.values()]; };
+  const maxMap = (a, b) => { const m = { ...a }; for (const [k, v] of Object.entries(b || {})) m[k] = Math.max(m[k] || 0, v); return m; };
+  if (d.seen) store.set("seen", union(cur("seen", []), d.seen));
+  if (d.removed) store.set("removed", union(cur("removed", []), d.removed));
+  if (d.saved) store.set("saved", byId(cur("saved", []), d.saved).sort((x, y) => y.at - x.at));
+  if (d.history) store.set("history", byId(cur("history", []), d.history, (x) => x.kind + ":" + x.id).sort((x, y) => y.at - x.at).slice(0, 300));
+  if (d.skips) store.set("skips", maxMap(cur("skips", {}), d.skips));
+  if (d.watchLog) store.set("watchLog", maxMap(cur("watchLog", {}), d.watchLog));
+  if (d.notes) store.set("notes", { ...d.notes, ...cur("notes", {}) });
+  if (d.flags) store.set("flags", { ...d.flags, ...cur("flags", {}) });
+  if (d.recall) { const m = { ...cur("recall", {}) }; for (const [k, v] of Object.entries(d.recall)) if (!m[k] || (v.due || 0) > (m[k].due || 0)) m[k] = v; store.set("recall", m); }
+  if (d.recallDay) store.set("recallDay", [cur("recallDay", ""), d.recallDay].sort().pop());
+  for (const k of ["rate", "captions", "selected"]) if (d[k] !== undefined) store.set(k, d[k]);
+}
+function openTransfer() {
+  openSheet("transfer", "Move to another device", `<div class="tx">
+    <p class="stats">Takes your watch history, saved clips, notes, recall progress and settings to another phone or laptop.
+      No account: nothing leaves this device unless you send the code yourself.</p>
+    <h3>On this device</h3>
+    <div class="h-actions"><button class="btn tx-copy">Copy code</button><button class="btn ghost tx-save">Save as file</button></div>
+    <h3>On the new device</h3>
+    <textarea id="tx-in" placeholder="Paste the code here" spellcheck="false"></textarea>
+    <div class="h-actions"><button class="btn tx-import">Import code</button>
+      <label class="btn ghost">Choose file<input type="file" id="tx-file" accept=".json,.txt,application/json,text/plain" hidden></label></div>
+    <p class="stats">Importing combines both devices; nothing is deleted.</p></div>`);
+}
+async function txCopy() {
+  const code = await encodeCode(snapshotAll());
+  try { await navigator.clipboard.writeText(code); toast(`Code copied · ${Math.max(1, Math.round(code.length / 1024))} KB`); }
+  catch { $("#sheet .tx").insertAdjacentHTML("afterbegin", `<textarea readonly class="tx-out">${code}</textarea>`); toast("Select the code and copy it"); }
+}
+function txSaveFile() {
+  const blob = new Blob([JSON.stringify(snapshotAll(), null, 1)], { type: "application/json" });
+  const a = document.createElement("a"); a.href = URL.createObjectURL(blob);
+  a.download = `signal-shorts-${new Date().toISOString().slice(0, 10)}.json`; document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+}
+async function txImport(text) {
+  if (!text.trim()) { toast("Paste the code first"); return; }
+  try {
+    const obj = await decodeCode(text);
+    if (obj?.app !== "signal-shorts" || !obj.data) throw new Error("not a backup");
+    mergeIn(obj.data);
+    toast(`Imported · ${(obj.data.saved || []).length} saved, ${(obj.data.seen || []).length} watched`);
+    setTimeout(() => location.reload(), 1200);
+  } catch { toast("That didn't work. Copy the whole code again."); }
+}
+$("#sheet").addEventListener("change", async (e) => {
+  if (e.target.id !== "tx-file" || !e.target.files[0]) return;
+  txImport(await e.target.files[0].text());
+});
 
 // ---------- Sheet: one full-screen panel used by Browse, channel pages and Recall
 let sheetOpen = null;
@@ -935,6 +1201,7 @@ function savedAsNotes() {
   for (const s of saved) {
     const c = findClip(s) || s;
     lines.push(`## ${c.hook}`, `${c.channel} · ${c.title}`);
+    if (notes[s.id]) lines.push(``, `**My note:** ${notes[s.id]}`);
     if (c.summary) lines.push(``, c.summary);
     for (const pt of c.points || []) lines.push(`- ${pt}`);
     lines.push(``, `▶ https://www.youtube.com/watch?v=${c.vid}&t=${c.start}s (${fmtTime(c.start)})`, ``);
@@ -1029,6 +1296,9 @@ $("#recall-pill").addEventListener("click", openRecall);
 
 $("#sheet").addEventListener("click", (e) => {
   if (e.target.closest(".sheet-x") || e.target.closest(".sheet-close")) { closeSheet(); return; }
+  if (e.target.closest(".tx-copy")) { txCopy(); return; }
+  if (e.target.closest(".tx-save")) { txSaveFile(); return; }
+  if (e.target.closest(".tx-import")) { txImport($("#tx-in").value); return; }
   const pl = e.target.closest(".play-list");
   if (pl) { const list = sheetLists[pl.dataset.list]; const t = pl.dataset.list === "all" ? $("#sheet h2").textContent : pl.querySelector("span").textContent;
             closeSheet(); renderFeed(list, `${t} · ${list.length}`); return; }
@@ -1088,7 +1358,7 @@ $("#feed").addEventListener("click", (e) => {
   const stage = tap.closest(".stage"), now = Date.now();
   if (now - lastTap < 300) {   // double-tap: save, with a heart
     clearTimeout(tapTimer); lastTap = 0;
-    if (c && !isSaved(c)) { save(c); toast("Saved · find it in History", "View", () => { historyTab = "saved"; openHistory(); }); }
+    if (c && !isSaved(c)) { save(c); afterSave(c); }
     const h = stage.querySelector(".burst"); h.classList.remove("go"); void h.offsetWidth; h.classList.add("go");
     return;
   }
@@ -1108,10 +1378,12 @@ document.addEventListener("visibilitychange", () => {
   const c = watchedClip; if (c && watched >= (c.end - c.start) * 0.5) markSeen(c);   // leaving the app: no skip
 });
 document.addEventListener("keydown", (e) => {
-  if (searchOpen || e.target.closest?.("input")) { if (e.key === "Escape") closeSearch(); return; }
+  if (!$("#tips").hidden) { if (e.key === "Escape" || e.key === "Enter") hideTips(); return; }
+  if (searchOpen || e.target.closest?.("input, textarea")) { if (e.key === "Escape") closeSearch(); return; }
   if (e.key === "Escape") { if (sheetOpen) closeSheet(); if (historyOpen) closeHistory(); return; }
   if (e.key === "/") { e.preventDefault(); openSearch(); return; }
   if (e.key === "b") { openBrowse(); return; }
+  if (e.key === "t") { openToday(); return; }
   if (e.key === "f") { toggleImmersive(); return; }
   if (e.key === "r") { openRecall(); return; }
   const feed = $("#feed");

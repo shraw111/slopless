@@ -812,8 +812,20 @@ def cmd_select(args):
                 if adj >= bar:
                     pool.append((adj, v["rank"], v, c, boost))
         pool.sort(key=lambda x: (-x[0], -x[1], x[3]["start_sec"]))
-        per_chan, per_subj, chosen = {}, {}, []   # per_chan: channel -> set of its videos used
+        per_chan, per_subj, chosen, picked = {}, {}, [], set()   # per_chan: channel -> set of its videos used
         limit = 10 if st["phase"] == "preview" else t["clips_per_topic"]
+
+        def entry(adj, v, r, boost, more=False):
+            subj = (r.get("subject_group") or r.get("subject") or v["vid"]).strip().lower()
+            return {"id": f"{v['vid']}-{r['start_sec']}", "vid": v["vid"], "topic": tid,
+                    "start": int(r["start_sec"]), "end": int(r["end_sec"]), "hook": r["hook"],
+                    "why": r["why"], "substance": adj, "boosted": bool(boost), "title": v["title"],
+                    "channel": v["channel"], "hn": bool(v.get("hn")), "source": v.get("source"),
+                    "subject": subj,
+                    **({"summary": r["summary"], "points": r.get("points", [])} if r.get("summary") else {}),
+                    **({"quiz": r["quiz"]} if r.get("quiz") else {}),
+                    **({"more": True} if more else {})}
+
         for adj, _, v, r, boost in pool:
             vids = per_chan.setdefault(v["channel_id"], set())
             if v["vid"] not in vids and len(vids) >= t["max_videos_per_channel"]:
@@ -823,20 +835,20 @@ def cmd_select(args):
                 continue
             per_subj[subj] = per_subj.get(subj, 0) + 1
             vids.add(v["vid"])
-            chosen.append({"id": f"{v['vid']}-{r['start_sec']}", "vid": v["vid"], "topic": tid,
-                           "start": int(r["start_sec"]), "end": int(r["end_sec"]), "hook": r["hook"],
-                           "why": r["why"], "substance": adj, "boosted": bool(boost), "title": v["title"],
-                           "channel": v["channel"], "hn": bool(v.get("hn")), "source": v.get("source"),
-                           "subject": subj,
-                           **({"summary": r["summary"], "points": r.get("points", [])} if r.get("summary") else {}),
-                           **({"quiz": r["quiz"]} if r.get("quiz") else {})})
+            chosen.append(entry(adj, v, r, boost))
+            picked.add(id(r))
             if len(chosen) >= limit:
                 break
+        # Reserve: clips that cleared the bar but were held back by the per-subject / per-channel / topic limits.
+        # They stay out of the main feed (flag "more") and only appear in the deep dives: "More on this subject",
+        # "Whole talk in order", search, Browse and channel pages. Not while a new topic is still in preview.
+        reserve = [entry(adj, v, r, boost, more=True) for adj, _, v, r, boost in pool
+                   if id(r) not in picked] if st["phase"] == "full" else []
         st["clips"] = len(chosen)
-        clips += chosen
+        clips += chosen + reserve
         topics_out.append({"id": tid, "name": t["name"], "clips": len(chosen)})
         print(f"{tid}: {len(pool)} clips over the bar ({t['min_substance']} with transcript, "
-              f"{t['min_substance_no_transcript']} without), published {len(chosen)} "
+              f"{t['min_substance_no_transcript']} without), published {len(chosen)} + {len(reserve)} reserve "
               f"(phase={st['phase']}, limit={limit})")
     jsave(STATE, state)
     (ROOT / "clips.json").write_text(json.dumps(clips, indent=1, ensure_ascii=False) + "\n")
