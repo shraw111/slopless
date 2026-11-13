@@ -7,6 +7,8 @@ defaults:
   max_age_months: 24
   min_substance: 7
   max_clips_per_channel: 5
+  max_clips_per_subject: 2   # e.g. at most 2 "self-attention" clips per topic, whoever made them
+  require_seen_content: true # publish only clips whose words Sonnet saw (transcript or chapters)
   # Noise filters (step 2). Any topic can override these.
   min_views: 5000          # drop videos below this view count
   min_views_hn: 1000       # lower bar for videos Hacker News recommended (already vetted by people)

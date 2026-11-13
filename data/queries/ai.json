@@ -22,5 +22,27 @@
   "scaling laws language models lecture",
   "Stanford lecture large language models",
   "machine learning research talk LLMs"
+ ],
+ "ran": [
+  "AI agents tool use architecture talk",
+  "LLM as a judge evaluation methodology",
+  "LLM inference optimization KV cache speculative decoding",
+  "RAG chunking embeddings retrieval evaluation",
+  "RLHF DPO preference tuning explained",
+  "Stanford lecture large language models",
+  "attention mechanism intuition lecture",
+  "building an LLM from scratch code walkthrough",
+  "building reliable LLM agents lessons",
+  "fine-tuning LLMs LoRA explained",
+  "how large language models work explained",
+  "how to build LLM evals",
+  "machine learning research talk LLMs",
+  "mechanistic interpretability LLM talk",
+  "reasoning models test-time compute explained",
+  "reinforcement learning for LLM reasoning talk",
+  "retrieval augmented generation RAG deep dive",
+  "scaling laws language models lecture",
+  "tokenization in LLMs explained",
+  "transformer architecture explained from scratch"
  ]
 }

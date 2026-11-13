@@ -29,6 +29,9 @@ sub-agent actually ran on (check the `model` field the agents wrote and the sess
 5. `python pipeline.py score-prep --topic <id> --limit 15`, then spawn Sonnet sub-agents (`model: "sonnet"`),
    each given `prompts/score.md` and ~5 files from `data/work/score/`. Then `python pipeline.py score-apply`
    and `python pipeline.py select`. Repeat until the topic has 10 published clips.
+   Then `python pipeline.py subjects-prep`, one Haiku sub-agent with `prompts/subjects.md`, and
+   `python pipeline.py subjects-apply` so `max_clips_per_subject` can stop near-identical clips.
+   To re-score everything after a prompt change, use `score-prep --rescore`.
 6. **STOP for new topics** (state `phase: preview` in `data/state.json`): show the user the 10 clips
    (hook, channel, title, substance, link with `&t=<start>`) and wait. On approval run
    `python pipeline.py promote <id>` and continue steps 5 until `clips_per_topic` or candidates run out.

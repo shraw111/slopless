@@ -30,6 +30,22 @@ Needs `YOUTUBE_API_KEY` as an environment variable. Never commit it.
 Claude will show you the search queries it wrote before spending API quota, then stop after the first
 10 clips of the new topic so you can check them before it fills the rest.
 
+## Get real transcripts (run on your own computer)
+
+YouTube blocks transcript requests from cloud servers, so the cloud run picks clips from chapters and the
+"Most replayed" heatmap, which gives approximate start times. Transcripts give exact cuts and let every
+candidate be used. From your laptop (no API key needed for this step):
+
+```bash
+git clone https://github.com/shraw111/slopless && cd slopless
+pip install -r requirements.txt
+python pipeline.py transcripts --retry     # fetches captions for every candidate, ~1 s each
+git add data/transcripts data/videos.json && git commit -m "Add transcripts" && git push
+```
+
+Then start a Claude Code session on the repo and say **"Re-score the videos that now have transcripts."**
+Videos that got a transcript lose their old score, so the normal scoring step picks them up again.
+
 ## Thresholds (defaults in `topics.yaml`)
 
 | filter | value |
@@ -41,6 +57,8 @@ Claude will show you the search queries it wrote before spending API quota, then
 | candidates scored per topic | top 100 by engagement rank |
 | minimum substance | 7 / 10 (+1 for HN-recommended on `hn_boost` topics, or trusted channels) |
 | max clips per channel | 5 |
+| max clips per subject | 2 (Haiku merges near-identical subjects, e.g. every attention explainer) |
+| only clips whose words were seen | yes: transcript or chapters, not heatmap alone |
 | clips per topic | 50 |
 
 Engagement rank (used to keep the top 100): `log10(views) + 60·likes/views + 200·comments/views (+1 if HN)`.

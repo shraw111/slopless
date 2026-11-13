@@ -15,6 +15,7 @@ See CLAUDE.md for the full run order.
   python pipeline.py heatmap [--topic T]      # YouTube "Most replayed" peaks per candidate
   python pipeline.py score-prep [--topic T] [--limit N]
   python pipeline.py score-apply
+  python pipeline.py subjects-prep / subjects-apply   # Haiku merges near-identical clip subjects
   python pipeline.py select [--preview]       # write clips.json + topics.json for the feed
 """
 import argparse, datetime as dt, gzip, html, json, math, os, re, sys, zipfile
@@ -269,7 +270,13 @@ def cmd_find(args):
     cache = load_cache()
     cards = None
     for t in enabled_topics(args.topic):
-        queries = topic_queries(t)
+        qfile = QUERIES / f"{t['id']}.json"
+        qdata = jload(qfile, {})
+        ran = set(qdata.get("ran", []))
+        queries = [q for q in topic_queries(t) if q not in ran]  # each query costs 100 units: run it once
+        if not queries:
+            print(f"{t['id']}: all queries already ran")
+            continue
         after = months_ago(t["max_age_months"]).strftime("%Y-%m-%dT%H:%M:%SZ")
         found = {}
         for q in queries:
@@ -287,6 +294,9 @@ def cmd_find(args):
         if t.get("hn_boost"):
             cards = cards or hackertube()
             hn_ids = hn_matches(t, cards)
+        if qdata:
+            qdata["ran"] = sorted(ran | set(queries))
+            jsave(qfile, qdata)
         new = [v for v in set(found) | set(hn_ids) if v not in cache]
         details = fetch_details(new) if new else {}
         kept = dropped = 0
@@ -393,7 +403,7 @@ def fetch_transcript(vid):
 def cmd_transcripts(args):
     cache = load_cache()
     vids = [v for t in enabled_topics(args.topic) for v in top_candidates(cache, t)
-            if v.get("source") is None][: args.limit or None]
+            if v.get("source") is None or (args.retry and v.get("source") != "transcript")][: args.limit or None]
     ok = ch = none = blocked = 0
     for v in vids:
         f = TRANSCRIPTS / f"{v['vid']}.json.gz"
@@ -410,9 +420,13 @@ def cmd_transcripts(args):
                 f.parent.mkdir(parents=True, exist_ok=True)
                 f.write_bytes(gzip.compress(json.dumps(seg).encode()))
             v["source"] = "transcript"
+            v.pop("transcript_error", None)
+            v.pop("result", None) if args.retry else None  # re-score with the real transcript
             ok += 1
         except Exception as e:  # IP block, no captions, etc.
             v["transcript_error"] = type(e).__name__
+            if v.get("source") in ("chapters", "heatmap"):
+                continue  # retry failed; keep the earlier fallback
             if chapters(v.get("description")):
                 v["source"] = "chapters"
                 ch += 1
@@ -512,7 +526,9 @@ def cmd_score_prep(args):
     for t in enabled_topics(args.topic):
         n = 0  # --limit applies per topic
         for v in top_candidates(cache, t):
-            if "result" in v or v.get("source") in (None, "none"):
+            if ("result" in v and not args.rescore) or v.get("source") in (None, "none"):
+                continue
+            if t["require_seen_content"] and v["source"] == "heatmap":  # would not be published anyway
                 continue
             if args.limit and n >= args.limit:
                 break
@@ -555,6 +571,8 @@ def cmd_score_apply(args):
             print(f"  invalid result for {vid}: {r}")
             continue
         r["at"] = NOW.isoformat(timespec="seconds")
+        if "result" in v:
+            v.setdefault("old_results", []).append(v["result"])
         v["result"] = r
         n += 1
         f.unlink()
@@ -563,7 +581,34 @@ def cmd_score_apply(args):
     print(f"applied {n} scores ({bad} invalid, left in place to redo)")
 
 
-# ---------------------------------------------------------------- 3c. select + build feed data
+# ---------------------------------------------------------------- 3c. subject groups (Haiku)
+def cmd_subjects_prep(args):
+    """One file per topic listing eligible clips' subjects, for Haiku to merge near-identical ones."""
+    cache = load_cache()
+    out = WORK / "subjects"
+    out.mkdir(parents=True, exist_ok=True)
+    for t in enabled_topics(args.topic):
+        items = [{"vid": v["vid"], "subject": v["result"].get("subject", ""), "hook": v["result"]["hook"],
+                  "channel": v["channel"]}
+                 for v in cache.values() if v.get("result") and v.get("label", {}).get("topic") == t["id"]
+                 and v["result"]["substance"] + 1 >= t["min_substance"]]
+        jsave(out / f"{t['id']}.in.json", {"topic": t["name"], "clips": items})
+        print(f"{t['id']}: {len(items)} clips -> {out / (t['id'] + '.in.json')} (prompt: prompts/subjects.md)")
+
+
+def cmd_subjects_apply(args):
+    cache = load_cache()
+    n = 0
+    for f in (WORK / "subjects").glob("*.out.json"):
+        for vid, g in json.loads(f.read_text())["groups"].items():
+            if vid in cache and cache[vid].get("result"):
+                cache[vid]["result"]["subject_group"] = g.strip().lower()
+                n += 1
+    save_cache(cache)
+    print(f"applied {n} subject groups")
+
+
+# ---------------------------------------------------------------- 3d. select + build feed data
 def cmd_select(args):
     cache = load_cache()
     state = jload(STATE, {})
@@ -577,22 +622,29 @@ def cmd_select(args):
             r = v.get("result")
             if not r or r.get("topic", tid) != tid or v.get("label", {}).get("topic") != tid:
                 continue
+            if t["require_seen_content"] and v.get("source") not in ("transcript", "chapters"):
+                continue  # Sonnet never saw what is said in this clip (heatmap only)
             boost = 1 if ((t["hn_boost"] and v.get("hn")) or v["channel"].lower() in trusted) else 0
             adj = min(10, int(r["substance"]) + boost)
             if adj >= t["min_substance"]:
                 pool.append((adj, v["rank"], v, r, boost))
         pool.sort(key=lambda x: (-x[0], -x[1]))
-        per_chan, chosen = {}, []
+        per_chan, per_subj, chosen = {}, {}, []
         limit = 10 if st["phase"] == "preview" else t["clips_per_topic"]
         for adj, _, v, r, boost in pool:
             if per_chan.get(v["channel_id"], 0) >= t["max_clips_per_channel"]:
                 continue
+            subj = (r.get("subject_group") or r.get("subject") or v["vid"]).strip().lower()
+            if per_subj.get(subj, 0) >= t["max_clips_per_subject"]:
+                continue
+            per_subj[subj] = per_subj.get(subj, 0) + 1
             per_chan[v["channel_id"]] = per_chan.get(v["channel_id"], 0) + 1
             chosen.append({"id": f"{v['vid']}-{r['start_sec']}", "vid": v["vid"], "topic": tid,
                            "start": int(r["start_sec"]), "end": int(r["end_sec"]), "hook": r["hook"],
                            "why": r["why"], "substance": adj, "boosted": bool(boost), "title": v["title"],
                            "channel": v["channel"], "published": v["published"][:10], "views": v["views"],
-                           "minutes": v["minutes"], "hn": bool(v.get("hn")), "source": v.get("source")})
+                           "minutes": v["minutes"], "hn": bool(v.get("hn")), "source": v.get("source"),
+                           "subject": subj})
             if len(chosen) >= limit:
                 break
         st["clips"] = len(chosen)
@@ -634,10 +686,13 @@ def main():
     for name, fn in [("status", cmd_status), ("queries", cmd_queries), ("find", cmd_find),
                      ("label-prep", cmd_label_prep), ("label-apply", cmd_label_apply),
                      ("transcripts", cmd_transcripts), ("heatmap", cmd_heatmap), ("score-prep", cmd_score_prep),
-                     ("score-apply", cmd_score_apply), ("select", cmd_select)]:
+                     ("score-apply", cmd_score_apply), ("subjects-prep", cmd_subjects_prep),
+                     ("subjects-apply", cmd_subjects_apply), ("select", cmd_select)]:
         p = sub.add_parser(name)
         p.add_argument("--topic")
         p.add_argument("--limit", type=int, default=0)
+        p.add_argument("--retry", action="store_true", help="transcripts: retry videos that fell back")
+        p.add_argument("--rescore", action="store_true", help="score-prep: include already-scored videos")
         p.set_defaults(fn=fn)
     for name, fn in [("approve-queries", cmd_approve), ("promote", cmd_promote)]:
         p = sub.add_parser(name)

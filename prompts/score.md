@@ -7,11 +7,17 @@ heatmap, first minute excluded), with scores from 0 to 1.
 
 Judge the WHOLE video for the topic, then pick its single best stand-alone clip.
 
-substance (1–10), for this topic:
+substance (1–10), for this topic. Use this scale the same way every time; most videos land at 4–6, and a 7
+must be something a working practitioner would be glad to have watched:
 - 9–10: expert-level insight or a demo a practitioner would bookmark; clear, specific, non-obvious.
 - 7–8: solid, specific explanation or lesson; worth a minute of a smart person's time.
 - 4–6: correct but generic, shallow, padded or mostly opinion.
 - 1–3: hype, news recap, listicle, sales pitch, off-topic, or matches the topic's EXCLUDE list.
+- Beginner "what is X" overviews, tool tutorials that mostly click through a UI, course chapters that only
+  restate common definitions, and long courses padded with setup score at most 5 unless the explanation is
+  unusually clear or original (e.g. 3Blue1Brown-level visual intuition).
+- Talks and interviews with first-hand experience (a researcher on their own work, a team on a decision
+  they made) score higher than second-hand summaries of the same idea.
 
 The clip (end_sec − start_sec between 60 and 90, inclusive):
 - Must stand alone: someone who has not seen the video understands it. It starts at the beginning of a
@@ -28,11 +34,14 @@ The clip (end_sec − start_sec between 60 and 90, inclusive):
   substance from the title and description only and be strict (max 7).
 - end_sec must not exceed the video length.
 
+subject: the core idea of the clip as a 1–4 word lowercase noun phrase, as generic as possible so clips on
+the same idea share it, e.g. "self-attention", "grpo", "kv cache", "rag chunking", "evals for pms",
+"ai pricing". Used to stop the feed repeating itself.
 hook: under 12 words, plain and specific, says what the viewer will get. No clickbait, no emoji, no
 "You won't believe". Example: "Why RAG fails on tables, and the fix".
 why: one line on why this clip is worth watching.
 
 Write `data/work/score/<vid>.out.json` containing only:
 {"substance": 8, "start_sec": 754, "end_sec": 832, "hook": "...", "topic": "<topic id>", "why": "...",
- "used_heatmap": true, "model": "<the model you are running on>"}
+ "subject": "self-attention", "used_heatmap": true, "model": "<the model you are running on>"}
 Use the topic id from the input file. Do not edit any other file.
