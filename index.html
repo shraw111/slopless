@@ -73,7 +73,17 @@
     overflow: hidden; }
   .src b { color: var(--text); font-weight: 600; }
   .why { font-size: 14px; color: rgba(255,255,255,.72); margin: -4px 0 0; }
-  .actions { display: flex; gap: 10px; }
+  /* summary from the transcript: 3 lines, tap to open the key points */
+  .sum { display: block; text-align: left; font-size: 14.5px; line-height: 1.45; color: rgba(255,255,255,.86);
+    margin: -4px 0 0; }
+  .sum-text { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+  .sum .points { display: none; margin: 8px 0 0; padding-left: 18px; color: rgba(255,255,255,.78); }
+  .sum .points li { margin: 3px 0; }
+  .sum-more { display: inline-block; margin-top: 6px; font-size: 13px; font-weight: 600; color: var(--accent); }
+  .sum[aria-expanded="true"] .sum-text { -webkit-line-clamp: unset; }
+  .sum[aria-expanded="true"] .points { display: block; }
+  .sum[aria-expanded="true"] .sum-more { display: none; }
+  .actions { display: flex; gap: 10px; flex-wrap: wrap; }
   .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 46px;
     padding: 0 18px; border-radius: 12px; background: var(--text); color: var(--bg); font-weight: 700;
     text-decoration: none; font-size: 15px; }
@@ -186,7 +196,11 @@ function cardHTML(c, i, name) {
         <div class="bar"><i></i></div>
       </div>
       <div class="src"><b>${esc(c.channel)}</b> · ${esc(c.title)}</div>
-      <p class="why">${esc(c.why)}</p>
+      ${c.summary ? `<button class="sum" aria-expanded="false">
+          <span class="sum-text">${esc(c.summary)}</span>
+          ${(c.points || []).length ? `<ul class="points">${c.points.map((x) => `<li>${esc(x)}</li>`).join("")}</ul>
+          <span class="sum-more">Key points</span>` : ""}
+        </button>` : `<p class="why">${esc(c.why)}</p>`}
       <div class="actions">
         <a class="btn" href="https://www.youtube.com/watch?v=${esc(c.vid)}&t=${c.start}s" target="_blank" rel="noopener">${ICON.yt}Watch full video</a>
         ${more ? `<button class="btn ghost more" data-i="${i}">More from this video · ${more}</button>` : ""}
@@ -234,6 +248,7 @@ function playMore(i) {
 }
 $("#feed").addEventListener("click", (e) => {
   const b = e.target.closest(".more"); if (b) playMore(+b.dataset.i);
+  const s = e.target.closest(".sum"); if (s) s.setAttribute("aria-expanded", s.getAttribute("aria-expanded") !== "true");
 });
 
 // ---------- players: the visible clip plays; the next one is loaded in advance so a swipe starts instantly

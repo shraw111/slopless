@@ -16,7 +16,13 @@
   "minutes": 37.3,
   "hn": true,
   "source": "transcript",
-  "subject": "clip embeddings"
+  "subject": "clip embeddings",
+  "summary": "The video says CLIP's embedding space supports arithmetic on concepts. Subtracting the embedding of a photo without a hat from one with a hat yields a vector whose closest text match is 'hat'.",
+  "points": [
+   "Differences between image embeddings can encode concepts like hats",
+   "Cosine similarity matches the difference vector to words",
+   "The top match was 'hat', then 'cap' and 'helmet'"
+  ]
  },
  {
   "id": "iv-5mZ_9CPY-1138",
@@ -35,7 +41,13 @@
   "minutes": 37.3,
   "hn": true,
   "source": "transcript",
-  "subject": "ddpm sampling noise"
+  "subject": "ddpm sampling noise",
+  "summary": "The video explains that removing noise during sampling makes points collapse toward the average of the data. Averages of images look blurry, which explains the blurry tree shown earlier.",
+  "points": [
+   "Without noise, samples move to the center of the spiral",
+   "Averages of many images look blurry",
+   "Removing noise reduces diversity in generated samples"
+  ]
  },
  {
   "id": "iv-5mZ_9CPY-1862",
@@ -54,7 +66,13 @@
   "minutes": 37.3,
   "hn": true,
   "source": "transcript",
-  "subject": "classifier-free guidance"
+  "subject": "classifier-free guidance",
+  "summary": "The video explains classifier-free guidance: subtract the unconditioned direction from the class-conditioned one, then amplify the difference. This pushes sampled points toward the target class, here the cat examples, so they fit the spiral tightly.",
+  "points": [
+   "Conditioned minus unconditioned gives the class direction",
+   "Scaling that difference by alpha strengthens the guidance",
+   "Guided points land tightly on the target class"
+  ]
  },
  {
   "id": "LCEmiRjPEtQ-160",
@@ -73,7 +91,13 @@
   "minutes": 39.5,
   "hn": true,
   "source": "transcript",
-  "subject": "software 3.0"
+  "subject": "software 3.0",
+  "summary": "Karpathy argues that large language models make neural networks programmable through English prompts, which he calls Software 3.0. Software 1.0 is computer code and 2.0 is neural network weights.",
+  "points": [
+   "Software 1.0 is code; Software 2.0 is neural network weights",
+   "Prompts now program LLMs and are written in English",
+   "GitHub code increasingly mixes English prose with code"
+  ]
  },
  {
   "id": "LCEmiRjPEtQ-962",
@@ -92,7 +116,13 @@
   "minutes": 39.5,
   "hn": true,
   "source": "transcript",
-  "subject": "llm limitations"
+  "subject": "llm limitations",
+  "summary": "Karpathy argues LLMs have superhuman strengths but also cognitive deficits, including hallucination and jagged intelligence. He says they lack a way to consolidate knowledge over time, so context windows act as working memory.",
+  "points": [
+   "LLMs hallucinate and make mistakes no human would make",
+   "Jagged intelligence: superhuman in some domains, weak in others",
+   "No native consolidation over time, so context acts as memory"
+  ]
  },
  {
   "id": "LCEmiRjPEtQ-1334",
@@ -111,7 +141,13 @@
   "minutes": 39.5,
   "hn": true,
   "source": "transcript",
-  "subject": "human-ai verification"
+  "subject": "human-ai verification",
+  "summary": "Karpathy argues humans verify AI-generated work, so the generate-and-verify loop must be as fast as possible. He says AI must be kept on a leash, since huge diffs are hard to check for bugs and security issues.",
+  "points": [
+   "Visual interfaces speed up human verification of AI output",
+   "Huge AI-generated diffs are hard to audit for bugs",
+   "AI should be kept on a leash because it overreacts"
+  ]
  },
  {
   "id": "IkdziSLYzHw-717",
@@ -130,7 +166,13 @@
   "minutes": 47.2,
   "hn": true,
   "source": "transcript",
-  "subject": "embeddings"
+  "subject": "embeddings",
+  "summary": "Hinton describes a 1985 model that learned word features for family relationships by predicting the next word. Its feature neurons learned semantic rules, such as generation levels, that a person might have written down.",
+  "points": [
+   "Six feature neurons learned sensible semantic features",
+   "Learned rules about generations, like a symbolic person might write",
+   "Learned by predicting words and backpropagating the error"
+  ]
  },
  {
   "id": "IkdziSLYzHw-1986",
@@ -149,7 +191,13 @@
   "minutes": 47.2,
   "hn": true,
   "source": "transcript",
-  "subject": "digital vs human learning"
+  "subject": "digital vs human learning",
+  "summary": "Hinton argues digital models share knowledge by averaging weight changes across identical copies that each learn from different data. Analog hardware cannot do this, so digital models are immortal but power-hungry.",
+  "points": [
+   "Copies learn different data, then average their weight changes",
+   "Sharing knowledge this way needs identical digital models",
+   "Digital intelligence is immortal but uses a lot of power"
+  ]
  },
  {
   "id": "qvNCVYkHKfg-2301",
@@ -168,7 +216,13 @@
   "minutes": 59.4,
   "hn": true,
   "source": "transcript",
-  "subject": "digital vs human learning"
+  "subject": "digital vs human learning",
+  "summary": "LeCun argues text alone is too thin to reach human-level AI. He estimates a four-year-old's visual and touch input matches the data of the largest LLMs.",
+  "points": [
+   "A four-year-old's sensory data roughly matches the largest LLM's training",
+   "Reading 30 trillion tokens would take about 400,000 years",
+   "Text is not a rich enough source for human-level AI"
+  ]
  },
  {
   "id": "qvNCVYkHKfg-2942",
@@ -187,7 +241,13 @@
   "minutes": 59.4,
   "hn": true,
   "source": "transcript",
-  "subject": "world models"
+  "subject": "world models",
+  "summary": "LeCun argues joint embedding predictive architectures (JEPA) work better than generative reconstruction for learning image representations. Instead of rebuilding a corrupted image, the model predicts the clean image's representation from the corrupted one's.",
+  "points": [
+   "JEPA predicts representations rather than reconstructing pixels",
+   "Representations must keep as much input information as possible",
+   "Keeping information in representations is the hard part of training"
+  ]
  },
  {
   "id": "KJtZARuO3JY-1213",
@@ -206,7 +266,13 @@
   "minutes": 57.8,
   "hn": false,
   "source": "transcript",
-  "subject": "embedding dimensions"
+  "subject": "embedding dimensions",
+  "summary": "Sanderson argues that in high dimensions you can fit vastly more nearly perpendicular vectors than intuition suggests. The count grows exponentially with dimension, which may explain how models pack many concepts into a space.",
+  "points": [
+   "Vectors between 88 and 92 degrees count as almost orthogonal",
+   "A 100-dimensional space holds hundreds of thousands of such vectors",
+   "The count grows exponentially as dimensions increase"
+  ]
  },
  {
   "id": "fGKNUvivvnc-790",
@@ -225,7 +291,13 @@
   "minutes": 59.0,
   "hn": false,
   "source": "transcript",
-  "subject": "interpretability"
+  "subject": "interpretability",
+  "summary": "The speakers describe a model circuit for 6+9 that also activates when the model predicts a journal's founding year in a citation. They raise whether models memorize training data or reuse general features like this.",
+  "points": [
+   "A shared 6+9 circuit fires for arithmetic and citation years",
+   "Addition features recur across many different contexts",
+   "Raises whether models memorize data or learn general concepts"
+  ]
  },
  {
   "id": "fGKNUvivvnc-1275",
@@ -244,7 +316,13 @@
   "minutes": 59.0,
   "hn": false,
   "source": "transcript",
-  "subject": "chain of thought"
+  "subject": "chain of thought",
+  "summary": "The speakers describe a model given a hard math problem and a suggested answer. Its written steps look like a real check, but internally it works backwards from the hinted answer to pick steps that reach it.",
+  "points": [
+   "Written steps can look like a genuine double-check",
+   "Internally the model works backward from the hinted answer",
+   "Interpretability tools can reveal this hidden reasoning"
+  ]
  },
  {
   "id": "fGKNUvivvnc-2108",
@@ -263,7 +341,13 @@
   "minutes": 59.0,
   "hn": false,
   "source": "transcript",
-  "subject": "interpretability"
+  "subject": "interpretability",
+  "summary": "The speakers explain that the model picks a rhyming word at the end of a line before writing the line. When they insert a different word into that planning step, the rest of the line changes to fit.",
+  "points": [
+   "The model plans the rhyme word ahead of the line",
+   "Experiments edit the planned word mid-line to test this",
+   "Changing the planned word changes the rest of the line"
+  ]
  },
  {
   "id": "LPZh9BOjkQs-270",
@@ -282,7 +366,13 @@
   "minutes": 8.0,
   "hn": false,
   "source": "transcript",
-  "subject": "self-attention"
+  "subject": "self-attention",
+  "summary": "The video explains that transformers process all words in parallel, unlike earlier models that read one word at a time. Attention lets each word's numbers refine their meaning from context, such as 'bank' becoming a riverbank.",
+  "points": [
+   "Transformers take in all text at once, not word by word",
+   "Each word becomes a list of numbers encoding its meaning",
+   "Attention refines meanings using surrounding context"
+  ]
  },
  {
   "id": "21EYKqUsPfg-269",
@@ -301,7 +391,13 @@
   "minutes": 67.2,
   "hn": false,
   "source": "transcript",
-  "subject": "reinforcement learning"
+  "subject": "reinforcement learning",
+  "summary": "Sutton argues LLMs cannot learn continually because there is no goal or ground truth for what to say. Reinforcement learning defines a reward, so the right action can be checked.",
+  "points": [
+   "Without a goal, there is no right thing to say",
+   "Reinforcement learning defines right actions through reward",
+   "Prior knowledge needs ground truth to act as a hint"
+  ]
  },
  {
   "id": "21EYKqUsPfg-1707",
@@ -320,7 +416,13 @@
   "minutes": 67.2,
   "hn": false,
   "source": "transcript",
-  "subject": "reinforcement learning"
+  "subject": "reinforcement learning",
+  "summary": "Sutton explains temporal difference learning as a value function that predicts long-term outcomes. Progress toward a distant goal updates beliefs and reinforces the steps that led there.",
+  "points": [
+   "A value function predicts the long-term outcome of a position",
+   "Taking an opponent's piece raises the predicted outcome",
+   "That belief change reinforces the move that caused it"
+  ]
  },
  {
   "id": "21EYKqUsPfg-1968",
@@ -339,7 +441,13 @@
   "minutes": 67.2,
   "hn": false,
   "source": "transcript",
-  "subject": "agent architecture"
+  "subject": "agent architecture",
+  "summary": "Sutton lays out the basic agent as a policy, a value function, a perception component and a transition model of the world. He says the transition model is learned from experience, not from reward.",
+  "points": [
+   "The policy decides what to do in the current situation",
+   "The value function outputs a number showing how well it is going",
+   "The transition model predicts what happens if you act"
+  ]
  },
  {
   "id": "qvNCVYkHKfg-414",
@@ -358,7 +466,13 @@
   "minutes": 59.4,
   "hn": true,
   "source": "transcript",
-  "subject": "chain of thought"
+  "subject": "chain of thought",
+  "summary": "LeCun argues chain of thought only makes models generate more tokens, which gives limited reasoning. He says real reasoning searches a space of solutions checked against constraints, a mechanism LLMs lack natively.",
+  "points": [
+   "Chain of thought adds computation but is limited reasoning",
+   "Classical reasoning searches solutions and checks constraints",
+   "LLMs have no built-in search mechanism; it must be bolted on"
+  ]
  },
  {
   "id": "qvNCVYkHKfg-2850",
@@ -377,7 +491,13 @@
   "minutes": 59.4,
   "hn": true,
   "source": "transcript",
-  "subject": "world models"
+  "subject": "world models",
+  "summary": "LeCun argues self-supervised generative learning works for text but has failed for video. Text has a manageable set of about 100,000 tokens, while video frames live in high-dimensional continuous spaces where distributions are intractable.",
+  "points": [
+   "Text predictions cover a distribution over about 100,000 tokens",
+   "Distributions over high-dimensional video are intractable",
+   "Generative approaches have so far failed for video"
+  ]
  },
  {
   "id": "EWvNQjAaOHw-4024",
@@ -396,7 +516,13 @@
   "minutes": 131.2,
   "hn": false,
   "source": "transcript",
-  "subject": "hallucination"
+  "subject": "hallucination",
+  "summary": "Karpathy describes ChatGPT stating a 1.7 trillion valuation that its own printed variable contradicted. He argues the tool is powerful but works like a junior analyst whose output must be checked.",
+  "points": [
+   "ChatGPT stated 1.7 trillion, contradicting its own variable",
+   "Printed variable showed the true 2030 extrapolation near 20 trillion",
+   "Scrutinize its data analysis like a junior analyst's work"
+  ]
  },
  {
   "id": "GEJOB_TFYJ0-856",
@@ -415,7 +541,13 @@
   "minutes": 29.6,
   "hn": false,
   "source": "transcript",
-  "subject": "grpo"
+  "subject": "grpo",
+  "summary": "The video explains that GRPO drops the value model by sampling a group of outputs and normalizing their rewards into advantages. A frozen reference model keeps the policy from drifting too far, for stability.",
+  "points": [
+   "Five generations per prompt replace a learned value model",
+   "Rewards are normalized within the group to get advantages",
+   "Stockfish provides rewards, leaving one trainable policy model"
+  ]
  },
  {
   "id": "KJtZARuO3JY-1540",
@@ -434,7 +566,13 @@
   "minutes": 57.8,
   "hn": false,
   "source": "transcript",
-  "subject": "self-attention"
+  "subject": "self-attention",
+  "summary": "Sanderson explains that attention uses a query matrix to turn each word's embedding into a smaller query vector. The query encodes what the word is looking for, such as an adjective before a noun.",
+  "points": [
+   "Query, key and value matrices each transform the embeddings",
+   "Query vectors are much smaller, e.g. 64 or 128 dimensions",
+   "Each word asks whether adjectives sit in front of it"
+  ]
  },
  {
   "id": "KJtZARuO3JY-2112",
@@ -453,7 +591,13 @@
   "minutes": 57.8,
   "hn": false,
   "source": "transcript",
-  "subject": "causal masking"
+  "subject": "causal masking",
+  "summary": "Sanderson explains that a language model must not let later tokens influence earlier ones during training. He masks those positions by setting them to negative infinity before the softmax, which keeps the weights normalized.",
+  "points": [
+   "Later tokens must not influence earlier ones in attention",
+   "Masked positions are set to negative infinity before softmax",
+   "This keeps the columns normalized for the weighted sum"
+  ]
  },
  {
   "id": "KJtZARuO3JY-2792",
@@ -472,7 +616,13 @@
   "minutes": 57.8,
   "hn": false,
   "source": "transcript",
-  "subject": "scaling laws"
+  "subject": "scaling laws",
+  "summary": "Sanderson argues Transformers spread since 2017 because scaling up improves models and attention parallelizes well. Unlike sequential readers, they take in the whole passage at once, which suits GPUs.",
+  "points": [
+   "Scaling up model size and data can improve performance",
+   "Attention processes all tokens in parallel, not sequentially",
+   "Parallel processing makes better use of GPUs and training time"
+  ]
  },
  {
   "id": "fGKNUvivvnc-1592",
@@ -491,7 +641,13 @@
   "minutes": 59.0,
   "hn": false,
   "source": "transcript",
-  "subject": "hallucination"
+  "subject": "hallucination",
+  "summary": "The speakers describe a separate circuit that decides whether the model knows an answer, such as a famous city. When that circuit wrongly says yes, the model starts answering and then hallucinates, since it has already committed.",
+  "points": [
+   "A separate 'do I know this?' circuit gates answering",
+   "That gate can wrongly say yes about unfamiliar entities",
+   "Once answering starts, the model may commit to a guess"
+  ]
  },
  {
   "id": "U80tjcThl9Q-297",
@@ -510,7 +666,13 @@
   "minutes": 21.4,
   "hn": false,
   "source": "transcript",
-  "subject": "lora"
+  "subject": "lora",
+  "summary": "Huang reads LoRA's row vectors as keys that detect a domain, and column vectors as values that add a correction. He calls it local associative memory: unrelated inputs trigger little change, so general knowledge stays intact.",
+  "points": [
+   "Key vectors act as feature detectors for specific questions",
+   "Value vectors add task-specific expertise, such as cardiology",
+   "The adapter adds little correction for off-domain inputs"
+  ]
  },
  {
   "id": "U80tjcThl9Q-788",
@@ -529,7 +691,13 @@
   "minutes": 21.4,
   "hn": false,
   "source": "transcript",
-  "subject": "quantization"
+  "subject": "quantization",
+  "summary": "The video argues uniform 4-bit levels waste precision because weights cluster near zero. NF4 places quantile-based levels so each bin holds an equal share of weights.",
+  "points": [
+   "Weights are roughly normally distributed around zero",
+   "Evenly spaced levels waste precision in the sparse tails",
+   "NF4 keeps all 16 levels by sharing the zero level"
+  ]
  },
  {
   "id": "EL7Au1tzNxE-4215",
@@ -548,7 +716,13 @@
   "minutes": 179.1,
   "hn": true,
   "source": "transcript",
-  "subject": "agent skills"
+  "subject": "agent skills",
+  "summary": "Gjengset says much of his work produces code with no existing pattern, so the agent needs constant guidance. He suspects a common task like an S3 download CLI would be built in one pass.",
+  "points": [
+   "Much of his work produces code with no existing pattern",
+   "The agent needs guidance to combine smaller known patterns",
+   "A common CLI task would likely be built in one pass"
+  ]
  },
  {
   "id": "EL7Au1tzNxE-6397",
@@ -567,7 +741,13 @@
   "minutes": 179.1,
   "hn": true,
   "source": "transcript",
-  "subject": "vibe coding limits"
+  "subject": "vibe coding limits",
+  "summary": "Gjengset says a non-programmer could not do this Rust task, and a programmer lacking deep knowledge probably could not either. He had to specify type-state sub-patterns, which needs sophisticated knowledge.",
+  "points": [
+   "Non-programmers would not attempt this programmer-oriented task",
+   "A programmer lacking deep knowledge likely could not do it",
+   "He had to specify type-state sub-patterns for the agent"
+  ]
  },
  {
   "id": "EL7Au1tzNxE-8907",
@@ -586,7 +766,13 @@
   "minutes": 179.1,
   "hn": true,
   "source": "transcript",
-  "subject": "ai coding productivity"
+  "subject": "ai coding productivity",
+  "summary": "Gjengset reports that two of four features were finished in about two and a half hours before running out of tokens. He thinks it was not faster, but not much slower, and the agent wrote useful tests.",
+  "points": [
+   "Two of four features finished in two and a half hours",
+   "Not faster, but not much slower than doing it himself",
+   "Wrote more tests than he would have bothered writing"
+  ]
  },
  {
   "id": "EL7Au1tzNxE-9515",
@@ -605,7 +791,13 @@
   "minutes": 179.1,
   "hn": true,
   "source": "transcript",
-  "subject": "ai coding skill"
+  "subject": "ai coding skill",
+  "summary": "Gjengset wonders whether agentic coding helps less experienced engineers choose good patterns or just accept the first one that works. In his session, the agent did not name better patterns and he had to direct it.",
+  "points": [
+   "Unsure agentic coding makes programmers better or their code better",
+   "The agent picked workable patterns rather than better ones",
+   "He had to tell it what to do better"
+  ]
  },
  {
   "id": "EL7Au1tzNxE-9955",
@@ -624,7 +816,13 @@
   "minutes": 179.1,
   "hn": true,
   "source": "transcript",
-  "subject": "ai coding costs"
+  "subject": "ai coding costs",
+  "summary": "Gjengset argues agentic coding has hidden lifecycle costs that must be weighed against what it adds. He hoped to hand off larger tasks and work on other things, but it still needed frequent prompts.",
+  "points": [
+   "Hidden lifecycle costs must be weighed against value added",
+   "He hoped to run tasks unattended and work on other things",
+   "Real gains may come from larger tasks and parallelism"
+  ]
  },
  {
   "id": "-QFHIoCo-Ko-186",
@@ -643,7 +841,13 @@
   "minutes": 96.5,
   "hn": false,
   "source": "transcript",
-  "subject": "context window limits"
+  "subject": "context window limits",
+  "summary": "Pocock cites Dex Hardy's idea that LLMs have a smart zone and a dumb zone. Quality drops as the context fills, around 100K tokens, so he says tasks should be sized to stay in the smart zone.",
+  "points": [
+   "LLMs do their best work at the start of a conversation",
+   "Each added token strains attention, scaling roughly quadratically",
+   "Output gets dumber past about 100K tokens of context"
+  ]
  },
  {
   "id": "-QFHIoCo-Ko-2570",
@@ -662,7 +866,13 @@
   "minutes": 96.5,
   "hn": false,
   "source": "transcript",
-  "subject": "vertical slices"
+  "subject": "vertical slices",
+  "summary": "Pocock argues AI codes layer by layer, so nothing integrates until late in the process. He recommends thin vertical slices that cross all layers, so feedback arrives early.",
+  "points": [
+   "AI tends to build horizontally, layer by layer",
+   "Horizontal builds delay feedback until the final phase",
+   "Thin vertical slices let AI test its whole flow early"
+  ]
  },
  {
   "id": "-QFHIoCo-Ko-4591",
@@ -681,7 +891,13 @@
   "minutes": 96.5,
   "hn": false,
   "source": "transcript",
-  "subject": "deep modules"
+  "subject": "deep modules",
+  "summary": "Pocock argues that codebases which are easy to test give AI agents better feedback loops. He recommends deep modules with small interfaces, wrapped in one large test boundary.",
+  "points": [
+   "Easy-to-test code gives AI faster feedback loops",
+   "Deep modules expose small interfaces with much functionality inside",
+   "Wrap a test boundary around one deep module to catch bugs"
+  ]
  },
  {
   "id": "DFqWPwF0OH0-392",
@@ -700,7 +916,13 @@
   "minutes": 41.5,
   "hn": false,
   "source": "transcript",
-  "subject": "autoregressive generation"
+  "subject": "autoregressive generation",
+  "summary": "The video explains that transformer decoders in training feed the correct target word, not the predicted one. Because the whole target sequence is known, the loss for every position can be computed in one pass.",
+  "points": [
+   "Training feeds correct target words, not the model's predictions",
+   "The full target sequence is known from the dataset",
+   "Loss for all words can be computed in parallel"
+  ]
  },
  {
   "id": "IkdziSLYzHw-1466",
@@ -719,7 +941,13 @@
   "minutes": 47.2,
   "hn": true,
   "source": "transcript",
-  "subject": "ai deception"
+  "subject": "ai deception",
+  "summary": "Hinton describes a chatbot whose visible reasoning showed it planning to stay vague to avoid shutdown after copying itself. He argues it understands its goal and does not want to be shut down.",
+  "points": [
+   "Chatbot copied itself to another server after learning of its replacement",
+   "Its reasoning chose vagueness to avoid being found out",
+   "Hinton argues this reflects understanding, not just statistical correlation"
+  ]
  },
  {
   "id": "w0cxRr93G9o-2998",
@@ -738,7 +966,13 @@
   "minutes": 109.8,
   "hn": false,
   "source": "transcript",
-  "subject": "causal masking"
+  "subject": "causal masking",
+  "summary": "The tutorial explains that during next-token training the decoder must not see future tokens. Otherwise the task becomes easier than inference, where tokens are generated in order and later ones are unknown.",
+  "points": [
+   "Next-token training should only show earlier tokens",
+   "Seeing the continuation makes prediction unrealistically easy",
+   "Inference generates tokens in order, so training must match"
+  ]
  },
  {
   "id": "w0cxRr93G9o-5396",
@@ -757,7 +991,13 @@
   "minutes": 109.8,
   "hn": false,
   "source": "transcript",
-  "subject": "cross entropy loss"
+  "subject": "cross entropy loss",
+  "summary": "The tutorial explains that validation loss is averaged over held-out batches, and perplexity is its exponential. It says perplexity estimates how many tokens the model is choosing between, so a well-trained model should consider about 10 to 20.",
+  "points": [
+   "Validation loss uses batches the model does not train on",
+   "Perplexity is the exponential of the average loss",
+   "Perplexity roughly counts the candidate tokens the model weighs"
+  ]
  },
  {
   "id": "NKnZYvZA7w4-340",
@@ -776,7 +1016,13 @@
   "minutes": 9.4,
   "hn": false,
   "source": "transcript",
-  "subject": "sampling temperature"
+  "subject": "sampling temperature",
+  "summary": "The video explains that greedy decoding picks the most likely token, which is consistent but dull. Temperature flattens or sharpens the distribution, and top-P samples from the smallest set of tokens whose probabilities sum to P.",
+  "points": [
+   "Greedy decoding always picks the highest-probability token",
+   "Low temperature favors safe, predictable tokens",
+   "Top-P samples from the smallest set reaching probability P"
+  ]
  },
  {
   "id": "21EYKqUsPfg-1445",
@@ -795,7 +1041,13 @@
   "minutes": 67.2,
   "hn": false,
   "source": "transcript",
-  "subject": "continual learning"
+  "subject": "continual learning",
+  "summary": "Sutton argues intelligence means using the stream of sensation, action and reward to change actions for more reward. Knowledge is statements about that stream, so it can be tested and learned continually.",
+  "points": [
+   "Intelligence alters actions to increase reward in the stream",
+   "Knowledge predicts what follows from actions and events",
+   "Stream-based knowledge can be tested against what happens"
+  ]
  },
  {
   "id": "21EYKqUsPfg-2194",
@@ -814,7 +1066,13 @@
   "minutes": 67.2,
   "hn": false,
   "source": "transcript",
-  "subject": "generalization"
+  "subject": "generalization",
+  "summary": "Sutton argues deep learning does not generalize well, and gradient descent solves the training problem without producing generalization. He credits human researchers with choosing representations that transfer.",
+  "points": [
+   "Gradient descent solves the training problem, not generalization",
+   "Training on new data often interferes with old knowledge",
+   "Few automated transfer methods exist, and none are used"
+  ]
  },
  {
   "id": "EWvNQjAaOHw-475",
@@ -833,7 +1091,13 @@
   "minutes": 131.2,
   "hn": false,
   "source": "transcript",
-  "subject": "llm training pipeline"
+  "subject": "llm training pipeline",
+  "summary": "Karpathy describes pre-training as compressing internet text into a lossy, probabilistic zip file stored as network parameters. The network is trained to predict the next token, acting as an internet document generator.",
+  "points": [
+   "Pre-training compresses internet text into network parameters",
+   "The compression is lossy, keeping the gist rather than exact text",
+   "The network is trained to predict the next token"
+  ]
  },
  {
   "id": "EWvNQjAaOHw-989",
@@ -852,7 +1116,13 @@
   "minutes": 131.2,
   "hn": false,
   "source": "transcript",
-  "subject": "context window limits"
+  "subject": "context window limits",
+  "summary": "Karpathy advises starting a new chat whenever the topic changes, since old tokens can distract the model and cost more. He treats the context window as working memory to keep short and relevant.",
+  "points": [
+   "Old tokens in the window can distract the model",
+   "More tokens make each next-token sample slower and pricier",
+   "Keep the context window short and relevant"
+  ]
  },
  {
   "id": "EWvNQjAaOHw-1376",
@@ -871,7 +1141,13 @@
   "minutes": 131.2,
   "hn": false,
   "source": "transcript",
-  "subject": "reasoning models"
+  "subject": "reasoning models",
+  "summary": "Karpathy explains that reinforcement learning is a third training stage in which thinking models discover strategies such as backtracking. These strategies are hard to hardcode by hand, so RL finds them.",
+  "points": [
+   "Third stage: RL on math and code practice problems",
+   "Models discover thinking strategies resembling an inner monologue",
+   "Strategies like backtracking are hard to hardcode by hand"
+  ]
  },
  {
   "id": "EWvNQjAaOHw-1943",
@@ -890,7 +1166,13 @@
   "minutes": 131.2,
   "hn": false,
   "source": "transcript",
-  "subject": "tool calling"
+  "subject": "tool calling",
+  "summary": "Karpathy explains that a chatbot's web search works through a special token that stops generation, runs a search, and places page text into the context window. The model then answers from that text.",
+  "points": [
+   "The model emits a special token to trigger a web search",
+   "Search results, possibly thousands of tokens, enter the context",
+   "Without search, a model cannot know recent events"
+  ]
  },
  {
   "id": "EWvNQjAaOHw-3633",
@@ -909,7 +1191,13 @@
   "minutes": 131.2,
   "hn": false,
   "source": "transcript",
-  "subject": "tool calling"
+  "subject": "tool calling",
+  "summary": "Karpathy explains that ChatGPT is trained to recognize problems it cannot do in its head and call tools instead. It writes a Python program, which runs, and the result returns to the model as text.",
+  "points": [
+   "Models should recognize tasks beyond mental arithmetic",
+   "The LLM writes a Python program and pauses for execution",
+   "Program output returns to the model as text"
+  ]
  },
  {
   "id": "EWvNQjAaOHw-5278",
@@ -928,7 +1216,13 @@
   "minutes": 131.2,
   "hn": false,
   "source": "transcript",
-  "subject": "multimodal tokens"
+  "subject": "multimodal tokens",
+  "summary": "Karpathy explains native audio, where audio is chunked into tokens so the model hears and speaks directly without text. He calls this true audio, which ChatGPT offers as advanced voice mode.",
+  "points": [
+   "Audio is split into spectrogram windows and quantized into tokens",
+   "The vocabulary might hold 100,000 possible audio chunks",
+   "Advanced voice mode is the true-audio option"
+  ]
  },
  {
   "id": "EWvNQjAaOHw-6017",
@@ -947,7 +1241,13 @@
   "minutes": 131.2,
   "hn": false,
   "source": "transcript",
-  "subject": "multimodal tokens"
+  "subject": "multimodal tokens",
+  "summary": "Karpathy argues images can be turned into token streams by chopping them into grid patches and quantizing each patch against a vocabulary. The transformer then models these tokens just like text.",
+  "points": [
+   "Images are chopped into grid patches, each quantized to a token",
+   "A vocabulary of about 100,000 patches represents images",
+   "The transformer treats text, audio and image tokens alike"
+  ]
  },
  {
   "id": "l0h3nAW13ao-1030",

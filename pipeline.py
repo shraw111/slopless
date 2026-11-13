@@ -647,6 +647,52 @@ def cmd_subjects_apply(args):
     print(f"applied {n} subject groups")
 
 
+# ---------------------------------------------------------------- 3c'. clip summaries (Haiku)
+def clip_text(vid, c):
+    """The words spoken during a clip, from the cached transcript."""
+    f = TRANSCRIPTS / f"{vid}.json.gz"
+    if not f.exists():
+        return ""
+    seg = json.loads(gzip.decompress(f.read_bytes()))
+    s, e = int(c["start_sec"]), int(c["end_sec"])
+    return " ".join(t.replace("\n", " ") for st, t in seg if s - 2 <= st < e).strip()
+
+
+def cmd_summaries_prep(args):
+    """Published clips that have a transcript but no summary yet -> data/work/summaries/batch_NNN.in.json."""
+    cache = load_cache()
+    out = WORK / "summaries"
+    out.mkdir(parents=True, exist_ok=True)
+    for f in out.glob("*.json"):
+        f.unlink()
+    published = {k["id"] for k in json.loads((ROOT / "clips.json").read_text())}
+    items = []
+    for v in cache.values():
+        if v.get("source") != "transcript" or not v.get("result"):
+            continue
+        for c in result_clips(v["result"]):
+            cid = clip_id(v["vid"], c)
+            if cid in published and "summary" not in c and (text := clip_text(v["vid"], c)):
+                items.append({"id": cid, "title": v["title"], "channel": v["channel"], "hook": c["hook"], "text": text})
+    for i in range(0, len(items), 25):
+        jsave(out / f"batch_{i // 25:03d}.in.json", {"clips": items[i:i + 25]})
+    print(f"{len(items)} clips to summarize in {math.ceil(len(items) / 25)} batches -> {out} (prompt: prompts/summaries.md)")
+
+
+def cmd_summaries_apply(args):
+    cache = load_cache()
+    by_id = {clip_id(v["vid"], c): c for v in cache.values() if v.get("result") for c in result_clips(v["result"])}
+    n = 0
+    for f in sorted((WORK / "summaries").glob("*.out.json")):
+        for cid, s in json.loads(f.read_text())["summaries"].items():
+            if cid in by_id and s.get("summary"):
+                by_id[cid]["summary"] = s["summary"].strip()
+                by_id[cid]["points"] = [x.strip() for x in s.get("points", [])][:3]
+                n += 1
+    save_cache(cache)
+    print(f"applied {n} summaries")
+
+
 # ---------------------------------------------------------------- 3d. select + build feed data
 def cmd_select(args):
     cache = load_cache()
@@ -686,7 +732,8 @@ def cmd_select(args):
                            "why": r["why"], "substance": adj, "boosted": bool(boost), "title": v["title"],
                            "channel": v["channel"], "published": v["published"][:10], "views": v["views"],
                            "minutes": v["minutes"], "hn": bool(v.get("hn")), "source": v.get("source"),
-                           "subject": subj})
+                           "subject": subj,
+                           **({"summary": r["summary"], "points": r.get("points", [])} if r.get("summary") else {})})
             if len(chosen) >= limit:
                 break
         st["clips"] = len(chosen)
@@ -730,7 +777,8 @@ def main():
                      ("label-prep", cmd_label_prep), ("label-apply", cmd_label_apply),
                      ("transcripts", cmd_transcripts), ("heatmap", cmd_heatmap), ("score-prep", cmd_score_prep),
                      ("score-apply", cmd_score_apply), ("subjects-prep", cmd_subjects_prep),
-                     ("subjects-apply", cmd_subjects_apply), ("select", cmd_select)]:
+                     ("subjects-apply", cmd_subjects_apply), ("summaries-prep", cmd_summaries_prep),
+                     ("summaries-apply", cmd_summaries_apply), ("select", cmd_select)]:
         p = sub.add_parser(name)
         p.add_argument("--topic")
         p.add_argument("--limit", type=int, default=0)

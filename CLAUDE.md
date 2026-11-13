@@ -35,7 +35,10 @@ sub-agent actually ran on (check the `model` field the agents wrote and the sess
 6. **STOP for new topics** (state `phase: preview` in `data/state.json`): show the user the 10 clips
    (hook, channel, title, substance, link with `&t=<start>`) and wait. On approval run
    `python pipeline.py promote <id>` and continue steps 5 until `clips_per_topic` or candidates run out.
-7. `python pipeline.py select`, commit `clips.json`, `topics.json` and `data/` (not `data/work/`,
+7. Summaries: `python pipeline.py select`, then `python pipeline.py summaries-prep`, Haiku sub-agents with
+   `prompts/summaries.md` (one per batch file in `data/work/summaries/`), and `python pipeline.py summaries-apply`.
+   Only clips with a transcript get a summary; the others keep their one-line "why".
+8. `python pipeline.py select`, commit `clips.json`, `topics.json` and `data/` (not `data/work/`,
    `data/hackertube/`), push, and merge to `main` (GitHub Pages deploys from `main`).
-8. Summarize: clips per topic, thresholds used (from topics.yaml), API units (`data/usage.json`) and
+9. Summarize: clips per topic, thresholds used (from topics.yaml), API units (`data/usage.json`) and
    sub-agent models.
