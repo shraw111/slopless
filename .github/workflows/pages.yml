@@ -2,6 +2,14 @@ name: Deploy feed to GitHub Pages
 on:
   push:
     branches: [main]
+    paths:   # only redeploy when something the site serves changes
+      - index.html
+      - clips.json
+      - topics.json
+      - manifest.webmanifest
+      - sw.js
+      - "*.png"
+      - .github/workflows/pages.yml
   workflow_dispatch:
 permissions:
   contents: read
