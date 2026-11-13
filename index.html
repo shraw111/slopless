@@ -89,7 +89,18 @@
   .yt { flex: none; padding: 5px 10px; border-radius: 999px; background: rgba(255,255,255,.12);
     color: var(--text); font-size: 13px; font-weight: 600; text-decoration: none; white-space: nowrap; }
   .pill-btn { padding: 7px 13px; border-radius: 999px; background: rgba(255,255,255,.12); font-size: 13px; font-weight: 600; }
-  .card[data-i] { touch-action: pan-y; }   /* vertical swipes scroll; horizontal ones are ours */
+  .card[data-i] { touch-action: pan-y; transform-origin: 50% 85%; }
+  /* swipe-to-remove: a label waits behind the feed and shows through as the card moves away */
+  #feed { z-index: 1; }
+  #swipe-hint { position: fixed; z-index: 0; top: 50%; right: 22px; transform: translateY(-50%) scale(.85);
+    display: grid; justify-items: center; gap: 8px; color: rgba(255,255,255,.6); font-weight: 700; font-size: 13px;
+    opacity: 0; transition: transform .18s, color .18s; pointer-events: none; }
+  #swipe-hint svg { width: 30px; height: 30px; fill: currentColor; }
+  #swipe-hint.armed { color: var(--accent); transform: translateY(-50%) scale(1.08); }
+  .card.leaving { transition: transform .32s cubic-bezier(.5,0,.75,0), opacity .32s; }
+  .card.springback { transition: transform .38s cubic-bezier(.2,1.5,.4,1), opacity .25s; }
+  .card.entering { animation: enter .42s cubic-bezier(.2,.9,.3,1); }
+  @keyframes enter { from { opacity: 0; transform: scale(.94) translateY(14px); } to { opacity: 1; transform: none; } }   /* vertical swipes scroll; horizontal ones are ours */
   .chip.hist { margin-left: auto; }
   .chip.hist[aria-pressed="true"] { background: var(--accent); color: var(--accent-text); }
   #toast { position: fixed; z-index: 40; left: 50%; bottom: calc(env(safe-area-inset-bottom) + 20px);
@@ -130,6 +141,7 @@
 <body>
 <header><nav class="chips" id="chips" aria-label="Topics"></nav></header>
 <main id="feed" aria-live="polite"></main>
+<div id="swipe-hint" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 19a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg><span>Remove video</span></div>
 <section id="history" hidden aria-label="History"></section>
 <div id="toast" role="status"></div>
 
@@ -454,16 +466,27 @@ $("#feed").addEventListener("touchmove", (e) => {
   if (drag.horiz === null && (Math.abs(dx) > 12 || Math.abs(dy) > 12)) drag.horiz = Math.abs(dx) > Math.abs(dy) * 1.3 && dx < 0;
   if (!drag.horiz) return;
   drag.dx = Math.min(0, dx);
-  drag.card.style.transform = `translateX(${drag.dx}px)`;
-  drag.card.style.opacity = String(Math.max(0.3, 1 + drag.dx / innerWidth));
+  drag.card.classList.remove("springback");
+  drag.card.style.transform = `translateX(${drag.dx}px) rotate(${drag.dx / 45}deg)`;
+  drag.card.style.opacity = String(Math.max(0.35, 1 + drag.dx / (innerWidth * 1.4)));
+  const hint = $("#swipe-hint"), armed = drag.dx < -innerWidth * 0.28;
+  hint.style.opacity = String(Math.min(1, -drag.dx / (innerWidth * 0.2)));
+  if (armed !== hint.classList.contains("armed")) {
+    hint.classList.toggle("armed", armed);
+    if (armed) navigator.vibrate?.(12);   // a small tick at the point of no return (Android)
+  }
 }, { passive: true });
 $("#feed").addEventListener("touchend", () => {
   if (!drag) return;
   const d = drag; drag = null;
   if (!d.horiz) return;
+  const hint = $("#swipe-hint");
   if (d.dx < -innerWidth * 0.28) removeVideo(d.card);
-  else { d.card.style.transition = "transform .2s, opacity .2s"; d.card.style.transform = ""; d.card.style.opacity = "";
-         setTimeout(() => (d.card.style.transition = ""), 220); }
+  else {
+    d.card.classList.add("springback"); d.card.style.transform = ""; d.card.style.opacity = "";
+    hint.style.transition = "opacity .25s, transform .18s, color .18s"; hint.style.opacity = "0"; hint.classList.remove("armed");
+    setTimeout(() => { d.card.classList.remove("springback"); hint.style.transition = ""; }, 400);
+  }
 });
 
 function removeVideo(card) {
@@ -471,9 +494,12 @@ function removeVideo(card) {
   removed.add(c.vid); store.set("removed", [...removed]);
   logHistory(c, "removed");
   if (activeCard === card) { clearInterval(tick); watchedClip = null; }
-  card.style.transition = "transform .25s, opacity .25s";
-  card.style.transform = "translateX(-110%)"; card.style.opacity = "0";
+  const hint = $("#swipe-hint");
+  card.classList.remove("springback"); card.classList.add("leaving");
+  card.style.transform = "translateX(-125%) rotate(-14deg)"; card.style.opacity = "0";
   setTimeout(() => {
+    hint.style.transition = "opacity .3s"; hint.style.opacity = "0"; hint.classList.remove("armed");
+    setTimeout(() => (hint.style.transition = ""), 320);
     const feed = $("#feed");
     document.querySelectorAll(".card[data-i]").forEach((el) => {
       const k = +el.dataset.i;
@@ -481,10 +507,14 @@ function removeVideo(card) {
     });
     if (activeCard && !activeCard.isConnected) { activeCard = null; activeIdx = -1; player = null; }
     const now = [...document.querySelectorAll(".card")].find((el) => Math.abs(el.offsetTop - feed.scrollTop) < feed.clientHeight / 2);
-    if (now?.dataset.i) activate(now);
+    if (now?.dataset.i) {
+      now.classList.add("entering");
+      now.addEventListener("animationend", () => now.classList.remove("entering"), { once: true });
+      activate(now);
+    }
     renderChips();
     toast("Removed from your feed", "Undo", () => restoreVideo(c.vid, c.id));
-  }, 260);
+  }, 320);
 }
 function restoreVideo(vid, focusId) {
   removed.delete(vid); store.set("removed", [...removed]);
