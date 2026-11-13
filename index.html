@@ -135,6 +135,25 @@
   .pill-btn { display: inline-flex; align-items: center; gap: 6px; }
   .pill-btn svg { width: 16px; height: 16px; fill: currentColor; }
   .pill-btn.save[aria-pressed="true"] { color: var(--accent); }
+  .fs { position: absolute; z-index: 3; top: 8px; left: 8px; width: 34px; height: 34px; border-radius: 50%;
+    display: grid; place-items: center; background: rgba(0,0,0,.6); }
+  .fs svg { width: 20px; height: 20px; fill: #fff; }
+  /* Full screen: the clip's video fills the screen; text, buttons and chips step aside.
+     Also automatic when a phone is turned sideways. */
+  body.immersive header, body.immersive #mode, body.immersive #recall-pill, body.immersive #keys { display: none; }
+  body.immersive .card[data-i] { display: block; padding: 0; max-width: none; background: #000; }
+  body.immersive .card[data-i] > :not(.stage) { display: none; }
+  body.immersive .card[data-i] > .stage { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0;
+    aspect-ratio: auto; border-radius: 0; box-shadow: none; background-size: contain; background-color: #000; }
+  body.immersive .stage .poster { background-size: contain; }
+  @media (orientation: landscape) and (max-height: 520px) {
+    header, #mode, #recall-pill, #keys { display: none; }
+    .card[data-i] { display: block; padding: 0; max-width: none; background: #000; }
+    .card[data-i] > :not(.stage) { display: none; }
+    .card[data-i] > .stage { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0;
+      aspect-ratio: auto; border-radius: 0; box-shadow: none; background-size: contain; background-color: #000; }
+    .stage .poster { background-size: contain; }
+  }
   .speed { position: absolute; z-index: 3; top: 10px; right: 10px; padding: 4px 9px; border-radius: 999px;
     background: rgba(0,0,0,.6); font-size: 12.5px; font-weight: 700; }
   .burst { position: absolute; z-index: 4; left: 50%; top: 50%; width: 90px; height: 90px; margin: -45px 0 0 -45px;
@@ -231,7 +250,7 @@
 <section id="search" class="panel" hidden aria-label="Search"></section>
 <section id="sheet" hidden></section>
 <button id="recall-pill" hidden></button>
-<div id="keys" aria-hidden="true">↑ ↓ next · Space pause · M sound · S save · X remove · / search · B browse · R recall</div>
+<div id="keys" aria-hidden="true">↑ ↓ next · Space pause · M sound · F full screen · S save · X remove · / search · B browse · R recall</div>
 <div id="toast" role="status"></div>
 
 <script>
@@ -242,6 +261,8 @@ const store = {
   set(k, v) { try { localStorage.setItem("ss:" + k, JSON.stringify(v)); } catch {} },
 };
 const ICON = {
+  expand: '<svg viewBox="0 0 24 24"><path d="M4 4h6v2H6v4H4V4zm10 0h6v6h-2V6h-4V4zM4 14h2v4h4v2H4v-6zm14 0h2v6h-6v-2h4v-4z"/></svg>',
+  shrink: '<svg viewBox="0 0 24 24"><path d="M8 4h2v6H4V8h4V4zm6 0h2v4h4v2h-6V4zM4 14h6v6H8v-4H4v-2zm10 0h6v2h-4v4h-2v-6z"/></svg>',
   grid: '<svg viewBox="0 0 24 24"><path d="M4 4h7v7H4V4zm9 0h7v7h-7V4zM4 13h7v7H4v-7zm9 0h7v7h-7v-7z"/></svg>',
   flag: '<svg viewBox="0 0 24 24"><path d="M5 3h2v18H5V3zm3 1h10l-2 4 2 4H8V4z"/></svg>',
   brain: '<svg viewBox="0 0 24 24"><path d="M9 3a3 3 0 0 0-3 3 3 3 0 0 0-2 5 3 3 0 0 0 2 5 3 3 0 0 0 3 3 3 3 0 0 0 3-1V4a3 3 0 0 0-3-1zm6 0a3 3 0 0 0-3 1v15a3 3 0 0 0 3 1 3 3 0 0 0 3-3 3 3 0 0 0 2-5 3 3 0 0 0-2-5 3 3 0 0 0-3-3z"/></svg>',
@@ -394,6 +415,7 @@ function cardHTML(c, i, name) {
         <div class="poster" style="background-image:url('https://i.ytimg.com/vi/${esc(c.vid)}/hqdefault.jpg')"></div>
         <button class="tap" aria-label="Tap for sound or pause, double-tap to save"><span class="paused-icon">${ICON.play}</span></button>
         <button class="speed" aria-label="Playback speed">${rate}×</button>
+        <button class="fs" aria-label="Full screen">${document.body.classList.contains("immersive") ? ICON.shrink : ICON.expand}</button>
         <span class="burst">${ICON.heart}</span>
         <div class="pill">${ICON.muted}Tap for sound</div>
         <div class="bar"><i></i></div>
@@ -821,6 +843,28 @@ async function shareClip(c) {
   }
 }
 
+// ---------- Full screen: the video fills the screen and swiping still moves between clips.
+// Android / computers: real full screen (and landscape on phones). iPhone can't do that from a web page,
+// so it gets the same edge-to-edge layout, plus a hint to turn the phone sideways.
+async function toggleImmersive(on = !document.body.classList.contains("immersive")) {
+  const card = activeCard;
+  document.body.classList.toggle("immersive", on);
+  document.querySelectorAll(".fs").forEach((b) => (b.innerHTML = on ? ICON.shrink : ICON.expand));
+  try {
+    if (on && document.fullscreenEnabled && !document.fullscreenElement) {
+      await document.documentElement.requestFullscreen({ navigationUI: "hide" });
+      await screen.orientation?.lock?.("landscape").catch(() => {});
+    } else if (!on && document.fullscreenElement) {
+      screen.orientation?.unlock?.(); await document.exitFullscreen();
+    }
+  } catch {}
+  if (on && !document.fullscreenEnabled && matchMedia("(orientation: portrait)").matches) toast("Turn your phone sideways for full screen");
+  if (card) requestAnimationFrame(() => $("#feed").scrollTo({ top: card.offsetTop }));   // stay on the same clip
+}
+document.addEventListener("fullscreenchange", () => { if (!document.fullscreenElement) toggleImmersive(false); });
+// Turning the phone keeps you on the same clip.
+addEventListener("orientationchange", () => setTimeout(() => activeCard && $("#feed").scrollTo({ top: activeCard.offsetTop }), 250));
+
 // ---------- Sheet: one full-screen panel used by Browse, channel pages and Recall
 let sheetOpen = null;
 function openSheet(kind, title, html) {
@@ -1021,6 +1065,7 @@ $("#feed").addEventListener("click", (e) => {
   if (e.target.closest(".share") && c) { shareClip(c); return; }
   if (e.target.closest(".flag") && card) { askBadCut(card); return; }
   const ch = e.target.closest(".ch"); if (ch) { openChannel(ch.dataset.ch); return; }
+  if (e.target.closest(".fs")) { toggleImmersive(); return; }
   if (e.target.closest(".speed")) {
     rate = RATES[(RATES.indexOf(rate) + 1) % RATES.length]; store.set("rate", rate);
     document.querySelectorAll(".speed").forEach((b) => (b.textContent = `${rate}×`));
@@ -1055,6 +1100,7 @@ document.addEventListener("keydown", (e) => {
   if (e.key === "Escape") { if (sheetOpen) closeSheet(); if (historyOpen) closeHistory(); return; }
   if (e.key === "/") { e.preventDefault(); openSearch(); return; }
   if (e.key === "b") { openBrowse(); return; }
+  if (e.key === "f") { toggleImmersive(); return; }
   if (e.key === "r") { openRecall(); return; }
   const feed = $("#feed");
   if (e.key === "ArrowDown" || e.key === "j") { e.preventDefault(); feed.scrollBy({ top: innerHeight, behavior: "smooth" }); }
