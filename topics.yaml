@@ -2,7 +2,7 @@
 # Then start a Claude Code session on this repo and say "Run the pipeline for new topics."
 
 defaults:
-  clips_per_topic: 50
+  clips_per_topic: 100
   min_minutes: 8
   max_age_months: 24
   min_substance: 7
