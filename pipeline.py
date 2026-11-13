@@ -342,8 +342,8 @@ def cmd_label_prep(args):
     cache = load_cache()
     todo = [v for v in cache.values() if v["status"] == "candidate" and "label" not in v]
     out = WORK / "labels"
-    for f in out.glob("batch_*.in.json"):
-        f.unlink()
+    for f in list(out.glob("batch_*.in.json")) + list(out.glob("batch_*.out.json")):
+        f.unlink()  # stale outputs from an earlier run must never be re-applied
     for i in range(0, len(todo), LABEL_BATCH):
         items = [{"vid": v["vid"], "title": v["title"], "channel": v["channel"], "minutes": v["minutes"],
                   "tags": v["tags"][:8], "description": v.get("description", "")[:400]}

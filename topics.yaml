@@ -5,7 +5,7 @@ defaults:
   clips_per_topic: 50
   min_minutes: 8
   max_age_months: 24
-  min_substance: 7
+  min_substance: 6          # 6 while clips come from chapters (no transcript costs 1 point); back to 7 with transcripts
   max_clips_per_channel: 5
   max_clips_per_subject: 2   # e.g. at most 2 "self-attention" clips per topic, whoever made them
   require_seen_content: true # publish only clips whose words Sonnet saw (transcript or chapters)
