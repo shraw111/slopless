@@ -84,10 +84,9 @@
   .sum[aria-expanded="true"] .points { display: block; }
   .sum[aria-expanded="true"] .sum-more { display: none; }
   .actions { display: flex; gap: 10px; flex-wrap: wrap; }
-  .src-row { display: flex; align-items: center; gap: 10px; }
-  .src-row .src { flex: 1; min-width: 0; }
-  .yt { flex: none; padding: 5px 10px; border-radius: 999px; background: rgba(255,255,255,.12);
-    color: var(--text); font-size: 13px; font-weight: 600; text-decoration: none; white-space: nowrap; }
+  .title-link { color: inherit; text-decoration: underline; text-decoration-color: rgba(255,255,255,.35);
+    text-underline-offset: 3px; }
+  .title-link:active, .title-link:hover { color: var(--text); text-decoration-color: currentColor; }
   .pill-btn { padding: 7px 13px; border-radius: 999px; background: rgba(255,255,255,.12); font-size: 13px; font-weight: 600; }
   .card[data-i] { touch-action: pan-y; transform-origin: 50% 85%; }
   /* swipe-to-remove: a label waits behind the feed and shows through as the card moves away */
@@ -257,11 +256,8 @@ function cardHTML(c, i, name) {
         <div class="pill">${ICON.muted}Tap for sound</div>
         <div class="bar"><i></i></div>
       </div>
-      <div class="src-row">
-        <div class="src"><b>${esc(c.channel)}</b> · ${esc(c.title)}</div>
-        <a class="yt" href="https://www.youtube.com/watch?v=${esc(c.vid)}&t=${c.start}s" target="_blank" rel="noopener"
-           aria-label="Watch the full video on YouTube">Full video ↗</a>
-      </div>
+      <div class="src"><b>${esc(c.channel)}</b> · <a class="title-link" href="https://www.youtube.com/watch?v=${esc(c.vid)}&t=${c.start}s"
+        target="_blank" rel="noopener" title="Watch the full video on YouTube">${esc(c.title)}</a></div>
       ${c.summary ? `<button class="sum" aria-expanded="false">
           <span class="sum-text">${esc(c.summary)}</span>
           ${(c.points || []).length ? `<ul class="points">${c.points.map((x) => `<li>${esc(x)}</li>`).join("")}</ul>
