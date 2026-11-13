@@ -23,28 +23,39 @@
 
   /* topic chips */
   header { position: fixed; z-index: 20; inset: 0 0 auto 0; padding: env(safe-area-inset-top) 0 0;
-    background: linear-gradient(var(--bg) 70%, transparent); }
+    background: linear-gradient(rgba(0,0,0,.55), transparent); pointer-events: none; }
+  header .chips { pointer-events: auto; }
   .chips { display: flex; gap: 8px; padding: 10px 16px 14px; overflow-x: auto; scrollbar-width: none; }
   .chips::-webkit-scrollbar { display: none; }
-  .chip { flex: none; padding: 7px 14px; border-radius: 999px; background: var(--chip); color: var(--text);
+  .chip { flex: none; padding: 7px 14px; border-radius: 999px; background: rgba(255,255,255,.14);
+    backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); color: var(--text);
     font-size: 14px; font-weight: 600; white-space: nowrap; transition: background .15s, color .15s; }
   .chip[aria-pressed="true"] { background: var(--accent); color: var(--accent-text); }
   .chip .n { opacity: .55; font-weight: 500; margin-left: 4px; }
 
   /* feed */
-  #feed { height: 100dvh; overflow-y: auto; scroll-snap-type: y mandatory; overscroll-behavior: contain;
+  /* A fixed full-screen layer: the browser's address bar never resizes cards mid-swipe. */
+  #feed { position: fixed; inset: 0; overflow-y: auto; scroll-snap-type: y mandatory; overscroll-behavior: contain;
     scrollbar-width: none; }
   #feed::-webkit-scrollbar { display: none; }
-  .card { height: 100dvh; scroll-snap-align: start; scroll-snap-stop: always; position: relative;
-    display: flex; flex-direction: column; justify-content: center; gap: 16px;
-    padding: var(--top) 16px calc(env(safe-area-inset-bottom) + 24px); }
+  .card { height: 100%; scroll-snap-align: start; scroll-snap-stop: always; position: relative; overflow: hidden;
+    display: flex; flex-direction: column; justify-content: center; gap: 14px;
+    padding: var(--top) 16px calc(env(safe-area-inset-bottom) + 20px); }
+  .card > * { position: relative; z-index: 1; }
+  /* Shorts-style backdrop: the video's own thumbnail, blurred, fills the screen */
+  .card > .bg { position: absolute; z-index: 0; inset: -40px; background: #000 center / cover no-repeat;
+    filter: blur(28px) brightness(.38) saturate(1.3); }
   .meta-top { display: flex; align-items: center; gap: 8px; color: var(--muted); font-size: 13px; }
   .tag { color: var(--accent); font-weight: 700; letter-spacing: .02em; text-transform: uppercase; font-size: 12px; }
   .hook { margin: 0; font-size: clamp(22px, 6.4vw, 30px); line-height: 1.15; font-weight: 750;
     letter-spacing: -.02em; text-wrap: balance; }
-  .stage { position: relative; width: 100%; aspect-ratio: 16 / 9; border-radius: 14px; overflow: hidden;
+  .stage { position: relative; width: calc(100% + 32px); margin: 0 -16px; aspect-ratio: 16 / 9; overflow: hidden;
     background: #000 center / cover no-repeat; box-shadow: 0 10px 40px rgba(0,0,0,.5); }
   .stage iframe, .stage .player { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+  /* thumbnail stays on top until the video is really playing, so there is no black flash */
+  .poster { position: absolute; inset: 0; z-index: 1; background: #000 center / cover no-repeat;
+    transition: opacity .35s; pointer-events: none; }
+  .stage.playing .poster { opacity: 0; }
   .tap { position: absolute; inset: 0; z-index: 2; display: grid; place-items: center; }
   .pill { position: absolute; z-index: 3; left: 10px; bottom: 12px; display: flex; align-items: center; gap: 6px;
     padding: 6px 11px; border-radius: 999px; background: rgba(0,0,0,.66); backdrop-filter: blur(8px);
@@ -58,20 +69,21 @@
   .stage.paused .paused-icon { display: grid; }
   .bar { position: absolute; z-index: 3; left: 0; right: 0; bottom: 0; height: 3px; background: rgba(255,255,255,.18); }
   .bar i { display: block; height: 100%; width: 0; background: var(--accent); }
-  .src { font-size: 14px; color: var(--muted); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+  .src { font-size: 14px; color: rgba(255,255,255,.72); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
     overflow: hidden; }
   .src b { color: var(--text); font-weight: 600; }
-  .why { font-size: 14px; color: var(--muted); margin: -6px 0 0; }
+  .why { font-size: 14px; color: rgba(255,255,255,.72); margin: -4px 0 0; }
   .actions { display: flex; gap: 10px; }
   .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 46px;
     padding: 0 18px; border-radius: 12px; background: var(--text); color: var(--bg); font-weight: 700;
     text-decoration: none; font-size: 15px; }
   .btn.ghost { background: var(--chip); color: var(--text); }
   .btn svg { width: 18px; height: 18px; fill: currentColor; }
-  .empty { height: 100dvh; display: grid; place-content: center; text-align: center; gap: 12px; padding: 24px; }
+  .empty { height: 100%; display: grid; place-content: center; text-align: center; gap: 12px; padding: 24px; }
   .empty h2 { margin: 0; font-size: 22px; }
   .empty p { margin: 0; color: var(--muted); max-width: 32ch; }
-  @media (min-width: 700px) { .card { max-width: 560px; margin: 0 auto; } }
+  @media (min-width: 700px) { .card { padding-left: calc(50% - 280px); padding-right: calc(50% - 280px); }
+    .stage { width: 100%; margin: 0; border-radius: 14px; } }
   @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
 </style>
 </head>
@@ -94,7 +106,7 @@ const ICON = {
 const fmtTime = (s) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
 const fmtViews = (n) => n >= 1e6 ? (n / 1e6).toFixed(1).replace(/\.0$/, "") + "M" : n >= 1e3 ? Math.round(n / 1e3) + "K" : String(n);
 
-let topics = [], clips = [], seen = new Set(store.get("seen", [])), selected = store.get("selected", null);
+let topics = [], clips = [], seen = new Set(store.get("seen", []).map((x) => String(x).slice(0, 11))), selected = store.get("selected", null);
 
 async function load() {
   const [t, c] = await Promise.all([
@@ -112,7 +124,7 @@ async function load() {
 // ---------- chips: "Mix" = every topic interleaved; tap a topic to focus it, tap more to mix them
 function renderChips() {
   const all = selected.length === topics.length;
-  const count = (id) => clips.filter((c) => c.topic === id && !seen.has(c.id)).length;
+  const count = (id) => clips.filter((c) => c.topic === id && !seen.has(c.vid)).length;
   $("#chips").innerHTML = (topics.length > 1 ? `<button class="chip" data-id="*" aria-pressed="${all}">Mix</button>` : "") +
     topics.map((t) => `<button class="chip" data-id="${esc(t.id)}" aria-pressed="${!all && selected.includes(t.id)}">
       ${esc(t.name)}<span class="n">${count(t.id)}</span></button>`).join("");
@@ -130,7 +142,7 @@ $("#chips").addEventListener("click", (e) => {
 
 // ---------- feed: round-robin across selected topics, unseen first, best substance first
 function buildOrder() {
-  const lanes = selected.map((id) => clips.filter((c) => c.topic === id && !seen.has(c.id))
+  const lanes = selected.map((id) => clips.filter((c) => c.topic === id && !seen.has(c.vid))
     .sort((a, b) => b.substance - a.substance));
   const out = [];
   for (let i = 0; lanes.some((l) => l.length); i++) {
@@ -152,10 +164,12 @@ function renderFeed() {
   const name = Object.fromEntries(topics.map((t) => [t.id, t.name]));
   feed.innerHTML = order.map((c, i) => `
     <article class="card" data-i="${i}">
+      <div class="bg" style="background-image:url('https://i.ytimg.com/vi/${esc(c.vid)}/hqdefault.jpg')"></div>
       <div class="meta-top"><span class="tag">${esc(name[c.topic])}</span><span>·</span><span>${fmtTime(c.end - c.start)}</span></div>
       <h2 class="hook">${esc(c.hook)}</h2>
       <div class="stage" style="background-image:url('https://i.ytimg.com/vi/${esc(c.vid)}/hqdefault.jpg')">
         <div class="slot"></div>
+        <div class="poster" style="background-image:url('https://i.ytimg.com/vi/${esc(c.vid)}/hqdefault.jpg')"></div>
         <button class="tap" aria-label="Tap to unmute or pause"><span class="paused-icon">${ICON.play}</span></button>
         <div class="pill">${ICON.muted}Tap for sound</div>
         <div class="bar"><i></i></div>
@@ -164,10 +178,9 @@ function renderFeed() {
       <p class="why">${esc(c.why)}</p>
       <div class="actions">
         <a class="btn" href="https://www.youtube.com/watch?v=${esc(c.vid)}&t=${c.start}s" target="_blank" rel="noopener">${ICON.yt}Watch full video</a>
-        <span class="btn ghost" title="Views">${fmtViews(c.views)} views</span>
       </div>
     </article>`).join("") + `
-    <div class="empty card"><h2>You're caught up</h2><p>${seen.size} clips watched. New clips land when the pipeline runs.</p>
+    <div class="empty card"><h2>You're caught up</h2><p>${clips.filter((c) => seen.has(c.vid)).length} clips watched. New clips land when the pipeline runs.</p>
       <button class="btn ghost" id="reset">Watch them again</button>
       <p style="font-size:12px">HN picks via <a href="https://hackertube.org">HackerTube</a> (ODC-By)</p></div>`;
   $("#reset").onclick = () => { seen.clear(); store.set("seen", []); renderChips(); renderFeed(); };
@@ -193,7 +206,7 @@ function dropPlayer(i) {
   try { p.player.destroy(); } catch {}
   players.delete(i);
   const card = cardAt(i);
-  if (card) { card.querySelector(".stage").classList.remove("sound", "paused"); card.querySelector(".slot").innerHTML = ""; }
+  if (card) { card.querySelector(".stage").classList.remove("sound", "paused", "playing"); card.querySelector(".slot").innerHTML = ""; }
 }
 
 function destroyPlayer() {   // used when the feed is rebuilt
@@ -247,9 +260,9 @@ function ensurePlayer(i) {
       onReady: () => { entry.ready = true; if (activeIdx === i) startPlayback(entry, c, stage); },
       onStateChange: (e) => {
         if (activeIdx !== i) { if (e.data === YT.PlayerState.PLAYING) e.target.pauseVideo(); return; }
-        if (e.data === YT.PlayerState.ENDED) { e.target.seekTo(c.start, true); e.target.playVideo(); return; } // loop
+        if (e.data === YT.PlayerState.ENDED) { advance(i); return; }
         if (e.data === YT.PlayerState.PLAYING) {
-          stage.classList.remove("paused"); stage.classList.toggle("sound", !e.target.isMuted());
+          stage.classList.remove("paused"); stage.classList.add("playing"); stage.classList.toggle("sound", !e.target.isMuted());
           trySound(e.target, stage);
         }
         if (e.data === YT.PlayerState.PAUSED) stage.classList.add("paused");
@@ -275,9 +288,23 @@ async function activate(card) {
   tick = setInterval(() => {
     const t = player?.getCurrentTime?.(); if (t == null || activeIdx !== i) return;
     bar.style.width = Math.max(0, Math.min(100, ((t - c.start) / (c.end - c.start)) * 100)) + "%";
-    if (t >= c.end - 0.25) player.seekTo(c.start, true);
+    if (t >= c.end - 0.25) advance(i);
   }, 250);
-  seenTimer = setTimeout(() => { seen.add(c.id); store.set("seen", [...seen]); }, 4000);
+  seenTimer = setTimeout(() => markSeen(c), 4000);
+}
+
+function markSeen(c) { if (!seen.has(c.vid)) { seen.add(c.vid); store.set("seen", [...seen]); } }
+
+// When a clip ends, glide to the next one (like Shorts' auto-scroll). The last clip loops instead.
+let advancedFrom = -1;
+function advance(i) {
+  if (advancedFrom === i || activeIdx !== i) return;
+  markSeen(order[i]);
+  const next = cardAt(i + 1);
+  if (!next) { player?.seekTo(order[i].start, true); return; }
+  advancedFrom = i;
+  $("#feed").scrollTo({ top: next.offsetTop, behavior: "smooth" });
+  setTimeout(() => { if (advancedFrom === i) advancedFrom = -1; }, 1500);
 }
 
 $("#feed").addEventListener("click", (e) => {
