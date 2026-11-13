@@ -12,7 +12,11 @@ sub-agent actually ran on (check the `model` field the agents wrote and the sess
    long-form explainers/talks, avoiding its `exclude`) into `data/queries/<id>.json` as
    `{"approved": false, "queries": [...]}`. **Show them to the user and wait.** On approval run
    `python pipeline.py approve-queries <id>`. Topics with `queries:` in topics.yaml are already approved.
-2. `python pipeline.py find` — YouTube search (English, embeddable, `max_age_months`), stats, channel
+2. For `hn_boost` topics, `find` downloads the zip from hackertube.org/data and unzips it to
+   `data/hackertube/hackertube-data/`. **Read `DATA.md` there first** (stances, `shelf_life`, duplicate
+   uploads, what's missing, ODC-By license) and check the script's rules still match it, then the script
+   pulls each topic's matches from `videos.jsonl`.
+   `python pipeline.py find` — YouTube search (English, embeddable, `max_age_months`), stats, channel
    subscribers, HackerTube matches for `hn_boost` topics, then the noise filters from topics.yaml
    (`min_views`, `min_views_hn`, `min_like_ratio`, `min_minutes`). Videos already in `data/videos.json` are
    skipped, so only new topics cost API quota (~100 units per query page).

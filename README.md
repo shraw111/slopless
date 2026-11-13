@@ -44,3 +44,9 @@ Claude will show you the search queries it wrote before spending API quota, then
 | clips per topic | 50 |
 
 Engagement rank (used to keep the top 100): `log10(views) + 60·likes/views + 200·comments/views (+1 if HN)`.
+
+## Credits
+
+Hacker News recommendations come from the [HackerTube](https://hackertube.org) data export
+(ODC-By 1.0), built from the [open-index/hacker-news](https://huggingface.co/datasets/open-index/hacker-news)
+dataset. Video data from YouTube.

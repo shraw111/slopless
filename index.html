@@ -169,7 +169,8 @@ function renderFeed() {
       </div>
     </article>`).join("") + `
     <div class="empty card"><h2>You're caught up</h2><p>${seen.size} clips watched. New clips land when the pipeline runs.</p>
-      <button class="btn ghost" id="reset">Watch them again</button></div>`;
+      <button class="btn ghost" id="reset">Watch them again</button>
+      <p style="font-size:12px">HN picks via <a href="https://hackertube.org">HackerTube</a> (ODC-By)</p></div>`;
   $("#reset").onclick = () => { seen.clear(); store.set("seen", []); renderChips(); renderFeed(); };
   feed.querySelectorAll(".card[data-i]").forEach((el) => io.observe(el));
 }

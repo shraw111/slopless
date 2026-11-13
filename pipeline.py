@@ -16,7 +16,7 @@ See CLAUDE.md for the full run order.
   python pipeline.py score-apply
   python pipeline.py select [--preview]       # write clips.json + topics.json for the feed
 """
-import argparse, datetime as dt, gzip, html, json, math, os, re, sys
+import argparse, datetime as dt, gzip, html, json, math, os, re, sys, zipfile
 from pathlib import Path
 
 import requests
@@ -144,18 +144,38 @@ def fetch_details(vids):
 
 # ---------------------------------------------------------------- HackerTube
 def hackertube():
-    """{vid: card} for videos HN recommended, from hackertube.org's data export."""
-    f = HT_DIR / "videos.jsonl"
-    if not f.exists():
+    """{vid: card} for videos HN recommended, from the HackerTube data export (hackertube.org/data).
+
+    Downloads the export zip, unzips it to data/hackertube/hackertube-data/ and applies the rules in its
+    DATA.md (read it before relying on the matches): only rec/strong_rec count as recommendations
+    (hn.recommenders > 0), shelf_life "news" is hidden, and duplicate uploads are deduped by normalized
+    title, keeping the first (the file is sorted best-scored first). Data is ODC-By: credit HackerTube.
+    """
+    d = HT_DIR / "hackertube-data"
+    if not (d / "videos.jsonl").exists():
         HT_DIR.mkdir(parents=True, exist_ok=True)
-        r = requests.get("https://hackertube.org/download/videos.jsonl", timeout=300)
+        meta = requests.get("https://hackertube.org/api/export", timeout=30).json()
+        r = requests.get(f"https://hackertube.org/download/{meta['zip']['name']}", timeout=600)
         r.raise_for_status()
-        f.write_bytes(r.content)
-    cards = {}
-    for line in f.open():
+        zpath = HT_DIR / meta["zip"]["name"]
+        zpath.write_bytes(r.content)
+        with zipfile.ZipFile(zpath) as z:
+            for n in z.namelist():  # extract only plain relative paths
+                if n.startswith("hackertube-data/") and ".." not in n:
+                    z.extract(n, HT_DIR)
+        print(f"HackerTube export {meta.get('generated')} unzipped -> {d}; read {d / 'DATA.md'} first")
+    cards, titles = {}, set()
+    for line in (d / "videos.jsonl").open():
         v = json.loads(line)
-        if v.get("hn", {}).get("recommenders", 0) > 0 and v.get("shelf_life") != "news":
-            cards[v["vid"]] = v
+        if v.get("hn", {}).get("recommenders", 0) == 0 or v.get("shelf_life") == "news":
+            continue
+        if v.get("content_type") in ("comedy", "music"):
+            continue
+        norm = re.sub(r"[^a-z0-9]+", " ", v["title"].lower()).strip()
+        if norm in titles:
+            continue
+        titles.add(norm)
+        cards[v["vid"]] = v
     return cards
 
 
@@ -169,12 +189,14 @@ def topic_keywords(t):
 
 
 def hn_matches(t, cards):
+    """A topic's matches in videos.jsonl: at least 2 distinct topic keywords across the title, HN summary,
+    why_hn, primary topic, tags and category names. Haiku labeling then confirms or rejects each one."""
     kws = topic_keywords(t)
     pat = re.compile(r"\b(" + "|".join(map(re.escape, kws)) + r")s?\b")
     out = []
     for vid, v in cards.items():
-        text = " ".join([v["title"], v.get("primary_topic", ""), " ".join(v.get("tags", [])),
-                         " ".join(c["name"] for c in v.get("categories", []))]).lower()
+        text = " ".join([v["title"], v.get("summary", ""), v.get("why_hn", ""), v.get("primary_topic", ""),
+                         " ".join(v.get("tags", [])), " ".join(c["name"] for c in v.get("categories", []))]).lower()
         if len(set(pat.findall(text))) >= 2:
             out.append(vid)
     return out
@@ -260,8 +282,10 @@ def cmd_find(args):
                 token = res.get("nextPageToken")
                 if not token:
                     break
-        cards = cards or hackertube()  # also used to flag HN-recommended search hits
-        hn_ids = hn_matches(t, cards) if t.get("hn_boost") else []
+        hn_ids = []
+        if t.get("hn_boost"):
+            cards = cards or hackertube()
+            hn_ids = hn_matches(t, cards)
         new = [v for v in set(found) | set(hn_ids) if v not in cache]
         details = fetch_details(new) if new else {}
         kept = dropped = 0
@@ -276,7 +300,7 @@ def cmd_find(args):
             v = details.get(vid)
             if not v:
                 continue
-            v["hn"] = vid in cards
+            v["hn"] = bool(cards) and vid in cards
             if v["hn"]:
                 v["hn_why"] = cards[vid].get("why_hn", "")
             v["queries"] = found.get(vid, [])
