@@ -84,11 +84,18 @@ def save_cache(c):
 
 # ---------------------------------------------------------------- YouTube Data API
 def yt(endpoint, **params):
+    # The key comes from YOUTUBE_API_KEY, or (in Claude Code cloud sessions) from a network secret that the
+    # session's proxy adds as the X-Goog-Api-Key header; the placeholder below is replaced there.
     key = os.environ.get("YOUTUBE_API_KEY")
-    if not key:
-        sys.exit("YOUTUBE_API_KEY is not set. Add it as an environment variable (never commit it).")
-    params["key"] = key
-    r = requests.get(f"{YT}/{endpoint}", params=params, timeout=30)
+    headers = {}
+    if key:
+        params["key"] = key
+    else:
+        headers["X-Goog-Api-Key"] = "injected-by-proxy"
+    r = requests.get(f"{YT}/{endpoint}", params=params, headers=headers, timeout=30)
+    if r.status_code in (400, 403) and not key and "API key" in r.text:
+        sys.exit("No YouTube API key: set YOUTUBE_API_KEY, or save it as this environment's network secret "
+                 "for www.googleapis.com (header X-Goog-Api-Key). Never commit it.")
     if r.status_code != 200:
         sys.exit(f"YouTube API {endpoint} failed: {r.status_code} {r.text[:300]}")
     usage = jload(DATA / "usage.json", {})
@@ -273,11 +280,19 @@ def cmd_find(args):
         qfile = QUERIES / f"{t['id']}.json"
         qdata = jload(qfile, {})
         ran = set(qdata.get("ran", []))
-        queries = [q for q in topic_queries(t) if q not in ran]  # each query costs 100 units: run it once
+        state = jload(STATE, {})
+        last = state.get(t["id"], {}).get("last_refresh")
+        if args.refresh:   # weekly: every approved query again, only for videos published since the last run
+            queries = topic_queries(t)
+            since = max(months_ago(t["max_age_months"]),
+                        dt.datetime.fromisoformat(last) - dt.timedelta(days=2) if last else months_ago(t["max_age_months"]))
+        else:
+            queries = [q for q in topic_queries(t) if q not in ran]  # each query costs 100 units: run it once
+            since = months_ago(t["max_age_months"])
         if not queries:
             print(f"{t['id']}: all queries already ran")
             continue
-        after = months_ago(t["max_age_months"]).strftime("%Y-%m-%dT%H:%M:%SZ")
+        after = since.strftime("%Y-%m-%dT%H:%M:%SZ")
         found = {}
         for q in queries:
             token = None
@@ -297,6 +312,9 @@ def cmd_find(args):
         if qdata:
             qdata["ran"] = sorted(ran | set(queries))
             jsave(qfile, qdata)
+        state = jload(STATE, {})
+        state.setdefault(t["id"], {})["last_refresh"] = NOW.isoformat(timespec="seconds")
+        jsave(STATE, state)
         new = [v for v in set(found) | set(hn_ids) if v not in cache]
         details = fetch_details(new) if new else {}
         kept = dropped = 0
@@ -317,6 +335,7 @@ def cmd_find(args):
             v["queries"] = found.get(vid, [])
             v["found_for"] = [t["id"]]
             v["found_at"] = NOW.isoformat(timespec="seconds")
+            v["via_refresh"] = bool(args.refresh)
             why = passes(v, t, v["hn"])
             v["status"] = "candidate" if why is None else "dropped"
             v["drop_reason"] = why
@@ -372,8 +391,15 @@ def cmd_label_apply(args):
 
 
 def top_candidates(cache, t):
-    c = [v for v in cache.values() if v["status"] == "candidate" and v.get("label", {}).get("topic") == t["id"]]
-    return sorted(c, key=lambda v: -v["rank"])[: t["top_n"]]
+    """The topic's top_n candidates by engagement rank, plus videos a weekly refresh found in the last 14 days,
+    so new uploads always get scored even when the topic already has top_n scored ones."""
+    c = sorted((v for v in cache.values() if v["status"] == "candidate" and v.get("label", {}).get("topic") == t["id"]),
+               key=lambda v: -v["rank"])
+    recent = (NOW - dt.timedelta(days=14)).isoformat()
+    top = c[: t["top_n"]]
+    ids = {v["vid"] for v in top}
+    return top + [v for v in c[t["top_n"]:]
+                  if v.get("via_refresh") and v.get("found_at", "") >= recent and v["vid"] not in ids]
 
 
 # ---------------------------------------------------------------- 3a. transcripts / chapters
@@ -784,6 +810,7 @@ def main():
         p.add_argument("--limit", type=int, default=0)
         p.add_argument("--retry", action="store_true", help="transcripts: retry videos that fell back")
         p.add_argument("--rescore", action="store_true", help="score-prep: include already-scored videos")
+        p.add_argument("--refresh", action="store_true", help="find: weekly run, new uploads since the last run")
         p.set_defaults(fn=fn)
     for name, fn in [("approve-queries", cmd_approve), ("promote", cmd_promote)]:
         p = sub.add_parser(name)

@@ -42,3 +42,19 @@ sub-agent actually ran on (check the `model` field the agents wrote and the sess
    `data/hackertube/`), push, and merge to `main` (GitHub Pages deploys from `main`).
 9. Summarize: clips per topic, thresholds used (from topics.yaml), API units (`data/usage.json`) and
    sub-agent models.
+
+## Weekly refresh
+
+When the prompt says **"Run the weekly refresh"** (a scheduled task sends it every week), do this without
+stopping for approval. Topics in `phase: preview` (new topics) are skipped: those still need the user.
+1. If the repo isn't in the session, attach `shraw111/slopless` with push access and clone it. Work on `main`.
+2. `python pipeline.py find --refresh` for each topic in `phase: full` (`--topic <id>`). The YouTube key is a
+   network secret on the environment (header X-Goog-Api-Key); never ask for it in chat, never commit it.
+3. Steps 3–5 and 7 above for the new videos only (no `--rescore`): label (Haiku), transcripts + heatmap,
+   score (Sonnet; ~5 files per agent, larger transcripts fewer), subjects (Haiku), summaries (Haiku).
+   Transcripts are usually blocked from cloud servers; new clips then use chapters (bar 6) until the user
+   runs `python pipeline.py transcripts --retry` on their own computer.
+4. `python pipeline.py select`, commit `clips.json`, `topics.json` and `data/` (not `data/work/`,
+   `data/hackertube/`) with a message like "Weekly refresh: +N clips", and push to `main`.
+5. End with a short report: new videos found, clips added per topic, API units used, sub-agent models.
+   If nothing new qualified, say so and change nothing.
