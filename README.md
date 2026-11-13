@@ -11,8 +11,10 @@ Quality over quantity: no trending slop.
 - `pipeline.py` is the one script: find (YouTube Data API + [HackerTube](https://hackertube.org/data)
   for `hn_boost` topics) → cut the noise → label (Haiku sub-agents) → transcripts or chapter fallback →
   score and pick a clip (Sonnet sub-agents) → select → `clips.json` + `topics.json`.
-- `data/videos.json` caches every processed video and its result, so re-runs skip finished videos and
-  adding a topic only costs that topic.
+- The pipeline's working data (video cache, transcripts, queries, state) lives in the **private** repo
+  `shraw111/slopless-data`, cloned next to this one, because it holds YouTube's own data (metadata,
+  captions) that YouTube's terms don't allow republishing. Re-runs skip finished videos, so adding a
+  topic only costs that topic. Only `clips.json` and `topics.json` are public.
 - `index.html` is the feed. It reads `clips.json` and `topics.json` (no hardcoded topics) and is
   deployed by GitHub Pages from `main`.
 - `CLAUDE.md` is the step-by-step runbook Claude Code follows.
@@ -37,10 +39,12 @@ YouTube blocks transcript requests from cloud servers, so the cloud run picks cl
 candidate be used. From your laptop (no API key needed for this step):
 
 ```bash
-git clone https://github.com/shraw111/slopless && cd slopless
+git clone https://github.com/shraw111/slopless
+git clone https://github.com/shraw111/slopless-data   # private: pipeline data, sits next to it
+cd slopless
 pip install -r requirements.txt
 python pipeline.py transcripts --retry     # fetches captions for every candidate, ~1 s each
-git add data/transcripts data/videos.json && git commit -m "Add transcripts" && git push
+cd ../slopless-data && git add data && git commit -m "Add transcripts" && git push
 ```
 
 Then start a Claude Code session on the repo and say **"Re-score the videos that now have transcripts."**

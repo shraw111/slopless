@@ -1,6 +1,9 @@
 # signal-shorts: runbook for Claude Code
 
 When the user says **"Run the pipeline for new topics"** (or "run the pipeline"), follow these steps in order.
+Pipeline data lives in the PRIVATE repo `shraw111/slopless-data`, cloned at `../slopless-data` (attach it with
+`add_repo` and clone it there if missing). Paths below like `data/...` are inside that repo; commit and push data
+changes THERE, never in this public repo (it ignores `data/`). Only `clips.json` and `topics.json` are public.
 Never commit API keys. `YOUTUBE_API_KEY` must be an environment variable; if it is missing, stop and say so.
 
 Models: you (the orchestrator) plan and review. Sub-agents run with the model set explicitly:
@@ -38,8 +41,8 @@ sub-agent actually ran on (check the `model` field the agents wrote and the sess
 7. Summaries: `python pipeline.py select`, then `python pipeline.py summaries-prep`, Haiku sub-agents with
    `prompts/summaries.md` (one per batch file in `data/work/summaries/`), and `python pipeline.py summaries-apply`.
    Only clips with a transcript get a summary; the others keep their one-line "why".
-8. `python pipeline.py select`, commit `clips.json`, `topics.json` and `data/` (not `data/work/`,
-   `data/hackertube/`), push, and merge to `main` (GitHub Pages deploys from `main`).
+8. `python pipeline.py select`, commit `clips.json` and `topics.json` here and push to `main`; commit
+   `data/` in `../slopless-data` and push it there (GitHub Pages deploys from `main`).
 9. Summarize: clips per topic, thresholds used (from topics.yaml), API units (`data/usage.json`) and
    sub-agent models.
 
@@ -47,7 +50,8 @@ sub-agent actually ran on (check the `model` field the agents wrote and the sess
 
 When the prompt says **"Run the weekly refresh"** (a scheduled task sends it every week), do this without
 stopping for approval. Topics in `phase: preview` (new topics) are skipped: those still need the user.
-1. If the repo isn't in the session, attach `shraw111/slopless` with push access and clone it. Work on `main`.
+1. If the repos aren't in the session, attach `shraw111/slopless` and `shraw111/slopless-data` with push access
+   and clone them side by side. Work on `main` in both.
 2. `python pipeline.py find --refresh` for each topic in `phase: full` (`--topic <id>`). The YouTube key is a
    network secret on the environment (header X-Goog-Api-Key); never ask for it in chat, never commit it.
 3. Steps 3–5 and 7 above for the new videos only (no `--rescore`): label (Haiku), transcripts + heatmap,
@@ -59,7 +63,7 @@ stopping for approval. Topics in `phase: preview` (new topics) are skipped: thos
    `score-prep --flagged` + Sonnet + `score-apply` to re-cut those videos, then `quiz-prep`/`summaries-prep`
    for the new cuts. Comment on each issue with what changed and close it.
 5. Recall questions: `python pipeline.py quiz-prep`, Haiku with `prompts/quiz.md`, `python pipeline.py quiz-apply`.
-6. `python pipeline.py select`, commit `clips.json`, `topics.json` and `data/` (not `data/work/`,
-   `data/hackertube/`) with a message like "Weekly refresh: +N clips", and push to `main`.
+6. `python pipeline.py select`, commit `clips.json` and `topics.json` here and `data/` in `../slopless-data`
+   with a message like "Weekly refresh: +N clips", and push both to `main`.
 7. End with a short report: new videos found, clips added per topic, API units used, sub-agent models.
    If nothing new qualified, say so and change nothing.
