@@ -1,0 +1,25 @@
+{
+ "approved": false,
+ "queries": [
+  "how large language models work explained",
+  "transformer architecture explained from scratch",
+  "attention mechanism intuition lecture",
+  "tokenization in LLMs explained",
+  "building an LLM from scratch code walkthrough",
+  "AI agents tool use architecture talk",
+  "building reliable LLM agents lessons",
+  "retrieval augmented generation RAG deep dive",
+  "RAG chunking embeddings retrieval evaluation",
+  "how to build LLM evals",
+  "LLM as a judge evaluation methodology",
+  "fine-tuning LLMs LoRA explained",
+  "RLHF DPO preference tuning explained",
+  "reasoning models test-time compute explained",
+  "reinforcement learning for LLM reasoning talk",
+  "mechanistic interpretability LLM talk",
+  "LLM inference optimization KV cache speculative decoding",
+  "scaling laws language models lecture",
+  "Stanford lecture large language models",
+  "machine learning research talk LLMs"
+ ]
+}

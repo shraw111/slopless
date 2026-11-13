@@ -1,0 +1,45 @@
+# signal-shorts topics. Add a topic by copying a block, editing it and setting enabled: true.
+# Then start a Claude Code session on this repo and say "Run the pipeline for new topics."
+
+defaults:
+  clips_per_topic: 50
+  min_minutes: 8
+  max_age_months: 24
+  min_substance: 7
+  max_clips_per_channel: 5
+  # Noise filters (step 2). Any topic can override these.
+  min_views: 5000          # drop videos below this view count
+  min_views_hn: 1000       # lower bar for videos Hacker News recommended (already vetted by people)
+  min_like_ratio: 0.015    # likes / views; videos with hidden likes skip this check
+  top_n: 100               # candidates per topic that go on to scoring
+  search_pages: 1          # 50 results per page per query; each page costs 100 API units
+
+topics:
+  - id: ai
+    name: AI
+    enabled: true
+    covers: how LLMs work, agents, RAG, evals, fine-tuning, reasoning models, research talks
+    exclude: news recaps, hype, "top 10 tools" lists, sponsored walkthroughs
+    good_clip: explains a concept or shows a demo clearly enough to stand alone
+    hn_boost: true
+
+  - id: ai-product
+    name: AI Product
+    enabled: true
+    covers: building and shipping AI products, AI product management, AI UX, pricing AI features, evals in production, case studies
+    exclude: generic startup advice with no AI angle, hype
+    good_clip: a decision, lesson or tactic a PM could act on
+
+  - id: parenting
+    name: Parenting
+    enabled: false
+    covers: "evidence-based parenting of young children: sleep, tantrums, play, language development"
+    exclude: influencer hot takes, product hauls, vlog drama, medical claims from unqualified people
+    good_clip: practical advice from a qualified expert (pediatrician, child psychologist, researcher)
+    max_age_months: 60
+
+# Optional per topic:
+#   queries: [list of search strings]   (otherwise Claude writes ~20 from "covers" and asks you to approve them)
+#   trusted_channels: [channel names]   (+1 substance)
+#   hn_keywords: [words]                (override the words used to match HackerTube videos; hn_boost topics only)
+#   any key from defaults, to override it for this topic
