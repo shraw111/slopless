@@ -119,6 +119,17 @@
   #q { width: 100%; margin-bottom: 14px; padding: 12px 14px; border-radius: 12px; border: 0; outline: none;
     background: var(--chip); color: var(--text); font: inherit; font-size: 16px; }
   .h-unsave { min-height: 36px; padding: 0 12px; font-size: 13px; }
+  .stats { margin: 0 0 12px; color: var(--muted); font-size: 14px; }
+  .stats b { color: var(--text); }
+  .play-saved { margin: 0 0 14px; }
+  .play-saved svg { width: 18px; height: 18px; fill: currentColor; }
+  .new { padding: 2px 7px; border-radius: 6px; background: var(--accent); color: var(--accent-text);
+    font-size: 11px; font-weight: 800; letter-spacing: .03em; text-transform: uppercase; }
+  #mode { position: fixed; z-index: 21; left: 50%; top: calc(env(safe-area-inset-top) + 62px); transform: translateX(-50%);
+    display: flex; align-items: center; gap: 10px; padding: 6px 8px 6px 14px; border-radius: 999px;
+    background: var(--accent); color: var(--accent-text); font-weight: 700; font-size: 13px; }
+  #mode[hidden] { display: none; }
+  #mode button { width: 24px; height: 24px; border-radius: 50%; background: rgba(0,0,0,.15); font-weight: 800; }
   .chip svg { width: 18px; height: 18px; fill: currentColor; display: block; }
   .chip.hist { padding: 7px 11px; }
   .pill-btn { display: inline-flex; align-items: center; gap: 6px; }
@@ -161,6 +172,7 @@
 <header><nav class="chips" id="chips" aria-label="Topics"></nav></header>
 <main id="feed" aria-live="polite"></main>
 <div id="swipe-hint" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 19a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg><span>Remove video</span></div>
+<div id="mode" hidden></div>
 <section id="history" hidden aria-label="History"></section>
 <section id="search" class="panel" hidden aria-label="Search"></section>
 <div id="toast" role="status"></div>
@@ -194,6 +206,7 @@ async function load() {
   ]);
   topics = t.filter((x) => c.some((k) => k.topic === x.id));
   clips = c;
+  markNew();
   bestOf = {};
   for (const k of clips) if (!bestOf[k.vid] || k.substance > bestOf[k.vid].substance) bestOf[k.vid] = k;
   const ids = topics.map((x) => x.id);
@@ -201,6 +214,7 @@ async function load() {
   if (!selected.length) selected = ids;
   renderChips();
   const shared = new URLSearchParams(location.search).get("clip");   // opened from a shared link
+  $("#mode").addEventListener("click", () => { renderFeed(); renderChips(); });
   if (!(shared && playFirst({ id: shared, vid: shared.slice(0, 11), start: +shared.slice(12) }))) renderFeed();
   if (shared) window.history.replaceState(null, "", location.pathname);
 }
@@ -217,11 +231,33 @@ let bestOf = {};   // video id -> its highest-scoring clip
 let skips = store.get("skips", {});                // clip id -> times swiped away early
 let removed = new Set(store.get("removed", []));   // video ids removed with a left swipe
 let history = store.get("history", []);            // newest first: watched and removed clips
+let watchLog = store.get("watchLog", {});         // "YYYY-MM-DD" -> seconds watched
+let unsavedSecs = 0;
+function addWatchTime(s) {
+  const day = new Date().toISOString().slice(0, 10);
+  watchLog[day] = (watchLog[day] || 0) + s;
+  if ((unsavedSecs += s) >= 5) { unsavedSecs = 0; store.set("watchLog", watchLog); }
+}
+function weekStats() {
+  const since = Date.now() - 7 * 864e5, cutoff = new Date(since).toISOString().slice(0, 10);
+  const secs = Object.entries(watchLog).filter(([d]) => d >= cutoff).reduce((a, [, s]) => a + s, 0);
+  const n = history.filter((h) => h.kind === "watched" && h.at >= since).length;
+  return { n, min: Math.round(secs / 60) };
+}
 let saved = store.get("saved", []);               // newest first: clips you saved
 let rate = store.get("rate", 1);                   // playback speed, remembered
 const RATES = [1, 1.25, 1.5, 2];
 const isSaved = (c) => saved.some((s) => s.id === c.id);
 const SKIP_LIMIT = 2;                              // swiped away early twice: gone
+// Clips published since your last visit stay "new" (first in the feed, with a badge) until you watch them.
+let fresh = new Set(store.get("fresh", []));
+function markNew() {
+  const known = store.get("known", null), ids = clips.map((c) => c.id);
+  if (known) { const k = new Set(known); for (const id of ids) if (!k.has(id)) fresh.add(id); }
+  fresh = new Set([...fresh].filter((id) => ids.includes(id)));
+  store.set("known", ids); store.set("fresh", [...fresh]);
+}
+const isNew = (c) => fresh.has(c.id) && !isSeen(c);
 const available = (c) => !isSeen(c) && !removed.has(c.vid) && (skips[c.id] || 0) < SKIP_LIMIT;
 
 function logHistory(c, kind) {
@@ -260,7 +296,9 @@ $("#chips").addEventListener("click", (e) => {
 const GAP = 6;   // cards between two clips of the same video
 function buildOrder() {
   const ok = clips.filter(available);
-  return interleave(ok.filter((c) => !skips[c.id])).concat(interleave(ok.filter((c) => skips[c.id])));
+  return interleave(ok.filter((c) => isNew(c) && !skips[c.id]))
+    .concat(interleave(ok.filter((c) => !isNew(c) && !skips[c.id])))
+    .concat(interleave(ok.filter((c) => skips[c.id])));
 }
 function interleave(list) {
   const lanes = selected.map((id) => list.filter((c) => c.topic === id).sort((a, b) => b.substance - a.substance));
@@ -283,7 +321,7 @@ function cardHTML(c, i, name) {
   return `
     <article class="card" data-i="${i}">
       <div class="bg" style="background-image:url('https://i.ytimg.com/vi/${esc(c.vid)}/hqdefault.jpg')"></div>
-      <div class="meta-top"><span class="tag">${esc(name[c.topic])}</span><span>·</span><span>${fmtTime(c.end - c.start)}</span></div>
+      <div class="meta-top">${isNew(c) ? `<span class="new">New</span>` : ""}<span class="tag">${esc(name[c.topic])}</span><span>·</span><span>${fmtTime(c.end - c.start)}</span></div>
       <h2 class="hook">${esc(c.hook)}</h2>
       <div class="stage" style="background-image:url('https://i.ytimg.com/vi/${esc(c.vid)}/hqdefault.jpg')">
         <div class="slot"></div>
@@ -318,7 +356,9 @@ function wireTail() {
   document.querySelectorAll(".card[data-i]").forEach((el) => io.observe(el));
 }
 
-function renderFeed(custom) {
+function renderFeed(custom, label) {
+  $("#mode").hidden = !label;
+  if (label) $("#mode").innerHTML = `<span>${esc(label)}</span><button aria-label="Back to the feed">✕</button>`;
   leaveClip(true);
   destroyPlayer();
   order = custom || buildOrder();
@@ -405,6 +445,16 @@ function trySound(p, stage) {
     stage.classList.toggle("sound", !p.isMuted());
   }, 700);
 }
+// Captions: shown while the clip is muted, so it still makes sense silently; hidden once sound is on.
+const ccState = new WeakMap();
+function syncCaptions(p) {
+  const muted = p?.isMuted?.(); if (muted == null || ccState.get(p) === muted) return;
+  ccState.set(p, muted);
+  try {
+    if (muted) { p.loadModule("captions"); p.setOption("captions", "track", { languageCode: "en" }); }
+    else p.unloadModule("captions");
+  } catch {}
+}
 function startPlayback(entry, c, stage) {
   const p = entry.player;
   p.mute(); p.seekTo(c.start, true); p.setPlaybackRate?.(rate); p.playVideo();
@@ -432,7 +482,8 @@ function ensurePlayer(i) {
   entry.player = new YT.Player(host, {
     videoId: c.vid,
     playerVars: { start: c.start, end: c.end, autoplay: 0, mute: 1, playsinline: 1, controls: 0, rel: 0,
-      modestbranding: 1, iv_load_policy: 3, disablekb: 1, fs: 0 },
+      modestbranding: 1, iv_load_policy: 3, disablekb: 1, fs: 0,
+      cc_load_policy: 1, cc_lang_pref: "en", hl: "en" },   // captions on while muted (see syncCaptions)
     events: {
       onReady: () => { entry.ready = true; if (activeIdx === i) startPlayback(entry, c, stage); },
       onStateChange: (e) => {
@@ -468,7 +519,11 @@ async function activate(card) {
   watched = 0; watchedClip = c;
   tick = setInterval(() => {
     const t = player?.getCurrentTime?.(); if (t == null || activeIdx !== i) return;
-    if (player.getPlayerState?.() === YT.PlayerState.PLAYING) watched = Math.max(watched, t - c.start);   // speed-proof
+    if (player.getPlayerState?.() === YT.PlayerState.PLAYING) {
+      watched = Math.max(watched, t - c.start);   // speed-proof
+      addWatchTime(0.25);
+    }
+    syncCaptions(player);
     bar.style.width = Math.max(0, Math.min(100, ((t - c.start) / (c.end - c.start)) * 100)) + "%";
     if (t >= c.end - 0.25) advance(i);
   }, 250);
@@ -477,6 +532,7 @@ async function activate(card) {
 function markSeen(c) {
   if (seen.has(c.id)) return;
   seen.add(c.id); store.set("seen", [...seen]);
+  if (fresh.delete(c.id)) store.set("fresh", [...fresh]);
   logHistory(c, "watched");
 }
 
@@ -588,7 +644,9 @@ function closeHistory(rerender = true) {
 function renderHistory() {
   const list = historyTab === "saved" ? saved : history.filter((h) => h.kind === historyTab);
   const n = (k) => (k === "saved" ? saved.length : history.filter((h) => h.kind === k).length);
+  const w = weekStats();
   $("#history").innerHTML = `
+    <p class="stats">This week: <b>${w.n}</b> clip${w.n === 1 ? "" : "s"} · <b>${w.min}</b> min</p>
     <div class="h-tabs">
       <button data-tab="watched" aria-pressed="${historyTab === "watched"}">Watched · ${n("watched")}</button>
       <button data-tab="saved" aria-pressed="${historyTab === "saved"}">Saved · ${n("saved")}</button>
@@ -605,6 +663,8 @@ function renderHistory() {
           saved: "Tap Save on a clip, or double-tap the video, to keep it here.",
           removed: "Swipe a clip left to remove its video. It shows up here so you can bring it back." }[historyTab]}</p>`}
     ${historyTab === "watched" && list.length ? `<button class="btn ghost h-clear">Clear watch history</button>` : ""}`;
+  if (historyTab === "saved" && list.length)
+    $("#history .h-tabs").insertAdjacentHTML("afterend", `<button class="btn play-saved">${ICON.play}Play saved · ${list.length}</button>`);
 }
 $("#history").addEventListener("click", (e) => {
   const tab = e.target.closest("[data-tab]");
@@ -612,6 +672,11 @@ $("#history").addEventListener("click", (e) => {
   const item = e.target.closest(".h-item");
   if (e.target.closest(".h-restore") && item) { restoreVideo(item.dataset.vid, item.dataset.id); toast("Back in your feed"); return; }
   if (e.target.closest(".h-unsave") && item) { unsave(item.dataset.id); renderHistory(); return; }
+  if (e.target.closest(".play-saved")) {   // your saved clips, newest first, as their own swipe feed
+    const list = saved.map(findClip).filter(Boolean);
+    if (!list.length) { toast("Those clips are no longer in the feed"); return; }
+    closeHistory(); renderChips(); renderFeed(list, `Saved · ${list.length}`); return;
+  }
   if (e.target.closest(".h-clear")) {
     if (!confirm("Clear your watch history? Watched clips will show up in the feed again.")) return;
     history = history.filter((h) => h.kind !== "watched"); store.set("history", history);
@@ -728,6 +793,7 @@ $("#feed").addEventListener("click", (e) => {
 document.addEventListener("visibilitychange", () => {
   if (!document.hidden) return;
   player?.pauseVideo?.();
+  store.set("watchLog", watchLog);
   const c = watchedClip; if (c && watched >= (c.end - c.start) * 0.5) markSeen(c);   // leaving the app: no skip
 });
 document.addEventListener("keydown", (e) => {
