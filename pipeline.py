@@ -25,7 +25,15 @@ import requests
 import yaml
 
 ROOT = Path(__file__).resolve().parent
-DATA = ROOT / "data"
+# The pipeline's working data (YouTube metadata cache, transcripts, queries, state) lives in the PRIVATE repo
+# shraw111/slopless-data, cloned next to this one, so YouTube's data is never published. Override with
+# SLOPLESS_DATA=/path/to/slopless-data/data. Only clips.json and topics.json are public.
+DATA = Path(os.environ.get("SLOPLESS_DATA") or ROOT.parent / "slopless-data" / "data")
+if not DATA.exists() and (ROOT / "data").exists():
+    DATA = ROOT / "data"   # older layout
+if not DATA.exists():
+    sys.exit(f"Pipeline data not found at {DATA}. Clone the private repo next to this one:\n"
+             "  git clone https://github.com/shraw111/slopless-data ../slopless-data")
 CACHE = DATA / "videos.json"          # every processed video id and its results
 STATE = DATA / "state.json"           # per-topic progress (preview / full)
 QUERIES = DATA / "queries"            # data/queries/<topic>.json
@@ -818,8 +826,7 @@ def cmd_select(args):
             chosen.append({"id": f"{v['vid']}-{r['start_sec']}", "vid": v["vid"], "topic": tid,
                            "start": int(r["start_sec"]), "end": int(r["end_sec"]), "hook": r["hook"],
                            "why": r["why"], "substance": adj, "boosted": bool(boost), "title": v["title"],
-                           "channel": v["channel"], "published": v["published"][:10], "views": v["views"],
-                           "minutes": v["minutes"], "hn": bool(v.get("hn")), "source": v.get("source"),
+                           "channel": v["channel"], "hn": bool(v.get("hn")), "source": v.get("source"),
                            "subject": subj,
                            **({"summary": r["summary"], "points": r.get("points", [])} if r.get("summary") else {}),
                            **({"quiz": r["quiz"]} if r.get("quiz") else {})})
