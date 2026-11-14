@@ -731,6 +731,17 @@ function syncCaptions(p) {
     }
   } catch {}
 }
+// The CC button shows what YouTube reports for the clip on screen: "CC·EN" = a caption track is in use,
+// "CC·–" = YouTube is not offering captions for this clip, plain "CC" = switched off.
+let ccTick = 0;
+function updateCCLabel(p, card) {
+  const b = card?.querySelector(".cc"); if (!b) return;
+  if (!captions) { b.textContent = "CC"; return; }
+  let t = null; try { t = p.getOption("captions", "track"); } catch {}
+  const s = ccInfo.get(p);
+  if (t && t.languageCode) b.textContent = `CC·${t.languageCode.slice(0, 2).toUpperCase()}`;
+  else if (s && Date.now() - s.t0 > 6000) b.textContent = "CC·–";
+}
 function setCaptions(on) {
   captions = on; store.set("captions", on);
   document.querySelectorAll(".cc").forEach((b) => b.setAttribute("aria-pressed", on));
@@ -833,6 +844,7 @@ async function activate(card) {
       watched = Math.max(watched, t - c.start);   // speed-proof
       addWatchTime(0.25);
       syncCaptions(player);
+      if ((ccTick++ & 3) === 0) updateCCLabel(player, card);   // about once a second
     }
     bar.style.width = Math.max(0, Math.min(100, ((t - c.start) / (c.end - c.start)) * 100)) + "%";
     if (t >= c.end - 0.25) advance(i);
@@ -936,12 +948,12 @@ function restoreVideo(vid, focusId) {
 
 const buzz = (ms = 10) => { try { navigator.vibrate?.(ms); } catch {} };
 let toastTimer = null;
-function toast(msg, action, fn) {
+function toast(msg, action, fn, ms = 5000) {
   const t = $("#toast");
   t.innerHTML = `<span>${esc(msg)}</span>${action ? `<button>${esc(action)}</button>` : ""}`;
   t.classList.add("on");
   if (action) t.querySelector("button").onclick = () => { t.classList.remove("on"); fn(); };
-  clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove("on"), 5000);
+  clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove("on"), ms);
 }
 
 // ---------- History: what you watched (tap to replay) and what you removed (restore)
@@ -1721,7 +1733,10 @@ $("#feed").addEventListener("click", (e) => {
   if (e.target.closest(".flag") && card) { askBadCut(card); return; }
   const ch = e.target.closest(".ch"); if (ch) { openChannel(ch.dataset.ch); return; }
   if (e.target.closest(".fs")) { toggleImmersive(); return; }
-  if (e.target.closest(".cc")) { setCaptions(!captions); return; }
+  if (e.target.closest(".cc")) {
+    if (captions && e.target.closest(".cc").textContent.includes("–")) { toast("YouTube isn't offering captions for this clip"); return; }
+    setCaptions(!captions); return;
+  }
   if (e.target.closest(".speed")) {
     rate = RATES[(RATES.indexOf(rate) + 1) % RATES.length]; store.set("rate", rate);
     document.querySelectorAll(".speed").forEach((b) => (b.textContent = `${rate}×`));
@@ -1780,7 +1795,7 @@ if ("serviceWorker" in navigator) {
   let told = false;
   navigator.serviceWorker.addEventListener("message", (e) => {
     if (e.data?.type !== "updated" || told) return;
-    told = true; toast("New clips and updates are ready", "Reload", () => location.reload());
+    told = true; toast("New clips and updates are ready", "Reload", () => location.reload(), 15000);
   });
 }
 </script>
