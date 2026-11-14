@@ -61,6 +61,8 @@
     letter-spacing: -.02em; text-wrap: balance; }
   .stage { position: relative; width: calc(100% + 32px); margin: 0 -16px; aspect-ratio: 16 / 9; overflow: hidden;
     background: #000 center / cover no-repeat; box-shadow: 0 10px 40px rgba(0,0,0,.5); }
+  /* a YouTube Short is vertical: give it a tall, narrower stage instead of a tiny picture inside 16:9 */
+  .stage.vert { aspect-ratio: 9 / 16; width: auto; height: min(54vh, 480px); margin: 0; align-self: center; border-radius: 14px; }
   .stage iframe, .stage .player { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
   /* thumbnail stays on top until the video is really playing, so there is no black flash */
   .poster { position: absolute; inset: 0; z-index: 1; background: #000 center / cover no-repeat;
@@ -547,9 +549,9 @@ function cardHTML(c, i, name) {
   return `
     <article class="card" data-i="${i}" data-vid="${esc(c.vid)}">
       <div class="bg"></div>
-      <div class="meta-top">${tagOf[c.id] ? `<span class="step-tag ${tagOf[c.id].cls}">${esc(tagOf[c.id].text)}</span>` : ""}${isNew(c) ? `<span class="new">New</span>` : ""}<span class="tag">${esc(name[c.topic])}</span><span>·</span><span>${fmtTime(c.end - c.start)}</span>${c.level ? `<span>·</span><span class="lvl">${LEVEL_NAME[c.level]}</span>` : ""}</div>
+      <div class="meta-top">${tagOf[c.id] ? `<span class="step-tag ${tagOf[c.id].cls}">${esc(tagOf[c.id].text)}</span>` : ""}${isNew(c) ? `<span class="new">New</span>` : ""}<span class="tag">${esc(name[c.topic])}</span><span>·</span><span>${fmtTime(c.end - c.start)}</span>${c.short ? `<span>·</span><span class="lvl">Short</span>` : ""}${c.level ? `<span>·</span><span class="lvl">${LEVEL_NAME[c.level]}</span>` : ""}</div>
       <h2 class="hook">${esc(c.hook)}</h2>
-      <div class="stage">
+      <div class="stage${c.short ? " vert" : ""}">
         <div class="slot"></div>
         <div class="poster"></div>
         <button class="tap" aria-label="Tap for sound or pause, double-tap to save"><span class="paused-icon">${ICON.play}</span></button>

@@ -55,3 +55,10 @@ clips best first):
   {"start_sec": 2210, "end_sec": 2290, "substance": 7, "subject": "kv cache", "hook": "...", "why": "..."}
  ]}
 Use the topic id from the input file. Do not edit any other file.
+
+## YouTube Shorts
+
+If the file says THIS IS A YOUTUBE SHORT, the whole video is the one clip: return exactly one clip with
+`start_sec` 0 and `end_sec` as given. You usually have no transcript, only the title, description and tags, so be
+strict: give 7+ only when they promise a concrete explanation, demo or lesson that stands alone, and 5 or less for
+teasers, trend-riding, hooks without content, memes, or "follow for more" bait. Do not invent what is said.

@@ -262,10 +262,20 @@ def passes(v, t, hn):
         return "live/upcoming"
     if v["lang"] and not v["lang"].lower().startswith("en"):
         return "not English"
-    if v["minutes"] < t["min_minutes"]:
+    short = bool(v.get("short"))
+    if short:
+        if v["minutes"] > t["shorts_max_minutes"]:
+            return "not a short"
+    elif v["minutes"] < t["min_minutes"]:
         return "too short"
     if dt.datetime.fromisoformat(v["published"].replace("Z", "+00:00")) < months_ago(t["max_age_months"]):
         return "too old"
+    if short:
+        if v["views"] < t["shorts_min_views"]:
+            return "low views"
+        if v["likes"] is None or not v["views"] or v["likes"] / v["views"] < t["shorts_min_like_ratio"]:
+            return "weak like ratio"
+        return None
     if v["views"] < (t["min_views_hn"] if hn else t["min_views"]):
         return "low views"
     if v["likes"] is not None and v["views"] and v["likes"] / v["views"] < t["min_like_ratio"]:
@@ -285,9 +295,14 @@ def cmd_find(args):
     cache = load_cache()
     cards = None
     for t in enabled_topics(args.topic):
+        shorts = bool(getattr(args, "shorts", False))
+        if shorts and not t.get("shorts"):
+            print(f"{t['id']}: shorts not enabled (set shorts: true in topics.yaml)")
+            continue
         qfile = QUERIES / f"{t['id']}.json"
         qdata = jload(qfile, {})
-        ran = set(qdata.get("ran", []))
+        ran_key = "ran_shorts" if shorts else "ran"
+        ran = set(qdata.get(ran_key, []))
         state = jload(STATE, {})
         last = state.get(t["id"], {}).get("last_refresh")
         if args.refresh:   # weekly: every approved query again, only for videos published since the last run
@@ -307,22 +322,27 @@ def cmd_find(args):
             for _ in range(int(t.get("search_pages", 1))):
                 res = yt("search", part="id", q=q, type="video", maxResults=50, order="relevance",
                          relevanceLanguage="en", videoEmbeddable="true", publishedAfter=after,
-                         safeSearch="moderate", **({"pageToken": token} if token else {}))
+                         safeSearch="moderate", **({"videoDuration": "short"} if shorts else {}),
+                         **({"pageToken": token} if token else {}))
                 for it in res.get("items", []):
                     found.setdefault(it["id"]["videoId"], []).append(q)
                 token = res.get("nextPageToken")
                 if not token:
                     break
         hn_ids = []
-        if t.get("hn_boost"):
+        if t.get("hn_boost") and not shorts:
             cards = cards or hackertube()
             hn_ids = hn_matches(t, cards)
         if qdata:
-            qdata["ran"] = sorted(ran | set(queries))
+            qdata[ran_key] = sorted(ran | set(queries))
             jsave(qfile, qdata)
         state = jload(STATE, {})
         state.setdefault(t["id"], {})["last_refresh"] = NOW.isoformat(timespec="seconds")
         jsave(STATE, state)
+        # a Short an earlier long-video search dropped as "too short" gets a second look
+        redo = {v for v in found if shorts and v in cache and cache[v].get("drop_reason") == "too short"}
+        for v in redo:
+            del cache[v]
         new = [v for v in set(found) | set(hn_ids) if v not in cache]
         details = fetch_details(new) if new else {}
         kept = dropped = 0
@@ -337,6 +357,9 @@ def cmd_find(args):
             v = details.get(vid)
             if not v:
                 continue
+            v["short"] = shorts
+            if shorts:
+                v["source"] = "short"   # no transcript step: the whole Short is the clip
             v["hn"] = bool(cards) and vid in cards
             if v["hn"]:
                 v["hn_why"] = cards[vid].get("why_hn", "")
@@ -437,7 +460,7 @@ def fetch_transcript(vid):
 def cmd_transcripts(args):
     cache = load_cache()
     vids = [v for t in enabled_topics(args.topic) for v in top_candidates(cache, t)
-            if v.get("source") is None or (args.retry and v.get("source") != "transcript")][: args.limit or None]
+            if not v.get("short") and (v.get("source") is None or (args.retry and v.get("source") != "transcript"))][: args.limit or None]
     ok = ch = none = blocked = 0
     for v in vids:
         f = TRANSCRIPTS / f"{v['vid']}.json.gz"
@@ -538,6 +561,8 @@ def heat_peaks(v, n=8):
 def max_clips(v, t):
     """How many clips one video may give: one per `minutes_per_clip` of video, at most `max_clips_per_video`.
     Without a transcript the cuts are guesses, so at most one per chapter."""
+    if v.get("short"):
+        return 1
     n = max(1, min(int(t["max_clips_per_video"]), int(v["minutes"] // t["minutes_per_clip"])))
     if v.get("source") == "chapters":
         n = min(n, max(1, len(chapters(v.get("description")))))
@@ -583,7 +608,15 @@ def cmd_score_prep(args):
                 continue
             if args.limit and n >= args.limit:
                 break
-            if v["source"] == "transcript":
+            if v.get("short"):
+                f = TRANSCRIPTS / f"{v['vid']}.json.gz"
+                body = (f"THIS IS A YOUTUBE SHORT. The whole video is the clip: start_sec 0, end_sec {int(v['minutes'] * 60 + 0.99)}. "
+                        f"Judge it only on what its title, description and tags promise (and the transcript, if given); "
+                        f"views {v['views']}, likes {v['likes']}.\n\nTAGS: {', '.join(v.get('tags', []))}\n\nDESCRIPTION:\n"
+                        + v.get("description", "")[:1500])
+                if f.exists():
+                    body += "\n\nTIMESTAMPED TRANSCRIPT ([seconds] text):\n" + compact_transcript(json.loads(gzip.decompress(f.read_bytes())))
+            elif v["source"] == "transcript":
                 seg = json.loads(gzip.decompress((TRANSCRIPTS / f"{v['vid']}.json.gz").read_bytes()))
                 body = "TIMESTAMPED TRANSCRIPT ([seconds] text):\n" + compact_transcript(seg)
             elif v["source"] == "chapters":
@@ -592,7 +625,7 @@ def cmd_score_prep(args):
                         + "\n\nDESCRIPTION:\n" + v["description"][:2500])
             else:  # heatmap only
                 body = "NO TRANSCRIPT, NO CHAPTERS.\n\nDESCRIPTION:\n" + v.get("description", "")[:2500]
-            body += heat_peaks(v)
+            body += "" if v.get("short") else heat_peaks(v)
             if v.get("flags"):
                 body += ("\n\nVIEWER FLAGS (do not reuse these cuts; pick better ones, or fewer clips):\n"
                          + "\n".join(f"[{f['start']}-{f['end']}] {f['reason']}" for f in v["flags"]))
@@ -622,7 +655,8 @@ def cmd_score_apply(args):
         for c in result_clips(r)[:limit]:
             try:
                 s, e = int(c["start_sec"]), int(c["end_sec"])
-                ok = (1 <= int(c["substance"]) <= 10 and 60 <= e - s <= 90 and s >= 0
+                lo, hi = (5, 200) if v.get("short") else (60, 90)
+                ok = (1 <= int(c["substance"]) <= 10 and lo <= e - s <= hi and s >= 0
                       and e <= v["minutes"] * 60 + 1 and len(c["hook"].split()) < 12 and c.get("why"))
                 if ok and any(s < b and a < e for a, b in taken):
                     ok = False  # overlaps another clip of this video
@@ -944,17 +978,21 @@ def cmd_select(args):
             r = v.get("result")
             if not r or r.get("topic", tid) != tid or v.get("label", {}).get("topic") != tid:
                 continue
-            if t["require_seen_content"] and v.get("source") not in ("transcript", "chapters"):
+            if v.get("short") and not t.get("shorts"):
+                continue
+            if t["require_seen_content"] and not v.get("short") and v.get("source") not in ("transcript", "chapters"):
                 continue  # Sonnet never saw what is said in this clip (heatmap only)
             boost = 1 if ((t["hn_boost"] and v.get("hn")) or v["channel"].lower() in trusted) else 0
             for c in result_clips(r)[:max_clips(v, t)]:
                 if c.get("flagged"):
                     continue
                 adj = min(10, int(c["substance"]) + boost)
-                bar = t["min_substance"] if v.get("source") == "transcript" else t["min_substance_no_transcript"]
+                bar = (t["min_substance_short"] if v.get("short") else
+                       t["min_substance"] if v.get("source") == "transcript" else t["min_substance_no_transcript"])
                 if adj >= bar:
                     pool.append((adj, v["rank"], v, c, boost))
         pool.sort(key=lambda x: (-x[0], -x[1], x[3]["start_sec"]))
+        n_short = 0
         per_chan, per_subj, chosen, picked = {}, {}, [], set()   # per_chan: channel -> set of its videos used
         limit = 10 if st["phase"] == "preview" else t["clips_per_topic"]
 
@@ -968,6 +1006,7 @@ def cmd_select(args):
                     **({"summary": r["summary"], "points": r.get("points", [])} if r.get("summary") else {}),
                     **({"quiz": r["quiz"]} if r.get("quiz") else {}),
                     **({"level": r["level"]} if r.get("level") else {}),
+                    **({"short": True} if v.get("short") else {}),
                     **({"more": True} if more else {})}
 
         for adj, _, v, r, boost in pool:
@@ -977,6 +1016,9 @@ def cmd_select(args):
             subj = (r.get("subject_group") or r.get("subject") or v["vid"]).strip().lower()
             if per_subj.get(subj, 0) >= t["max_clips_per_subject"]:
                 continue
+            if v.get("short") and n_short >= t["max_shorts_per_topic"]:
+                continue
+            n_short += bool(v.get("short"))
             per_subj[subj] = per_subj.get(subj, 0) + 1
             vids.add(v["vid"])
             chosen.append(entry(adj, v, r, boost))
@@ -987,7 +1029,7 @@ def cmd_select(args):
         # They stay out of the main feed (flag "more") and only appear in the deep dives: "More on this subject",
         # "Whole talk in order", search, Browse and channel pages. Not while a new topic is still in preview.
         reserve = [entry(adj, v, r, boost, more=True) for adj, _, v, r, boost in pool
-                   if id(r) not in picked] if st["phase"] == "full" else []
+                   if id(r) not in picked and not v.get("short")] if st["phase"] == "full" else []
         st["clips"] = len(chosen)
         clips += chosen + reserve
         topics_out.append({"id": tid, "name": t["name"], "clips": len(chosen)})
@@ -1042,6 +1084,7 @@ def main():
         p.add_argument("--rescore", action="store_true", help="score-prep: include already-scored videos")
         p.add_argument("--flagged", action="store_true", help="score-prep: re-cut videos viewers flagged")
         p.add_argument("--refresh", action="store_true", help="find: weekly run, new uploads since the last run")
+        p.add_argument("--shorts", action="store_true", help="find: search YouTube Shorts instead (topics with shorts: true)")
         p.set_defaults(fn=fn)
     for name, fn in [("approve-queries", cmd_approve), ("promote", cmd_promote), ("flags-apply", cmd_flags_apply)]:
         p = sub.add_parser(name)

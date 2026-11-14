@@ -23,6 +23,10 @@ sub-agent actually ran on (check the `model` field the agents wrote and the sess
    subscribers, HackerTube matches for `hn_boost` topics, then the noise filters from topics.yaml
    (`min_views`, `min_views_hn`, `min_like_ratio`, `min_minutes`). Videos already in `data/videos.json` are
    skipped, so only new topics cost API quota (~100 units per query page).
+   **Shorts** (topics with `shorts: true`; opt in, off by default): `python pipeline.py find --shorts --topic <id>` searches
+   Shorts (`videoDuration=short`) with the topic's approved queries (~100 units each). They go through steps 3 and 5 like the
+   rest (no transcript or heatmap; Sonnet judges title/description, strict, see `prompts/score.md`). One Short = one clip,
+   at most `max_shorts_per_topic` per topic, bar `min_substance_short`. Show the user the Shorts before publishing.
 3. `python pipeline.py label-prep`, then spawn Haiku sub-agents (`model: "haiku"`), each given
    `prompts/label.md` and a few batch files from `data/work/labels/`. Then `python pipeline.py label-apply`.
 4. `python pipeline.py transcripts` — tries timestamped transcripts; on failure (YouTube often blocks cloud
