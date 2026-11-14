@@ -11,6 +11,10 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <meta name="apple-mobile-web-app-title" content="Signal">
+<link rel="preconnect" href="https://www.youtube.com">
+<link rel="preconnect" href="https://i.ytimg.com">
+<script>window.__ytReady = new Promise((r) => { window.onYouTubeIframeAPIReady = r; });</script>
+<script async src="https://www.youtube.com/iframe_api"></script>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230b0b0c'/%3E%3Cpath d='M6 20h4l3-9 4 13 3-8h6' fill='none' stroke='%23e8ff6b' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
 <style>
   :root {
@@ -21,7 +25,9 @@
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   html, body { margin: 0; height: 100%; background: var(--bg); color: var(--text); overflow: hidden;
     font: 15px/1.4 ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-  button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; padding: 0; }
+  button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; padding: 0; touch-action: manipulation; }
+  html, body { overscroll-behavior: none; -webkit-tap-highlight-color: transparent; }
+  #feed { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
   a { color: inherit; }
 
   /* topic chips */
@@ -46,8 +52,9 @@
     padding: var(--top) 16px calc(env(safe-area-inset-bottom) + 20px); }
   .card > * { position: relative; z-index: 1; }
   /* Shorts-style backdrop: the video's own thumbnail, blurred, fills the screen */
-  .card > .bg { position: absolute; z-index: 0; inset: -40px; background: #000 center / cover no-repeat;
-    filter: blur(28px) brightness(.38) saturate(1.3); }
+  .card > .bg { position: absolute; z-index: 0; inset: -40px; background: #000 center / cover no-repeat; }
+  /* the blur only runs on cards near the screen: a blurred full-screen layer for every card would use up a phone's graphics memory */
+  .card.near > .bg { filter: blur(28px) brightness(.38) saturate(1.3); }
   .meta-top { display: flex; align-items: center; gap: 8px; color: var(--muted); font-size: 13px; }
   .tag { color: var(--accent); font-weight: 700; letter-spacing: .02em; text-transform: uppercase; font-size: 12px; }
   .hook { margin: 0; font-size: clamp(22px, 6.4vw, 30px); line-height: 1.15; font-weight: 750;
@@ -535,13 +542,13 @@ const topicName = () => Object.fromEntries(topics.map((t) => [t.id, t.name]));
 function cardHTML(c, i, name) {
   const hasMore = !!moreOptions(c, i);
   return `
-    <article class="card" data-i="${i}">
-      <div class="bg" style="background-image:url('https://i.ytimg.com/vi/${esc(c.vid)}/hqdefault.jpg')"></div>
+    <article class="card" data-i="${i}" data-vid="${esc(c.vid)}">
+      <div class="bg"></div>
       <div class="meta-top">${tagOf[c.id] ? `<span class="step-tag ${tagOf[c.id].cls}">${esc(tagOf[c.id].text)}</span>` : ""}${isNew(c) ? `<span class="new">New</span>` : ""}<span class="tag">${esc(name[c.topic])}</span><span>·</span><span>${fmtTime(c.end - c.start)}</span>${c.level ? `<span>·</span><span class="lvl">${LEVEL_NAME[c.level]}</span>` : ""}</div>
       <h2 class="hook">${esc(c.hook)}</h2>
-      <div class="stage" style="background-image:url('https://i.ytimg.com/vi/${esc(c.vid)}/hqdefault.jpg')">
+      <div class="stage">
         <div class="slot"></div>
-        <div class="poster" style="background-image:url('https://i.ytimg.com/vi/${esc(c.vid)}/hqdefault.jpg')"></div>
+        <div class="poster"></div>
         <button class="tap" aria-label="Tap for sound or pause, double-tap to save"><span class="paused-icon">${ICON.play}</span></button>
         <button class="speed" aria-label="Playback speed">${rate}×</button>
         <button class="cc" aria-label="Captions" aria-pressed="${captions}">CC</button>
@@ -580,7 +587,7 @@ const mainEndCard = () => `
 function wireTail() {
   const rs = $("#reset"); if (rs) rs.onclick = () => { seen.clear(); store.set("seen", []); skips = {}; store.set("skips", {}); renderChips(); renderFeed(); };
   const bf = $("#back-feed"); if (bf) bf.onclick = () => { renderFeed(); renderChips(); };
-  document.querySelectorAll(".card[data-i]").forEach((el) => io.observe(el));
+  document.querySelectorAll(".card[data-i]").forEach((el) => { io.observe(el); ioNear.observe(el); });
 }
 
 function renderFeed(custom, label, mode = null, tags = null) {
@@ -610,7 +617,7 @@ function playMore(i) {
   order.splice(order.indexOf(next), 1);
   order.splice(i + 1, 0, next);
   for (const k of [...players.keys()]) if (k > i) dropPlayer(k);
-  document.querySelectorAll(".card").forEach((el) => { if (!el.dataset.i || +el.dataset.i > i) { io.unobserve(el); el.remove(); } });
+  document.querySelectorAll(".card").forEach((el) => { if (!el.dataset.i || +el.dataset.i > i) { io.unobserve(el); ioNear.unobserve(el); el.remove(); } });
   const name = topicName();
   $("#feed").insertAdjacentHTML("beforeend", order.slice(i + 1).map((c, k) => cardHTML(c, i + 1 + k, name)).join("") + endCardHTML());
   const row = cardAt(i).querySelector(".actions"); row.querySelector(".more-menu")?.remove();   // refresh this card's menu
@@ -632,7 +639,7 @@ $("#feed").addEventListener("click", (e) => {
 
 // ---------- players: the visible clip plays; the next one is loaded in advance so a swipe starts instantly
 const players = new Map();   // card index -> { player, ready }
-let player = null, activeCard = null, activeIdx = -1, tick = null, seenTimer = null, blockedTimer = null;
+let player = null, activeCard = null, activeIdx = -1, tick = null, seenTimer = null, blockedTimer = null, preloadTimer = null;
 // "Seen" = watched more than half of the clip, or to the end. Swiping away after it really played counts as
 // a skip: the clip comes back once at the end of the feed; skipped twice, it is gone.
 let watched = 0, watchedClip = null;
@@ -643,14 +650,23 @@ function leaveClip(quiet) {
   else if (!quiet && watched >= 1 && !isSeen(c)) { skips[c.id] = (skips[c.id] || 0) + 1; store.set("skips", skips); }
   watched = 0;
 }
+// Cards within about two screens of the viewport get their images (small blurred backdrop, sharp poster) and the blur.
+const ioNear = new IntersectionObserver((entries) => {
+  for (const e of entries) {
+    const el = e.target; el.classList.toggle("near", e.isIntersecting);
+    if (e.isIntersecting && !el.dataset.warm) {
+      el.dataset.warm = "1";
+      const v = el.dataset.vid;
+      el.querySelector(".bg").style.backgroundImage = `url(https://i.ytimg.com/vi/${v}/mqdefault.jpg)`;
+      const po = el.querySelector(".poster"); if (po) po.style.backgroundImage = `url(https://i.ytimg.com/vi/${v}/hqdefault.jpg)`;
+    }
+  }
+}, { root: document.getElementById("feed"), rootMargin: "200% 0px" });
 const io = new IntersectionObserver((entries) => {
   for (const e of entries) if (e.isIntersecting && e.intersectionRatio > 0.6 && e.target !== activeCard) activate(e.target);
 }, { root: document.getElementById("feed"), threshold: [0.6] });
 
-const ytReady = new Promise((res) => {
-  window.onYouTubeIframeAPIReady = res;
-  const s = document.createElement("script"); s.src = "https://www.youtube.com/iframe_api"; document.head.appendChild(s);
-});
+const ytReady = window.__ytReady;   // set in <head>, so the player script loads in parallel with the page
 
 const cardAt = (i) => document.querySelector(`.card[data-i="${i}"]`);
 
@@ -663,7 +679,7 @@ function dropPlayer(i) {
 }
 
 function destroyPlayer() {   // used when the feed is rebuilt
-  clearInterval(tick); clearTimeout(seenTimer); clearTimeout(blockedTimer);
+  clearInterval(tick); clearTimeout(seenTimer); clearTimeout(blockedTimer); clearTimeout(preloadTimer);
   for (const i of [...players.keys()]) dropPlayer(i);
   player = null; activeCard = null; activeIdx = -1;
 }
@@ -750,6 +766,7 @@ function ensurePlayer(i) {
         if (e.data === YT.PlayerState.PLAYING) {
           stage.classList.remove("paused"); stage.classList.add("playing"); stage.classList.toggle("sound", !e.target.isMuted());
           trySound(e.target, stage);
+          if (entry.onPlaying) { entry.onPlaying(); entry.onPlaying = null; }
         }
         if (e.data === YT.PlayerState.PAUSED) stage.classList.add("paused");
       },
@@ -767,10 +784,14 @@ async function activate(card) {
   leaveClip(false);
   activeCard = card; activeIdx = i;
   const near = (el) => (el && el.dataset.i ? +el.dataset.i : null);
-  const prevI = near(card.previousElementSibling), nextI = near(card.nextElementSibling);
-  for (const k of [...players.keys()]) if (k !== i && k !== prevI && k !== nextI) dropPlayer(k);   // keep memory low
+  const nextI = near(card.nextElementSibling);
+  for (const k of [...players.keys()]) if (k !== i && k !== nextI) dropPlayer(k);   // only this clip and the next: less memory
   const entry = ensurePlayer(i);
-  if (nextI !== null) ensurePlayer(nextI);                                                         // preload the next clip
+  // A YouTube player is heavy to start, so the next clip is preloaded only once this one is playing (or after a few
+  // seconds if it is slow), and the first clip gets the phone's full attention.
+  const preload = () => { if (activeIdx === i && nextI !== null) ensurePlayer(nextI); };
+  clearTimeout(preloadTimer); preloadTimer = setTimeout(preload, 4000);
+  entry.onPlaying = () => { clearTimeout(preloadTimer); setTimeout(preload, 500); };
   player = entry.player;
   const c = order[i], stage = card.querySelector(".stage"), bar = card.querySelector(".bar i");
   if (entry.ready) startPlayback(entry, c, stage);
@@ -859,7 +880,7 @@ function animateOut(card, match, after) {
     const feed = $("#feed");
     document.querySelectorAll(".card[data-i]").forEach((el) => {
       const k = +el.dataset.i;
-      if (order[k] && match(order[k])) { dropPlayer(k); io.unobserve(el); el.remove(); }
+      if (order[k] && match(order[k])) { dropPlayer(k); io.unobserve(el); ioNear.unobserve(el); el.remove(); }
     });
     if (activeCard && !activeCard.isConnected) { activeCard = null; activeIdx = -1; player = null; }
     const now = [...document.querySelectorAll(".card")].find((el) => Math.abs(el.offsetTop - feed.scrollTop) < feed.clientHeight / 2);
@@ -882,6 +903,7 @@ function restoreVideo(vid, focusId) {
   if (k >= 0) $("#feed").scrollTo({ top: cardAt(k).offsetTop });
 }
 
+const buzz = (ms = 10) => { try { navigator.vibrate?.(ms); } catch {} };
 let toastTimer = null;
 function toast(msg, action, fn) {
   const t = $("#toast");
@@ -1146,6 +1168,7 @@ function saveNote(item) {
   store.set("notes", notes); renderHistory(); toast(v ? "Note saved" : "Note removed");
 }
 function afterSave(c) {
+  buzz(12);
   toast("Saved · find it in History", "Add note", () => {
     historyTab = "saved"; openHistory();
     setTimeout(() => { const it = $(`#history .h-item[data-id="${CSS.escape(c.id)}"]`); if (it) { openNoteEditor(it); it.scrollIntoView({ block: "center" }); } }, 30);
@@ -1282,6 +1305,7 @@ function speakFrom(k) {
   run(Math.min(k, listen.parts.length - 1));
 }
 function playListen() {
+  buzz(8);
   if (!canSpeak || !listen.items.length) return;
   if (listen.done) { listen.i = 0; listen.chunk = 0; listen.done = false; }
   listen.playing = true; keepAwake(true); renderListen(); speakFrom(listen.chunk);
@@ -1493,6 +1517,7 @@ function openDebate(id, focusId) {
 
 // ---------- Level filter: cycles Any → Intro → Intermediate → Advanced
 function cycleLevel() {
+  buzz(8);
   level = LEVELS[(LEVELS.indexOf(level) + 1) % LEVELS.length]; store.set("level", level);
   renderChips();
   if (!feedMode && !historyOpen && !searchOpen && !sheetOpen) renderFeed();
@@ -1714,7 +1739,14 @@ document.addEventListener("keydown", (e) => {
 });
 
 load();
-if ("serviceWorker" in navigator) addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(() => {}));
+if ("serviceWorker" in navigator) {
+  addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(() => {}));
+  let told = false;
+  navigator.serviceWorker.addEventListener("message", (e) => {
+    if (e.data?.type !== "updated" || told) return;
+    told = true; toast("New clips and updates are ready", "Reload", () => location.reload());
+  });
+}
 </script>
 </body>
 </html>
