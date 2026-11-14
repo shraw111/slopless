@@ -67,7 +67,8 @@
     transition: opacity .35s; pointer-events: none; }
   .stage.playing .poster { opacity: 0; }
   .tap { position: absolute; inset: 0; z-index: 2; display: grid; place-items: center; }
-  .pill { position: absolute; z-index: 3; left: 10px; bottom: 12px; display: flex; align-items: center; gap: 6px;
+  /* top centre, between the buttons: never over the captions, which sit at the bottom of the video */
+  .pill { position: absolute; z-index: 3; left: 50%; top: 10px; transform: translateX(-50%); white-space: nowrap; display: flex; align-items: center; gap: 6px;
     padding: 6px 11px; border-radius: 999px; background: rgba(0,0,0,.66); backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px); font-size: 13px; font-weight: 600; pointer-events: none;
     transition: opacity .3s; }
@@ -164,7 +165,9 @@
   .cc { position: absolute; z-index: 3; top: 10px; right: 58px; padding: 4px 8px; border-radius: 999px;
     background: rgba(0,0,0,.6); font-size: 12px; font-weight: 800; letter-spacing: .02em; opacity: .75; }
   .cc[aria-pressed="true"] { background: var(--accent); color: var(--accent-text); opacity: 1; }
-  .stage.no-cc .cc { background: rgba(0,0,0,.6); color: rgba(255,255,255,.55); text-decoration: line-through; opacity: .8; }
+  .cc-report { margin: 0 0 12px; padding: 12px; border-radius: 12px; background: var(--chip); font: 12px/1.5 ui-monospace, Menlo, monospace;
+    white-space: pre-wrap; word-break: break-word; color: rgba(255,255,255,.86); }
+  .tips-card .btn + .btn { margin-top: 8px; }
   .speed { position: absolute; z-index: 3; top: 10px; right: 10px; padding: 4px 9px; border-radius: 999px;
     background: rgba(0,0,0,.6); font-size: 12.5px; font-weight: 700; }
   .burst { position: absolute; z-index: 4; left: 50%; top: 50%; width: 90px; height: 90px; margin: -45px 0 0 -45px;
@@ -698,36 +701,64 @@ function trySound(p, stage) {
   }, 700);
 }
 // Captions: on by default and they stay on with sound. The CC button turns them off (remembered).
-// YouTube's player ignores caption commands until it is playing and its captions module has loaded, so the
-// request is repeated every tick until the video's caption list shows up. If the module answers with an empty
-// list, this video simply has no captions and the CC button says so.
+// YouTube does the work: cc_load_policy=1 makes the player switch captions on by itself and pick the right track,
+// including auto-generated ones (those never appear in the track list, so an empty list does NOT mean "no captions").
+// We only step in when the viewer toggles them, and nudge at most twice if the player has not loaded the module.
 let captions = store.get("captions", true);
-const ccState = new WeakMap();   // player -> { want, done, tries }
-const CC_TRIES = 48;             // about 12 seconds of playing
-function syncCaptions(p, stage) {
+const ccInfo = new WeakMap();   // player -> { off, t0, nudges, track }
+function syncCaptions(p) {
   if (!p?.getPlayerState) return;
-  let s = ccState.get(p);
-  if (!s || s.want !== captions) { s = { want: captions, done: false, tries: 0 }; ccState.set(p, s); }
-  if (s.done) return;
-  s.tries++;
+  let s = ccInfo.get(p); if (!s) { s = { off: false, t0: Date.now(), nudges: 0, track: null }; ccInfo.set(p, s); }
   try {
-    if (!captions) { p.unloadModule("captions"); s.done = true; stage?.classList.remove("no-cc"); return; }
-    p.loadModule("captions");
-    const list = p.getOption("captions", "tracklist");
-    if (Array.isArray(list) && list.length) {
-      const pick = list.find((t) => /^en/i.test(t.languageCode || "")) || list[0];
-      p.setOption("captions", "track", { languageCode: pick.languageCode });
-      s.done = true; stage?.classList.remove("no-cc");
-    } else if (Array.isArray(list) && s.tries >= CC_TRIES) { s.done = true; stage?.classList.add("no-cc"); }   // nothing to show
-    else if (s.tries >= CC_TRIES * 2) s.done = true;   // the module never answered: stop trying
+    if (!captions) {   // switched off: remember the track YouTube chose, then unload the module
+      if (!s.off) { const t = p.getOption("captions", "track"); if (t && t.languageCode) s.track = t; p.unloadModule("captions"); s.off = true; }
+      return;
+    }
+    if (s.off) {       // switched back on: load the module and restore the track it had
+      p.loadModule("captions"); if (s.track) p.setOption("captions", "track", s.track);
+      s.off = false; s.t0 = Date.now(); s.nudges = 0; return;
+    }
+    if (s.nudges < 2 && Date.now() - s.t0 > 3000 * (s.nudges + 1)) {   // YouTube did not start captions by itself
+      s.nudges++;
+      if (!(p.getOptions?.() || []).includes("captions")) p.loadModule("captions");
+      else {
+        const cur = p.getOption("captions", "track");
+        if (!(cur && cur.languageCode)) {
+          const list = p.getOption("captions", "tracklist");
+          if (Array.isArray(list) && list.length) p.setOption("captions", "track", list.find((t) => /^en/i.test(t.languageCode || "")) || list[0]);
+        }
+      }
+    }
   } catch {}
 }
 function setCaptions(on) {
   captions = on; store.set("captions", on);
   document.querySelectorAll(".cc").forEach((b) => b.setAttribute("aria-pressed", on));
-  const stage = activeCard?.querySelector(".stage");
-  for (const { player: pl, ready } of players.values()) if (ready) syncCaptions(pl, pl === player ? stage : null);
+  for (const { player: pl, ready } of players.values()) if (ready) syncCaptions(pl);
   toast(on ? "Captions on" : "Captions off");
+}
+// "Captions check" (History): what the player itself reports, so a missing caption can be diagnosed on the phone.
+function captionReport() {
+  const p = player, g = (f) => { try { return f(); } catch { return null; } };
+  const track = p && g(() => p.getOption("captions", "track")), list = p && g(() => p.getOption("captions", "tracklist"));
+  const mods = p && g(() => p.getOptions());
+  const name = (t) => (t && t.languageCode ? `${t.displayName || t.languageName || t.languageCode}${t.kind ? ` [${t.kind}]` : ""}` : "none");
+  const c = order[activeIdx];
+  return [`Setting: ${captions ? "on" : "off"}`, `Clip: ${c ? c.hook : "none open"}`,
+    `Player: ${p ? ["unstarted", "ended", "playing", "paused", "buffering"][[-1, 0, 1, 2, 3].indexOf(g(() => p.getPlayerState()))] || "unknown" : "no player"}`,
+    `Captions module loaded: ${Array.isArray(mods) && mods.includes("captions") ? "yes" : "no"}`,
+    `Track in use: ${name(track)}`,
+    `Tracks listed: ${Array.isArray(list) ? `${list.length}${list.length ? " (" + list.slice(0, 4).map((t) => t.languageCode).join(", ") + ")" : ""}` : "n/a"}`,
+    `Fullscreen API: ${document.fullscreenEnabled ? "yes" : "no"} · touch: ${matchMedia("(pointer: coarse)").matches ? "yes" : "no"}`,
+    `Browser: ${navigator.userAgent.replace(/\s+/g, " ").slice(0, 140)}`].join("\n");
+}
+function showCaptionReport() {
+  const text = captionReport();
+  $("#tips").innerHTML = `<div class="tips-card" role="dialog" aria-label="Captions check"><h2>Captions check</h2>
+    <p class="stats">Open a clip first, let it play for a few seconds, then run this. If “Track in use” says none, YouTube is not serving captions for that clip.</p>
+    <pre class="cc-report">${esc(text)}</pre>
+    <button class="btn cc-copy">Copy report</button><button class="btn ghost tips-ok">Close</button></div>`;
+  $("#tips").dataset.report = text; $("#tips").hidden = false;
 }
 function startPlayback(entry, c, stage) {
   const p = entry.player;
@@ -801,7 +832,7 @@ async function activate(card) {
     if (player.getPlayerState?.() === YT.PlayerState.PLAYING) {
       watched = Math.max(watched, t - c.start);   // speed-proof
       addWatchTime(0.25);
-      syncCaptions(player, stage);
+      syncCaptions(player);
     }
     bar.style.width = Math.max(0, Math.min(100, ((t - c.start) / (c.end - c.start)) * 100)) + "%";
     if (t >= c.end - 0.25) advance(i);
@@ -955,7 +986,7 @@ function renderHistory() {
           removed: "Swipe a clip left to remove its video. It shows up here so you can bring it back.",
           flagged: "" }[historyTab]}</p>`}
     ${historyTab === "watched" && list.length ? `<button class="btn ghost h-clear">Clear watch history</button>` : ""}
-    <div class="h-foot"><button class="h-link h-transfer">Move to another device</button><button class="h-link h-tips">Show tips</button></div>`;
+    <div class="h-foot"><button class="h-link h-transfer">Move to another device</button><button class="h-link h-tips">Show tips</button><button class="h-link h-cc">Captions check</button></div>`;
   if (historyTab === "saved" && list.length)
     $("#history .h-tabs").insertAdjacentHTML("afterend", `<div class="h-actions"><button class="btn play-saved">${ICON.play}Play saved · ${list.length}</button>
       <button class="btn ghost export-saved">Copy as notes</button></div>`);
@@ -971,6 +1002,7 @@ $("#history").addEventListener("click", (e) => {
   if (tab) { historyTab = tab.dataset.tab; renderHistory(); return; }
   if (e.target.closest(".h-transfer")) { openTransfer(); return; }
   if (e.target.closest(".h-tips")) { closeHistory(false); showTips(); renderChips(); return; }
+  if (e.target.closest(".h-cc")) { closeHistory(false); showCaptionReport(); renderChips(); return; }
   const item = e.target.closest(".h-item");
   if (item && e.target.closest(".note-save")) { saveNote(item); return; }
   if (item && e.target.closest(".note-cancel")) { renderHistory(); return; }
@@ -1148,8 +1180,15 @@ function showTips() {
     <button class="btn tips-ok">Got it</button></div>`;
   $("#tips").hidden = false;
 }
-function hideTips() { $("#tips").hidden = true; store.set("tipsSeen", true); }
-$("#tips").addEventListener("click", (e) => { if (e.target.closest(".tips-ok") || e.target.id === "tips") hideTips(); });
+function hideTips() { $("#tips").hidden = true; store.set("tipsSeen", true); resumeActive(); }
+$("#tips").addEventListener("click", async (e) => {
+  if (e.target.closest(".cc-copy")) {
+    try { await navigator.clipboard.writeText($("#tips").dataset.report || ""); toast("Report copied"); }
+    catch { toast("Select the text above and copy it"); }
+    return;
+  }
+  if (e.target.closest(".tips-ok") || e.target.id === "tips") hideTips();
+});
 
 // ---------- Notes on saved clips
 const noteHTML = (h) => notes[h.id]
@@ -1682,10 +1721,7 @@ $("#feed").addEventListener("click", (e) => {
   if (e.target.closest(".flag") && card) { askBadCut(card); return; }
   const ch = e.target.closest(".ch"); if (ch) { openChannel(ch.dataset.ch); return; }
   if (e.target.closest(".fs")) { toggleImmersive(); return; }
-  if (e.target.closest(".cc")) {
-    if (captions && e.target.closest(".stage")?.classList.contains("no-cc")) { toast("This video has no captions"); return; }
-    setCaptions(!captions); return;
-  }
+  if (e.target.closest(".cc")) { setCaptions(!captions); return; }
   if (e.target.closest(".speed")) {
     rate = RATES[(RATES.indexOf(rate) + 1) % RATES.length]; store.set("rate", rate);
     document.querySelectorAll(".speed").forEach((b) => (b.textContent = `${rate}×`));
