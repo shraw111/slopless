@@ -1,0 +1,197 @@
+[
+ {
+  "id": "ai-product-make-evals-the-backbone-of-an-ai-product",
+  "topic": "ai-product",
+  "title": "Make evals the backbone of an AI product",
+  "goal": "Explain why evals decide AI product reliability, build one from data, task and scores, and know where offline evals and monitoring each fall short.",
+  "steps": [
+   "scsW6_2SPC4-1130",
+   "PplmzlgE0kg-3300",
+   "l0h3nAW13ao-1030",
+   "71qvIkO9d_A-1345",
+   "71qvIkO9d_A-2365",
+   "UVeeNW_z068-737",
+   "z7T1pCxgvlA-2000"
+  ],
+  "minutes": 10
+ },
+ {
+  "id": "ai-product-price-an-ai-product-from-seats-to-outcomes",
+  "topic": "ai-product",
+  "title": "Price an AI product, from seats to outcomes",
+  "goal": "Explain how AI pricing differs from SaaS and choose a pricing model, including outcome-based pricing.",
+  "steps": [
+   "NR85H55eYkM-1655",
+   "NR85H55eYkM-2338",
+   "NR85H55eYkM-2688",
+   "0_opWSfmN8M-985",
+   "ESa1TdS3dI4-1160"
+  ],
+  "minutes": 7
+ },
+ {
+  "id": "ai-product-design-the-ux-of-an-ai-product",
+  "topic": "ai-product",
+  "title": "Design the UX of an AI product",
+  "goal": "Apply a practical design model, trust patterns and a declarative generative UI approach to an AI product.",
+  "steps": [
+   "PEDzBT-jNmI-65",
+   "PEDzBT-jNmI-1470",
+   "hCMrEfPG2Yg-462"
+  ],
+  "minutes": 4
+ },
+ {
+  "id": "ai-product-decide-where-ai-belongs-in-your-product",
+  "topic": "ai-product",
+  "title": "Decide where AI belongs in your product",
+  "goal": "Choose where AI adds value, commit to it, and keep a product fit as models change.",
+  "steps": [
+   "l0h3nAW13ao-285",
+   "e1R_-esuO9o-2360",
+   "0_opWSfmN8M-600",
+   "PplmzlgE0kg-3650",
+   "6qAB6aUMIeA-3630",
+   "z7T1pCxgvlA-2741"
+  ],
+  "minutes": 8
+ },
+ {
+  "id": "ai-product-run-a-product-team-that-ships-with-ai",
+  "topic": "ai-product",
+  "title": "Run a product team that ships with AI",
+  "goal": "Describe how AI-first teams prototype, build and organize to ship faster.",
+  "steps": [
+   "scsW6_2SPC4-3225",
+   "1em64iUFt3U-890",
+   "1em64iUFt3U-2312",
+   "e1R_-esuO9o-770",
+   "PplmzlgE0kg-430",
+   "crMrVozp_h8-1990",
+   "crMrVozp_h8-2490"
+  ],
+  "minutes": 10
+ },
+ {
+  "id": "ai-how-attention-lets-a-transformer-read-text",
+  "topic": "ai",
+  "title": "How attention lets a transformer read text",
+  "goal": "Explain how queries, keys and values let each token take meaning from context, and why masking and parallelism matter.",
+  "steps": [
+   "LPZh9BOjkQs-270",
+   "RNF0FvRjGZk-280",
+   "KJtZARuO3JY-1540",
+   "KJtZARuO3JY-2380",
+   "KMHkbXzHn7s-716",
+   "KJtZARuO3JY-2792"
+  ],
+  "minutes": 9
+ },
+ {
+  "id": "ai-from-raw-text-to-a-chat-assistant",
+  "topic": "ai",
+  "title": "From raw text to a chat assistant",
+  "goal": "Describe the training stages that turn internet text into an aligned assistant, from pre-training to RL.",
+  "steps": [
+   "EWvNQjAaOHw-475",
+   "p3sij8QzONQ-13404",
+   "p3sij8QzONQ-15826",
+   "EWvNQjAaOHw-1376",
+   "p3sij8QzONQ-18295",
+   "GEJOB_TFYJ0-856"
+  ],
+  "minutes": 8
+ },
+ {
+  "id": "ai-how-a-model-turns-tokens-into-output-text",
+  "topic": "ai",
+  "title": "How a model turns tokens into output text",
+  "goal": "Explain tokenization, probability distributions and the sampling settings that shape generated text.",
+  "steps": [
+   "p3sij8QzONQ-9474",
+   "NKnZYvZA7w4-340",
+   "vXiB0UdDhk8-1849",
+   "vXiB0UdDhk8-1687",
+   "w0cxRr93G9o-5396"
+  ],
+  "minutes": 7
+ },
+ {
+  "id": "ai-give-an-llm-tools-context-and-skills",
+  "topic": "ai",
+  "title": "Give an LLM tools, context and skills",
+  "goal": "Set up an agent that manages its context window, calls tools and improves through reusable skill files.",
+  "steps": [
+   "EWvNQjAaOHw-1943",
+   "EWvNQjAaOHw-3633",
+   "EWvNQjAaOHw-989",
+   "-QFHIoCo-Ko-186",
+   "LP7ywsMuxmc-187",
+   "CEvIs9y1uog-122",
+   "S_oN3vlzpMw-1267"
+  ],
+  "minutes": 10
+ },
+ {
+  "id": "ai-a-disciplined-workflow-for-coding-with-ai-agents",
+  "topic": "ai",
+  "title": "A disciplined workflow for coding with AI agents",
+  "goal": "Run an AI coding task from shared understanding through small tickets, tests and review.",
+  "steps": [
+   "-QFHIoCo-Ko-966",
+   "-QFHIoCo-Ko-2370",
+   "-QFHIoCo-Ko-2570",
+   "-QFHIoCo-Ko-4020",
+   "-QFHIoCo-Ko-4591",
+   "-QFHIoCo-Ko-3925"
+  ],
+  "minutes": 8
+ },
+ {
+  "id": "ai-know-where-llms-and-coding-agents-fall-short",
+  "topic": "ai",
+  "title": "Know where LLMs and coding agents fall short",
+  "goal": "Judge when to trust LLM output and where agentic coding still needs expert guidance.",
+  "steps": [
+   "LCEmiRjPEtQ-962",
+   "EWvNQjAaOHw-4024",
+   "LCEmiRjPEtQ-1334",
+   "EL7Au1tzNxE-44",
+   "EL7Au1tzNxE-4215",
+   "EL7Au1tzNxE-6397",
+   "EL7Au1tzNxE-9955"
+  ],
+  "minutes": 9
+ },
+ {
+  "id": "ai-what-interpretability-shows-inside-language-mode",
+  "topic": "ai",
+  "title": "What interpretability shows inside language models",
+  "goal": "Explain what researchers have found inside models about shared concepts, planning, faithful reasoning and hallucination.",
+  "steps": [
+   "ykfQD1_WPBQ-2862",
+   "ykfQD1_WPBQ-1662",
+   "fGKNUvivvnc-1010",
+   "fGKNUvivvnc-2108",
+   "fGKNUvivvnc-1592",
+   "fGKNUvivvnc-1275"
+  ],
+  "minutes": 8
+ },
+ {
+  "id": "ai-the-case-for-world-models-beyond-text",
+  "topic": "ai",
+  "title": "The case for world models beyond text",
+  "goal": "Explain why some researchers think text-only LLMs are not enough and what world models and planning would add.",
+  "steps": [
+   "ykfQD1_WPBQ-995",
+   "qvNCVYkHKfg-2301",
+   "qvNCVYkHKfg-414",
+   "ykfQD1_WPBQ-1877",
+   "qvNCVYkHKfg-2850",
+   "qvNCVYkHKfg-3204",
+   "qvNCVYkHKfg-2942"
+  ],
+  "minutes": 10
+ }
+]

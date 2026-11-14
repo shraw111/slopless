@@ -32,6 +32,16 @@ Needs `YOUTUBE_API_KEY` as an environment variable. Never commit it.
 Claude will show you the search queries it wrote before spending API quota, then stop after the first
 10 clips of the new topic so you can check them before it fills the rest.
 
+## Levels, learning paths, debates and Listen
+
+- **Levels:** Haiku tags every clip intro, intermediate or advanced, judged by the background a viewer needs.
+  The Level chip in the feed filters on it.
+- **Learning paths:** Sonnet writes ordered sequences from the basics to depth (`paths.json`). Browse → Paths.
+- **Debates:** Sonnet finds questions where speakers in the clips really disagree (`debates.json`), then a second
+  Sonnet pass checks each side against the words actually spoken in its clips and drops anything it can't back.
+  Browse → Debates.
+- **Listen:** the browser's built-in voice reads each clip's summary aloud. Nothing is sent anywhere.
+
 ## Get real transcripts (run on your own computer)
 
 YouTube blocks transcript requests from cloud servers, so the cloud run picks clips from chapters and the

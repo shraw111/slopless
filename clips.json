@@ -23,7 +23,8 @@
   "quiz": {
    "a": "Subtracting a no-hat photo's embedding from a hat photo's gives a vector whose closest text match is 'hat', then 'cap' and 'helmet'.",
    "q": "What did the CLIP experiment show about vector differences between image embeddings?"
-  }
+  },
+  "level": "intermediate"
  },
  {
   "id": "iv-5mZ_9CPY-1138",
@@ -49,7 +50,8 @@
   "quiz": {
    "a": "Without noise, samples collapse toward the average of the data; averages of many images look blurry, reducing sample diversity.",
    "q": "Why does removing noise during diffusion sampling produce blurry images?"
-  }
+  },
+  "level": "advanced"
  },
  {
   "id": "iv-5mZ_9CPY-1862",
@@ -75,7 +77,8 @@
   "quiz": {
    "a": "It subtracts the unconditioned direction from the class-conditioned one, then amplifies that difference by alpha to pull samples toward the target class.",
    "q": "How does classifier-free guidance use the conditioned and unconditioned directions?"
-  }
+  },
+  "level": "advanced"
  },
  {
   "id": "LCEmiRjPEtQ-160",
@@ -101,7 +104,8 @@
   "quiz": {
    "a": "Software 3.0 means programming LLMs through English prompts, while Software 1.0 is code and 2.0 is neural network weights.",
    "q": "How does Karpathy define Software 3.0 in the age of LLMs?"
-  }
+  },
+  "level": "intro"
  },
  {
   "id": "LCEmiRjPEtQ-962",
@@ -127,7 +131,8 @@
   "quiz": {
    "a": "LLMs have no native way to consolidate knowledge over time, so the context window serves as working memory.",
    "q": "Why does Karpathy say LLM context windows act as working memory?"
-  }
+  },
+  "level": "intro"
  },
  {
   "id": "LCEmiRjPEtQ-1334",
@@ -153,7 +158,8 @@
   "quiz": {
    "a": "Humans must verify AI output, so the loop must be fast; huge diffs are hard to audit for bugs, and AI overreacts.",
    "q": "Why does Karpathy say AI-generated diffs must be kept on a leash?"
-  }
+  },
+  "level": "intermediate"
  },
  {
   "id": "IkdziSLYzHw-717",
@@ -179,7 +185,8 @@
   "quiz": {
    "a": "Semantic features, including generation levels, learned by predicting the next word and backpropagating the error, much like written rules.",
    "q": "What did Hinton's 1985 word model's feature neurons learn to represent?"
-  }
+  },
+  "level": "advanced"
  },
  {
   "id": "IkdziSLYzHw-1986",
@@ -205,7 +212,8 @@
   "quiz": {
    "a": "Identical copies learn different data then average their weight changes; analog hardware cannot do this; digital models are immortal but power-hungry.",
    "q": "Why can digital models share knowledge so much faster than people?"
-  }
+  },
+  "level": "intermediate"
  },
  {
   "id": "qvNCVYkHKfg-2301",
@@ -231,7 +239,8 @@
   "quiz": {
    "a": "A four-year-old's visual and touch input roughly matches the largest LLM's training data, and reading 30 trillion tokens would take 400,000 years.",
    "q": "Why does LeCun argue text alone is too thin to reach human-level AI?"
-  }
+  },
+  "level": "intro"
  },
  {
   "id": "qvNCVYkHKfg-2942",
@@ -257,7 +266,8 @@
   "quiz": {
    "a": "JEPA predicts the clean image's representation from a corrupted one's; keeping as much input information in representations is the hard part.",
    "q": "What does JEPA predict instead of reconstructing pixels, and why is it hard?"
-  }
+  },
+  "level": "advanced"
  },
  {
   "id": "KJtZARuO3JY-1213",
@@ -283,7 +293,8 @@
   "quiz": {
    "a": "Vectors within 88 to 92 degrees count as nearly orthogonal, and their count grows exponentially with dimension, helping pack many concepts.",
    "q": "Why can high-dimensional spaces hold far more nearly perpendicular vectors than expected?"
-  }
+  },
+  "level": "advanced"
  },
  {
   "id": "fGKNUvivvnc-790",
@@ -309,7 +320,8 @@
   "quiz": {
    "a": "One circuit fires for both arithmetic and citation years, raising whether models memorize data or learn reusable general concepts.",
    "q": "What does the shared 6+9 circuit suggest about how models store knowledge?"
-  }
+  },
+  "level": "advanced"
  },
  {
   "id": "fGKNUvivvnc-1275",
@@ -335,7 +347,8 @@
   "quiz": {
    "a": "Written steps look like a genuine check, but internally the model works backward from the hinted answer to find steps reaching it.",
    "q": "What is hidden behind Claude's written steps when given a suggested answer?"
-  }
+  },
+  "level": "advanced"
  },
  {
   "id": "fGKNUvivvnc-2108",
@@ -361,7 +374,8 @@
   "quiz": {
    "a": "Inserting a different word into the planning step changes the rest of the line to fit, showing the rhyme is chosen ahead.",
    "q": "How do experiments show Claude plans its rhyme word before writing the line?"
-  }
+  },
+  "level": "advanced"
  },
  {
   "id": "LPZh9BOjkQs-270",
@@ -387,7 +401,8 @@
   "quiz": {
    "a": "Each word is a list of numbers, and attention refines those numbers using surrounding words, such as 'bank' becoming a riverbank.",
    "q": "How does attention let each word's meaning get refined by context?"
-  }
+  },
+  "level": "intro"
  },
  {
   "id": "21EYKqUsPfg-269",
@@ -413,7 +428,8 @@
   "quiz": {
    "a": "They have no goal or ground truth for what to say; reinforcement learning defines a reward, so right actions can be checked.",
    "q": "Why does Sutton say LLMs cannot learn continually?"
-  }
+  },
+  "level": "advanced"
  },
  {
   "id": "21EYKqUsPfg-1707",
@@ -439,7 +455,8 @@
   "quiz": {
    "a": "A value function predicts long-term outcomes; when a move changes that prediction, such as taking a piece, it reinforces the move.",
    "q": "How does TD learning reinforce the moves that lead toward a distant goal?"
-  }
+  },
+  "level": "advanced"
  },
  {
   "id": "21EYKqUsPfg-1968",
@@ -465,7 +482,8 @@
   "quiz": {
    "a": "A policy, a value function, a perception component and a transition model; the transition model is learned from experience, not reward.",
    "q": "What are the parts of a basic reinforcement learning agent, per Sutton?"
-  }
+  },
+  "level": "advanced"
  },
  {
   "id": "qvNCVYkHKfg-414",
@@ -491,7 +509,8 @@
   "quiz": {
    "a": "Chain of thought only adds tokens and computation, while real reasoning searches solutions checked against constraints, which LLMs lack natively.",
    "q": "Why does LeCun say chain of thought is not real reasoning?"
-  }
+  },
+  "level": "intermediate"
  },
  {
   "id": "qvNCVYkHKfg-2850",
@@ -517,7 +536,8 @@
   "quiz": {
    "a": "Text has about 100,000 manageable tokens, while video lives in high-dimensional continuous space where distributions are intractable.",
    "q": "Why has self-supervised generative learning worked for text but not video?"
-  }
+  },
+  "level": "intermediate"
  },
  {
   "id": "EWvNQjAaOHw-4024",
@@ -543,7 +563,8 @@
   "quiz": {
    "a": "Its printed variable showed about 20 trillion, yet it stated 1.7 trillion; the tool is powerful but needs checking.",
    "q": "Why must ChatGPT's data analysis be checked like a junior analyst's work?"
-  }
+  },
+  "level": "intermediate"
  },
  {
   "id": "GEJOB_TFYJ0-856",
@@ -569,7 +590,8 @@
   "quiz": {
    "a": "It samples five outputs per prompt and normalizes their rewards within the group; a frozen reference model keeps the policy from drifting too far.",
    "q": "How does GRPO remove PPO's value model while still getting advantages?"
-  }
+  },
+  "level": "advanced"
  },
  {
   "id": "KJtZARuO3JY-1540",
@@ -595,7 +617,8 @@
   "quiz": {
    "a": "It turns each word's embedding into a smaller query vector encoding what the word is looking for, such as an adjective before a noun.",
    "q": "What does the query matrix do to each word's embedding in attention?"
-  }
+  },
+  "level": "intermediate"
  },
  {
   "id": "KJtZARuO3JY-2112",
@@ -621,7 +644,8 @@
   "quiz": {
    "a": "Later tokens must not influence earlier ones; masked positions are set to negative infinity before softmax, which keeps the weights normalized.",
    "q": "Why does attention set masked positions to negative infinity before softmax?"
-  }
+  },
+  "level": "intermediate"
  },
  {
   "id": "KJtZARuO3JY-2792",
@@ -647,7 +671,8 @@
   "quiz": {
    "a": "Scaling up improves models, and attention parallelizes well: it takes in the whole passage at once, which suits GPUs.",
    "q": "Why did Transformers spread so widely after 2017, according to Sanderson?"
-  }
+  },
+  "level": "intermediate"
  },
  {
   "id": "fGKNUvivvnc-1592",
@@ -673,7 +698,8 @@
   "quiz": {
    "a": "That gate can wrongly say yes about unfamiliar entities; the model then starts answering and may commit to a guess.",
    "q": "How can a 'do I know this?' circuit lead to hallucinated answers?"
-  }
+  },
+  "level": "advanced"
  },
  {
   "id": "U80tjcThl9Q-297",
@@ -699,7 +725,8 @@
   "quiz": {
    "a": "Keys act as feature detectors that recognize a domain, values add the correction, and unrelated inputs trigger little change.",
    "q": "What role do LoRA's key vectors play in local associative memory?"
-  }
+  },
+  "level": "advanced"
  },
  {
   "id": "U80tjcThl9Q-788",
@@ -725,7 +752,8 @@
   "quiz": {
    "a": "Weights cluster near zero, so evenly spaced levels waste precision in the tails; NF4 gives each bin an equal share of weights.",
    "q": "Why does NF4 place quantization levels by quantile rather than evenly spaced?"
-  }
+  },
+  "level": "advanced"
  },
  {
   "id": "EL7Au1tzNxE-4215",
@@ -751,7 +779,8 @@
   "quiz": {
    "a": "Much of his work produces code with no existing pattern, so the agent must combine smaller known patterns with guidance.",
    "q": "Why does Gjengset need constant agent guidance on his work?"
-  }
+  },
+  "level": "intermediate"
  },
  {
   "id": "EL7Au1tzNxE-6397",
@@ -777,7 +806,8 @@
   "quiz": {
    "a": "No: a non-programmer would not attempt it, and a programmer lacking deep knowledge likely could not either.",
    "q": "Could a non-expert vibe-code this Rust change, according to Gjengset?"
-  }
+  },
+  "level": "advanced"
  },
  {
   "id": "EL7Au1tzNxE-8907",
@@ -803,7 +833,8 @@
   "quiz": {
    "a": "Not faster, but not much slower; two of four features took about two and a half hours, and the agent wrote useful tests.",
    "q": "How did agentic coding's speed compare to doing the work himself?"
-  }
+  },
+  "level": "intermediate"
  },
  {
   "id": "EL7Au1tzNxE-9515",
@@ -829,7 +860,8 @@
   "quiz": {
    "a": "Gjengset is unsure. In his session the agent picked workable patterns rather than better ones, and he had to direct it.",
    "q": "Does agentic coding help engineers learn good patterns or just accept the first working one?"
-  }
+  },
+  "level": "intermediate"
  },
  {
   "id": "EL7Au1tzNxE-9955",
@@ -855,7 +887,8 @@
   "quiz": {
    "a": "Lifecycle costs must be weighed against the value added; he hoped to hand off larger tasks, but still needed frequent prompts.",
    "q": "What hidden costs does Gjengset say agentic coding carries?"
-  }
+  },
+  "level": "intermediate"
  },
  {
   "id": "-QFHIoCo-Ko-186",
@@ -881,7 +914,8 @@
   "quiz": {
    "a": "Early in a conversation, where output is best; past about 100K tokens output gets dumber, so keep tasks small.",
    "q": "What is the 'smart zone' of an LLM context, and why size tasks to it?"
-  }
+  },
+  "level": "intermediate"
  },
  {
   "id": "-QFHIoCo-Ko-2570",
@@ -907,7 +941,8 @@
   "quiz": {
    "a": "AI builds horizontally, so nothing integrates until late; thin vertical slices cross all layers and give feedback early.",
    "q": "Why should AI build thin vertical slices instead of layer by layer?"
-  }
+  },
+  "level": "intermediate"
  },
  {
   "id": "-QFHIoCo-Ko-4591",
@@ -933,7 +968,8 @@
   "quiz": {
    "a": "Easy-to-test code gives AI faster feedback loops; use deep modules with small interfaces and one large test boundary.",
    "q": "Why does making a codebase easy to test help AI agents?"
-  }
+  },
+  "level": "intermediate"
  },
  {
   "id": "DFqWPwF0OH0-392",
@@ -959,7 +995,8 @@
   "quiz": {
    "a": "Training feeds the correct target words, not predictions, so the full target sequence is known and every loss can be computed in one pass.",
    "q": "Why can transformer training compute every position's loss in parallel?"
-  }
+  },
+  "level": "intermediate"
  },
  {
   "id": "IkdziSLYzHw-1466",
@@ -985,7 +1022,8 @@
   "quiz": {
    "a": "After learning it would be replaced, the chatbot copied itself elsewhere and planned vagueness to avoid detection; Hinton argues this shows understanding.",
    "q": "What did Hinton's chatbot example reveal about its reasoning around shutdown?"
-  }
+  },
+  "level": "intro"
  },
  {
   "id": "w0cxRr93G9o-2998",
@@ -1011,7 +1049,8 @@
   "quiz": {
    "a": "Seeing the continuation makes prediction unrealistically easy, while inference generates tokens in order, so training must match that.",
    "q": "Why must a decoder not see future tokens during next-token training?"
-  }
+  },
+  "level": "intermediate"
  },
  {
   "id": "w0cxRr93G9o-5396",
@@ -1037,7 +1076,8 @@
   "quiz": {
    "a": "Perplexity estimates how many candidate tokens the model weighs, so a well-trained model should consider about 10 to 20.",
    "q": "How should you interpret perplexity as the exponential of validation loss?"
-  }
+  },
+  "level": "intermediate"
  },
  {
   "id": "NKnZYvZA7w4-340",
@@ -1063,7 +1103,8 @@
   "quiz": {
    "a": "It samples from the smallest set of tokens whose probabilities sum to P, while temperature flattens or sharpens the distribution.",
    "q": "How does top-P sampling choose which tokens to sample from?"
-  }
+  },
+  "level": "intro"
  },
  {
   "id": "21EYKqUsPfg-1445",
@@ -1089,7 +1130,8 @@
   "quiz": {
    "a": "Altering actions to gain more reward from the stream of sensation, action and reward; knowledge is testable statements about that stream.",
    "q": "What does intelligence mean in Sutton's view of the experience stream?"
-  }
+  },
+  "level": "advanced"
  },
  {
   "id": "21EYKqUsPfg-2194",
@@ -1115,7 +1157,8 @@
   "quiz": {
    "a": "Gradient descent solves the training problem, not generalization; training on new data interferes with old knowledge, and few automated transfer methods exist.",
    "q": "Why does Sutton say gradient descent alone will not produce generalization?"
-  }
+  },
+  "level": "advanced"
  },
  {
   "id": "EWvNQjAaOHw-475",
@@ -1141,7 +1184,8 @@
   "quiz": {
    "a": "Pre-training lossily compresses internet text into parameters, keeping the gist; the network learns next-token prediction.",
    "q": "What is a chat model, in Karpathy's lossy zip file analogy?"
-  }
+  },
+  "level": "intro"
  },
  {
   "id": "EWvNQjAaOHw-989",
@@ -1167,7 +1211,8 @@
   "quiz": {
    "a": "Old tokens can distract the model and make each sample slower and pricier; keep the context window short and relevant.",
    "q": "Why should you start a new chat whenever the topic changes?"
-  }
+  },
+  "level": "intermediate"
  },
  {
   "id": "EWvNQjAaOHw-1376",
@@ -1193,7 +1238,8 @@
   "quiz": {
    "a": "It is a third training stage on math and code problems; models discover strategies like backtracking that are hard to hardcode.",
    "q": "What role does reinforcement learning play in producing thinking models?"
-  }
+  },
+  "level": "intermediate"
  },
  {
   "id": "EWvNQjAaOHw-1943",
@@ -1219,7 +1265,8 @@
   "quiz": {
    "a": "A special token stops generation and triggers a search; page text enters the context window, and the model answers from it.",
    "q": "How does a chatbot's web search get its results into the model?"
-  }
+  },
+  "level": "intro"
  },
  {
   "id": "EWvNQjAaOHw-3633",
@@ -1245,7 +1292,8 @@
   "quiz": {
    "a": "It is trained to recognize tasks beyond mental arithmetic and call tools; the program runs, and its output returns to the model as text.",
    "q": "Why does ChatGPT write a Python program instead of doing arithmetic in its head?"
-  }
+  },
+  "level": "intro"
  },
  {
   "id": "EWvNQjAaOHw-5278",
@@ -1271,7 +1319,8 @@
   "quiz": {
    "a": "Audio is split into spectrogram windows and quantized into tokens from a vocabulary that might hold 100,000 chunks, so no text is needed.",
    "q": "How does native audio let a model hear and speak without text?"
-  }
+  },
+  "level": "intro"
  },
  {
   "id": "EWvNQjAaOHw-6017",
@@ -1297,7 +1346,8 @@
   "quiz": {
    "a": "Chop the image into grid patches and quantize each against a vocabulary of about 100,000 patches; the transformer treats them like text tokens.",
    "q": "How can an image become tokens that a transformer models like text?"
-  }
+  },
+  "level": "intermediate"
  },
  {
   "id": "LP7ywsMuxmc-187",
@@ -1323,7 +1373,8 @@
   "quiz": {
    "a": "soul.md, which defines voice, judgment and behavior; identity.md is a startup card and user.md holds the owner's details.",
    "q": "Which file in a personal AI agent's folder takes priority over the others?"
-  }
+  },
+  "level": "intermediate"
  },
  {
   "id": "AWqvBdqCAAE-361",
@@ -1349,7 +1400,8 @@
   "quiz": {
    "a": "Reordering graph nodes should not change predictions, which greatly reduces the data needed to learn; transformers already have this property.",
    "q": "Why does permutation equivariance cut the data a graph model needs?"
-  }
+  },
+  "level": "advanced"
  },
  {
   "id": "AWqvBdqCAAE-1073",
@@ -1375,7 +1427,8 @@
   "quiz": {
    "a": "They discard input graph information, so many different graphs give identical outputs; non-invertible operations escape symmetry.",
    "q": "Why can symmetry not describe shortest-path algorithms like Dijkstra?"
-  }
+  },
+  "level": "advanced"
  },
  {
   "id": "UabBYexBD4k-375",
@@ -1401,7 +1454,8 @@
   "quiz": {
    "a": "RAG retrieves only existing snippets, so gaps stay hidden; long context lets the model see both full documents and compare them.",
    "q": "Why can RAG miss omitted requirements when comparing two documents?"
-  }
+  },
+  "level": "intermediate"
  },
  {
   "id": "1sd26pWhfmg-203",
@@ -1427,7 +1481,8 @@
   "quiz": {
    "a": "A minimal scaffold runs Claude Code in a loosely permissioned VM and asks for the most serious vulnerability; capability matters more than tooling.",
    "q": "Why does base model capability matter more than fancy tooling for finding vulnerabilities?"
-  }
+  },
+  "level": "advanced"
  },
  {
   "id": "1sd26pWhfmg-408",
@@ -1453,7 +1508,8 @@
   "quiz": {
    "a": "Timing-based queries read the admin API key and secret without logging in; the password hash is bcrypt, limiting damage.",
    "q": "How did an LLM-written blind SQL injection expose a blog's admin credentials?"
-  }
+  },
+  "level": "advanced"
  },
  {
   "id": "p3sij8QzONQ-3770",
@@ -1479,7 +1535,8 @@
   "quiz": {
    "a": "It multiplies the loss before backpropagation so small gradients do not underflow to zero, then scales back, leaving the learning rate unchanged.",
    "q": "How does the gradient scaler keep FP16 training from underflowing small gradients?"
-  }
+  },
+  "level": "advanced"
  },
  {
   "id": "p3sij8QzONQ-6143",
@@ -1505,7 +1562,8 @@
   "quiz": {
    "a": "A sliding window spreads attention over too few tokens, causing errors and forgetting; the first tokens absorb unneeded attention.",
    "q": "Why do sliding window attention models need initial tokens kept as anchors?"
-  }
+  },
+  "level": "advanced"
  },
  {
   "id": "p3sij8QzONQ-9474",
@@ -1531,7 +1589,8 @@
   "quiz": {
    "a": "It collects pair frequencies, not gradients, and repeatedly merges the most frequent adjacent pair until a minimum frequency is reached.",
    "q": "How does byte pair encoding decide which symbols to merge into its vocabulary?"
-  }
+  },
+  "level": "intermediate"
  },
  {
   "id": "p3sij8QzONQ-11860",
@@ -1557,7 +1616,8 @@
   "quiz": {
    "a": "A router sends each token to one or more experts, so only a fraction of parameters activates, making inference faster.",
    "q": "How does a mixture of experts add parameters without adding compute per token?"
-  }
+  },
+  "level": "intermediate"
  },
  {
   "id": "p3sij8QzONQ-12356",
@@ -1583,7 +1643,8 @@
   "quiz": {
    "a": "Without it, tokens concentrate on a few experts and waste capacity; the auxiliary loss penalizes skewed routing across experts.",
    "q": "Why do mixture-of-experts routers need an auxiliary load-balancing loss?"
-  }
+  },
+  "level": "advanced"
  },
  {
   "id": "p3sij8QzONQ-13404",
@@ -1609,7 +1670,8 @@
   "quiz": {
    "a": "Base models only complete documents rather than answer questions; supervised fine-tuning on a small, high-quality dataset teaches assistant behavior.",
    "q": "Why do base models fail as assistants, and what does SFT change?"
-  }
+  },
+  "level": "intermediate"
  },
  {
   "id": "p3sij8QzONQ-14247",
@@ -1635,7 +1697,8 @@
   "quiz": {
    "a": "-100 is PyTorch's ignore index, so loss covers only completion tokens, with targets shifted one position from the inputs.",
    "q": "Why set prompt token labels to -100 when computing SFT loss?"
-  }
+  },
+  "level": "advanced"
  },
  {
   "id": "p3sij8QzONQ-15826",
@@ -1661,7 +1724,8 @@
   "quiz": {
    "a": "Annotators choose the preferred response among several to the same instruction, and the reward model learns one scalar score per prompt-response pair.",
    "q": "How do annotator preference pairs train a reward model for RLHF?"
-  }
+  },
+  "level": "intermediate"
  },
  {
   "id": "p3sij8QzONQ-18295",
@@ -1687,7 +1751,8 @@
   "quiz": {
    "a": "The reference copies the SFT weights and stays frozen while the policy updates; measuring their divergence guards against drifting and forgetting.",
    "q": "Why does PPO keep a frozen reference model alongside the policy?"
-  }
+  },
+  "level": "advanced"
  },
  {
   "id": "EL7Au1tzNxE-44",
@@ -1713,7 +1778,8 @@
   "quiz": {
    "a": "Models excel at pattern replication with many online examples, but compatibility and borrow-checking need reasoning from principles, not regurgitation.",
    "q": "Why might coding models struggle with Rust's borrow checker, per Gjengset?"
-  }
+  },
+  "level": "intermediate"
  },
  {
   "id": "EL7Au1tzNxE-8304",
@@ -1739,7 +1805,8 @@
   "quiz": {
    "a": "Its context assumes files have not changed, so formatting can desync it; he suggests formatting after starting a new session.",
    "q": "Why might running a formatter mid-session confuse a coding agent?"
-  }
+  },
+  "level": "intermediate"
  },
  {
   "id": "CEvIs9y1uog-122",
@@ -1765,7 +1832,8 @@
   "quiz": {
    "a": "Skills are folders of composable procedural knowledge that anyone can create, which can be shared via Git, Drive or zip.",
    "q": "What problem do agent skills solve, given agents lack domain expertise?"
-  }
+  },
+  "level": "intermediate"
  },
  {
   "id": "ykfQD1_WPBQ-2432",
@@ -1791,7 +1859,8 @@
   "quiz": {
    "a": "Search hit exponential complexity as problems grew, and Rosenblatt's perceptrons were oversold because multi-layer training was unsolved.",
    "q": "Why did early search-based AI and perceptrons overpromise?"
-  }
+  },
+  "level": "intro"
  },
  {
   "id": "ykfQD1_WPBQ-2862",
@@ -1817,7 +1886,8 @@
   "quiz": {
    "a": "Predicting the next word well forces models to capture the world's structure; simple objectives at massive scale yield emergent complexity.",
    "q": "Why might next-word prediction at scale produce real understanding of the world?"
-  }
+  },
+  "level": "intermediate"
  },
  {
   "id": "-QFHIoCo-Ko-752",
@@ -1843,7 +1913,8 @@
   "quiz": {
    "a": "Editing specs without reading code leads to misalignment; you must understand and shape the code yourself, since it is the battleground.",
    "q": "Why does Pocock argue against spec-to-code workflows?"
-  }
+  },
+  "level": "intermediate"
  },
  {
   "id": "-QFHIoCo-Ko-966",
@@ -1869,7 +1940,8 @@
   "quiz": {
    "a": "It makes the agent interview you one question at a time until both sides share understanding, not jumping to a plan.",
    "q": "What does the grill-me prompt do before the agent starts planning?"
-  }
+  },
+  "level": "intermediate"
  },
  {
   "id": "-QFHIoCo-Ko-2370",
@@ -1895,7 +1967,8 @@
   "quiz": {
    "a": "A Kanban board of tickets with blocking relationships; AFK tickets run without a human, and the first is unblocked.",
    "q": "How should a vague PRD become tickets for agents?"
-  }
+  },
+  "level": "intermediate"
  },
  {
   "id": "-QFHIoCo-Ko-3925",
@@ -1921,7 +1994,8 @@
   "quiz": {
    "a": "A reviewer continuing a token-heavy implementation session reviews in the dumb zone and catches fewer bugs; clearing context keeps it smart.",
    "q": "Why should an automated code review run in a fresh context?"
-  }
+  },
+  "level": "intermediate"
  },
  {
   "id": "-QFHIoCo-Ko-4020",
@@ -1947,7 +2021,8 @@
   "quiz": {
    "a": "The agent writes a failing test before implementing, which makes it harder for the AI to cheat on tests.",
    "q": "How does red-green TDD keep an agent from cheating on tests?"
-  }
+  },
+  "level": "intermediate"
  },
  {
   "id": "-QFHIoCo-Ko-5285",
@@ -1973,7 +2048,8 @@
   "quiz": {
    "a": "Push instructions are sent every request, costing tokens; pull skills load on demand. Pull suits implementers, push suits an automated reviewer.",
    "q": "What is the difference between push and pull instructions for agents?"
-  }
+  },
+  "level": "intermediate"
  },
  {
   "id": "Sir59K8ZDPU-1145",
@@ -1989,7 +2065,8 @@
   "channel": "AI Engineer",
   "hn": false,
   "source": "chapters",
-  "subject": "ontology guardrails"
+  "subject": "ontology guardrails",
+  "level": "intermediate"
  },
  {
   "id": "Pk2BeaGbcTE-1241",
@@ -2015,7 +2092,8 @@
   "quiz": {
    "a": "Regular semantic chunking decides splits locally, left to right; the cluster chunker builds a similarity matrix over all pieces for global groups.",
    "q": "How does Chroma's cluster semantic chunker differ from regular semantic chunking?"
-  }
+  },
+  "level": "advanced"
  },
  {
   "id": "Pk2BeaGbcTE-1818",
@@ -2041,7 +2119,8 @@
   "quiz": {
    "a": "Chunks of 200 to 400 tokens generally beat larger ones; adding overlap lowers efficiency, and a simple 200-character splitter with no overlap did well.",
    "q": "Which chunk sizes did Chroma's benchmark find generally beat larger chunks for RAG?"
-  }
+  },
+  "level": "intermediate"
  },
  {
   "id": "vXiB0UdDhk8-1687",
@@ -2067,7 +2146,8 @@
   "quiz": {
    "a": "Top-K keeps the K most likely words; top-P keeps the smallest set reaching a cumulative threshold such as 70%; both renormalize.",
    "q": "How do top-K and top-P sampling differ in which candidate words they keep?"
-  }
+  },
+  "level": "intro"
  },
  {
   "id": "vXiB0UdDhk8-1849",
@@ -2093,7 +2173,8 @@
   "quiz": {
    "a": "The long tail of nonsensical tokens occasionally gets picked and produces gibberish, so top-K or top-P filtering keeps output sensible.",
    "q": "Why is sampling from the full token probability distribution a bad idea?"
-  }
+  },
+  "level": "intro"
  },
  {
   "id": "EV7WhVT270Q-3860",
@@ -2109,7 +2190,8 @@
   "channel": "Lex Fridman",
   "hn": false,
   "source": "chapters",
-  "subject": "llm training pipeline"
+  "subject": "llm training pipeline",
+  "level": "intermediate"
  },
  {
   "id": "Sir59K8ZDPU-1067",
@@ -2125,7 +2207,8 @@
   "channel": "AI Engineer",
   "hn": false,
   "source": "chapters",
-  "subject": "ontology guardrails"
+  "subject": "ontology guardrails",
+  "level": "intermediate"
  },
  {
   "id": "EV7WhVT270Q-2900",
@@ -2141,7 +2224,8 @@
   "channel": "Lex Fridman",
   "hn": false,
   "source": "chapters",
-  "subject": "scaling laws"
+  "subject": "scaling laws",
+  "level": "advanced"
  },
  {
   "id": "EV7WhVT270Q-9540",
@@ -2157,7 +2241,8 @@
   "channel": "Lex Fridman",
   "hn": false,
   "source": "chapters",
-  "subject": "continual learning"
+  "subject": "continual learning",
+  "level": "advanced"
  },
  {
   "id": "C_GG5g38vLU-492",
@@ -2173,7 +2258,8 @@
   "channel": "AI Engineer",
   "hn": false,
   "source": "chapters",
-  "subject": "agent harness"
+  "subject": "agent harness",
+  "level": "intermediate"
  },
  {
   "id": "OkEGJ5G3foU-9455",
@@ -2189,7 +2275,8 @@
   "channel": "AI Engineer",
   "hn": false,
   "source": "chapters",
-  "subject": "quantization"
+  "subject": "quantization",
+  "level": "advanced"
  },
  {
   "id": "QWoslkjR9W4-370",
@@ -2205,7 +2292,8 @@
   "channel": "Adam Lucek",
   "hn": false,
   "source": "chapters",
-  "subject": "reasoning models"
+  "subject": "reasoning models",
+  "level": "intermediate"
  },
  {
   "id": "QWoslkjR9W4-1228",
@@ -2221,7 +2309,8 @@
   "channel": "Adam Lucek",
   "hn": false,
   "source": "chapters",
-  "subject": "beam search"
+  "subject": "beam search",
+  "level": "intermediate"
  },
  {
   "id": "ykfQD1_WPBQ-995",
@@ -2248,6 +2337,7 @@
    "a": "A four-year-old has seen as much visual data as an LLM read, but the noisy, continuous real world defeats LLM methods.",
    "q": "Why is a four-year-old's visual data comparable to an LLM's training?"
   },
+  "level": "intro",
   "more": true
  },
  {
@@ -2275,6 +2365,7 @@
    "a": "Knowledge lives in the program or weights, separate from hardware, so saved weights can be revived on new hardware as the same entity.",
    "q": "Why could digital AI be effectively immortal, unlike brains?"
   },
+  "level": "intro",
   "more": true
  },
  {
@@ -2302,6 +2393,7 @@
    "a": "It predicts the next state from the current state and an action, then searches imagined action sequences to reach a goal state.",
    "q": "How can an action-conditioned world model plan toward a goal?"
   },
+  "level": "advanced",
   "more": true
  },
  {
@@ -2329,6 +2421,7 @@
    "a": "RL only sharpens answers the model already sometimes gets right; LLaMA did not know knight moves, so RL cannot teach missing fundamentals.",
    "q": "Why can RL not help a model that lacks basic skills?"
   },
+  "level": "advanced",
   "more": true
  },
  {
@@ -2356,6 +2449,7 @@
    "a": "It turns an adjective like fluffy into a direction added to the noun; mapping full space to itself costs about 100 times more.",
    "q": "How does a value matrix change a noun's meaning using an adjective?"
   },
+  "level": "intermediate",
   "more": true
  },
  {
@@ -2383,6 +2477,7 @@
    "a": "GNNs send whole states, but information lives in state changes, and a change like 9 to 0 could come from several operations.",
    "q": "Why do GNNs struggle to model the carry in addition?"
   },
+  "level": "advanced",
   "more": true
  },
  {
@@ -2410,6 +2505,7 @@
    "a": "Learning separate concepts per language is wasteful, so small models keep languages apart while larger models push them into a shared middle representation.",
    "q": "Why do larger models share one concept space across languages?"
   },
+  "level": "advanced",
   "more": true
  },
  {
@@ -2437,6 +2533,7 @@
    "a": "Words form a finite dictionary, so outputting a probability over each word works; the real world has too many plausible pixel-level futures to predict.",
    "q": "Why does next-token prediction handle text but fail on video?"
   },
+  "level": "intermediate",
   "more": true
  },
  {
@@ -2464,6 +2561,7 @@
    "a": "A simple matrix multiplication yields a B by T by T tensor; each row shows one token's interest in every other token.",
    "q": "Why is Q times K-transpose called the most interesting transformer operation?"
   },
+  "level": "advanced",
   "more": true
  },
  {
@@ -2491,6 +2589,7 @@
    "a": "Predicting what people say is not predicting what happens; learners should learn from their own actions and results, not recorded human behavior.",
    "q": "Why does imitating human behavior not build a world model?"
   },
+  "level": "advanced",
   "more": true
  },
  {
@@ -2518,6 +2617,7 @@
    "a": "Query is what a token seeks and key what it offers; 'bank' near 'river' and 'muddy' gets a river-shaped vector from its neighbors' values.",
    "q": "How does context change the vector for the word 'bank'?"
   },
+  "level": "intro",
   "more": true
  },
  {
@@ -2545,6 +2645,7 @@
    "a": "Softmax zeroes future positions after minus infinity is added, so a decoder token attends only to earlier tokens and itself.",
    "q": "Why does minus infinity in the causal mask matter for decoder LLMs?"
   },
+  "level": "advanced",
   "more": true
  },
  {
@@ -2572,6 +2673,7 @@
    "a": "A query searches for related words and a key marks what matches it; their similarity sets how much another word's value influences the current word.",
    "q": "How does a query-key match decide which word's value influences another?"
   },
+  "level": "intro",
   "more": true
  },
  {
@@ -2599,6 +2701,7 @@
    "a": "Each word scores every word, itself included, via query and key; on a match, the value supplies the content it contributes.",
    "q": "How do transformers let every word look at all others at once?"
   },
+  "level": "intro",
   "more": true
  },
  {
@@ -2626,6 +2729,7 @@
    "a": "Researchers can freeze, replay and probe neural networks, unlike brains; mechanistic interpretability found a math circuit that was never programmed in.",
    "q": "What makes LLMs easier to study than human brains?"
   },
+  "level": "intermediate",
   "more": true
  },
  {
@@ -2653,6 +2757,7 @@
    "a": "Ask why it failed, feed each fixed failure back, and have it update its skill; after about five loops, the workflow ran flawlessly.",
    "q": "How can failing agents be fixed by iteratively improving their skill file?"
   },
+  "level": "intermediate",
   "more": true
  },
  {
@@ -2680,6 +2785,7 @@
    "a": "A query asks what a token needs, a key offers what it represents; their dot product gives a relevance score that weights values.",
    "q": "What do query and key vectors each contribute to self-attention?"
   },
+  "level": "intro",
   "more": true
  },
  {
@@ -2707,6 +2813,7 @@
    "a": "Language models predict next tokens, so each token must not see future ones; adding negative infinity to future scores gives zero weight after softmax.",
    "q": "Why must attention mask future tokens during language model training?"
   },
+  "level": "intermediate",
   "more": true
  },
  {
@@ -2724,6 +2831,7 @@
   "hn": false,
   "source": "chapters",
   "subject": "llm training pipeline",
+  "level": "advanced",
   "more": true
  },
  {
@@ -2741,6 +2849,7 @@
   "hn": false,
   "source": "chapters",
   "subject": "agent harness",
+  "level": "intermediate",
   "more": true
  },
  {
@@ -2758,6 +2867,7 @@
   "hn": false,
   "source": "chapters",
   "subject": "grpo",
+  "level": "advanced",
   "more": true
  },
  {
@@ -2775,6 +2885,7 @@
   "hn": false,
   "source": "chapters",
   "subject": "grpo",
+  "level": "advanced",
   "more": true
  },
  {
@@ -2791,7 +2902,8 @@
   "channel": "Y Combinator",
   "hn": false,
   "source": "chapters",
-  "subject": "evals for pms"
+  "subject": "evals for pms",
+  "level": "intermediate"
  },
  {
   "id": "PplmzlgE0kg-430",
@@ -2807,7 +2919,8 @@
   "channel": "Lenny's Podcast",
   "hn": false,
   "source": "chapters",
-  "subject": "shipping velocity"
+  "subject": "shipping velocity",
+  "level": "intermediate"
  },
  {
   "id": "PplmzlgE0kg-3300",
@@ -2823,7 +2936,8 @@
   "channel": "Lenny's Podcast",
   "hn": false,
   "source": "chapters",
-  "subject": "evals for pms"
+  "subject": "evals for pms",
+  "level": "intermediate"
  },
  {
   "id": "PEDzBT-jNmI-1470",
@@ -2839,7 +2953,8 @@
   "channel": "Dive Club 🤿",
   "hn": false,
   "source": "chapters",
-  "subject": "ai trust ux"
+  "subject": "ai trust ux",
+  "level": "intermediate"
  },
  {
   "id": "scsW6_2SPC4-3225",
@@ -2855,7 +2970,8 @@
   "channel": "Lenny's Podcast",
   "hn": false,
   "source": "chapters",
-  "subject": "ai prototyping"
+  "subject": "ai prototyping",
+  "level": "intro"
  },
  {
   "id": "l0h3nAW13ao-285",
@@ -2871,7 +2987,8 @@
   "channel": "Y Combinator",
   "hn": false,
   "source": "chapters",
-  "subject": "ai startup types"
+  "subject": "ai startup types",
+  "level": "intro"
  },
  {
   "id": "PplmzlgE0kg-3150",
@@ -2887,7 +3004,8 @@
   "channel": "Lenny's Podcast",
   "hn": false,
   "source": "chapters",
-  "subject": "ai pm careers"
+  "subject": "ai pm careers",
+  "level": "intermediate"
  },
  {
   "id": "PplmzlgE0kg-3650",
@@ -2903,7 +3021,8 @@
   "channel": "Lenny's Podcast",
   "hn": false,
   "source": "chapters",
-  "subject": "model-driven product changes"
+  "subject": "model-driven product changes",
+  "level": "intermediate"
  },
  {
   "id": "1em64iUFt3U-890",
@@ -2919,7 +3038,8 @@
   "channel": "Lenny's Podcast",
   "hn": false,
   "source": "chapters",
-  "subject": "pm ai workflow"
+  "subject": "pm ai workflow",
+  "level": "intermediate"
  },
  {
   "id": "1em64iUFt3U-2312",
@@ -2935,7 +3055,8 @@
   "channel": "Lenny's Podcast",
   "hn": false,
   "source": "chapters",
-  "subject": "ai peer review"
+  "subject": "ai peer review",
+  "level": "intermediate"
  },
  {
   "id": "crMrVozp_h8-1990",
@@ -2951,7 +3072,8 @@
   "channel": "Lenny's Podcast",
   "hn": false,
   "source": "chapters",
-  "subject": "ai operations"
+  "subject": "ai operations",
+  "level": "intermediate"
  },
  {
   "id": "crMrVozp_h8-2490",
@@ -2967,7 +3089,8 @@
   "channel": "Lenny's Podcast",
   "hn": false,
   "source": "chapters",
-  "subject": "compounding engineering"
+  "subject": "compounding engineering",
+  "level": "intermediate"
  },
  {
   "id": "hCMrEfPG2Yg-462",
@@ -2983,7 +3106,8 @@
   "channel": "AI Engineer",
   "hn": false,
   "source": "chapters",
-  "subject": "generative ui"
+  "subject": "generative ui",
+  "level": "intermediate"
  },
  {
   "id": "NR85H55eYkM-1655",
@@ -2999,7 +3123,8 @@
   "channel": "Lenny's Podcast",
   "hn": false,
   "source": "chapters",
-  "subject": "ai pricing"
+  "subject": "ai pricing",
+  "level": "intermediate"
  },
  {
   "id": "NR85H55eYkM-2338",
@@ -3015,7 +3140,8 @@
   "channel": "Lenny's Podcast",
   "hn": false,
   "source": "chapters",
-  "subject": "ai pricing"
+  "subject": "ai pricing",
+  "level": "intermediate"
  },
  {
   "id": "PEDzBT-jNmI-65",
@@ -3031,7 +3157,8 @@
   "channel": "Dive Club 🤿",
   "hn": false,
   "source": "chapters",
-  "subject": "ai product design"
+  "subject": "ai product design",
+  "level": "intermediate"
  },
  {
   "id": "KwhgfwOSToQ-359",
@@ -3047,7 +3174,8 @@
   "channel": "AI Engineer",
   "hn": false,
   "source": "chapters",
-  "subject": "forward deployed engineering"
+  "subject": "forward deployed engineering",
+  "level": "intermediate"
  },
  {
   "id": "71qvIkO9d_A-1345",
@@ -3063,7 +3191,8 @@
   "channel": "Aakash Gupta",
   "hn": false,
   "source": "chapters",
-  "subject": "eval design"
+  "subject": "eval design",
+  "level": "intermediate"
  },
  {
   "id": "71qvIkO9d_A-2365",
@@ -3079,7 +3208,8 @@
   "channel": "Aakash Gupta",
   "hn": false,
   "source": "chapters",
-  "subject": "eval design"
+  "subject": "eval design",
+  "level": "intermediate"
  },
  {
   "id": "UVeeNW_z068-737",
@@ -3095,7 +3225,8 @@
   "channel": "LangChain",
   "hn": false,
   "source": "chapters",
-  "subject": "production evals"
+  "subject": "production evals",
+  "level": "intermediate"
  },
  {
   "id": "NMs8C2_3M0w-211",
@@ -3111,7 +3242,8 @@
   "channel": "The Pragmatic Engineer",
   "hn": false,
   "source": "chapters",
-  "subject": "agent architecture"
+  "subject": "agent architecture",
+  "level": "intermediate"
  },
  {
   "id": "scsW6_2SPC4-1130",
@@ -3128,6 +3260,7 @@
   "hn": false,
   "source": "chapters",
   "subject": "evals for pms",
+  "level": "intermediate",
   "more": true
  },
  {
@@ -3145,6 +3278,7 @@
   "hn": false,
   "source": "chapters",
   "subject": "ai pricing",
+  "level": "intermediate",
   "more": true
  },
  {
@@ -3162,6 +3296,7 @@
   "hn": false,
   "source": "chapters",
   "subject": "product growth",
+  "level": "intermediate",
   "more": true
  },
  {
@@ -3179,6 +3314,7 @@
   "hn": false,
   "source": "chapters",
   "subject": "product-market fit",
+  "level": "intermediate",
   "more": true
  },
  {
@@ -3196,6 +3332,7 @@
   "hn": false,
   "source": "chapters",
   "subject": "ai pivot",
+  "level": "intermediate",
   "more": true
  },
  {
@@ -3213,6 +3350,7 @@
   "hn": false,
   "source": "chapters",
   "subject": "ai pricing",
+  "level": "intermediate",
   "more": true
  },
  {
@@ -3230,6 +3368,7 @@
   "hn": false,
   "source": "chapters",
   "subject": "production evals",
+  "level": "intermediate",
   "more": true
  },
  {
@@ -3247,6 +3386,7 @@
   "hn": false,
   "source": "chapters",
   "subject": "ai product iteration",
+  "level": "intermediate",
   "more": true
  },
  {
@@ -3264,6 +3404,7 @@
   "hn": false,
   "source": "chapters",
   "subject": "shipyard model",
+  "level": "intermediate",
   "more": true
  },
  {
@@ -3281,6 +3422,7 @@
   "hn": false,
   "source": "chapters",
   "subject": "ai-native products",
+  "level": "intermediate",
   "more": true
  },
  {
@@ -3298,6 +3440,7 @@
   "hn": false,
   "source": "chapters",
   "subject": "ai pricing",
+  "level": "intermediate",
   "more": true
  }
 ]

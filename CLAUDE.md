@@ -41,6 +41,14 @@ sub-agent actually ran on (check the `model` field the agents wrote and the sess
 7. Summaries: `python pipeline.py select`, then `python pipeline.py summaries-prep`, Haiku sub-agents with
    `prompts/summaries.md` (one per batch file in `data/work/summaries/`), and `python pipeline.py summaries-apply`.
    Only clips with a transcript get a summary; the others keep their one-line "why".
+   Levels: `levels-prep`, Haiku with `prompts/levels.md` (one agent per batch file), `levels-apply`, then `select`
+   (the feed's Level chip filters on `level`).
+   Paths: `paths-prep`, one Sonnet agent per topic with `prompts/paths.md`, `paths-apply` → `paths.json`.
+   Debates: `debates-prep`, Sonnet with `prompts/debates.md`, then `debates-check-prep` and a SECOND Sonnet pass
+   with `prompts/debates-check.md` (it judges only the words actually spoken; never loosen it). If a side fails
+   because its stance mixes claims, reword that side to the one claim every clip supports and re-check, as
+   was done for "next-word prediction"; never skip the check. Then `debates-apply` → `debates.json`.
+   Paths and debates refer to clip ids (`<video>-<start>`), so rerun them after clips are re-cut.
 8. `python pipeline.py select`, commit `clips.json` and `topics.json` here and push to `main`; commit
    `data/` in `../slopless-data` and push it there (GitHub Pages deploys from `main`).
 9. Summarize: clips per topic, thresholds used (from topics.yaml), API units (`data/usage.json`) and
@@ -63,6 +71,8 @@ stopping for approval. Topics in `phase: preview` (new topics) are skipped: thos
    `score-prep --flagged` + Sonnet + `score-apply` to re-cut those videos, then `quiz-prep`/`summaries-prep`
    for the new cuts. Comment on each issue with what changed and close it.
 5. Recall questions: `python pipeline.py quiz-prep`, Haiku with `prompts/quiz.md`, `python pipeline.py quiz-apply`.
+   New clips also need levels (`levels-prep` / Haiku / `levels-apply`). Rerun paths and debates (step 7) when
+   10 or more clips were added or any were re-cut; otherwise leave them.
 6. `python pipeline.py select`, commit `clips.json` and `topics.json` here and `data/` in `../slopless-data`
    with a message like "Weekly refresh: +N clips", and push both to `main`.
 7. End with a short report: new videos found, clips added per topic, API units used, sub-agent models.

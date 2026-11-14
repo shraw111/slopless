@@ -787,6 +787,149 @@ def cmd_quiz_apply(args):
     print(f"applied {n} recall questions")
 
 
+# ---------------------------------------------------------------- 3e. levels, paths, debates
+LEVELS = ("intro", "intermediate", "advanced")
+
+
+def public_clips():
+    return json.loads((ROOT / "clips.json").read_text())
+
+
+def slug(s):
+    return re.sub(r"[^a-z0-9]+", "-", s.lower()).strip("-")[:48]
+
+
+def cmd_levels_prep(args):
+    """Published clips (main feed and reserve) without a level -> data/work/levels/batch_NNN.in.json."""
+    out = WORK / "levels"
+    out.mkdir(parents=True, exist_ok=True)
+    for f in out.glob("*.json"):
+        f.unlink()
+    cache = load_cache()
+    pub = {k["id"]: k for k in public_clips()}
+    items = []
+    for v in cache.values():
+        for c in result_clips(v["result"]) if v.get("result") else []:
+            k = pub.get(clip_id(v["vid"], c))
+            if k and "level" not in c:
+                items.append({"id": k["id"], "subject": k["subject"], "hook": k["hook"],
+                              "about": k.get("summary") or k["why"], "points": k.get("points", []),
+                              "channel": k["channel"], "video": k["title"]})
+    for i in range(0, len(items), 80):
+        jsave(out / f"batch_{i // 80:03d}.in.json", {"clips": items[i:i + 80]})
+    print(f"{len(items)} clips need a level in {math.ceil(len(items) / 80)} batches -> {out} (prompt: prompts/levels.md)")
+
+
+def cmd_levels_apply(args):
+    cache = load_cache()
+    by_id = {clip_id(v["vid"], c): c for v in cache.values() if v.get("result") for c in result_clips(v["result"])}
+    n = bad = 0
+    for f in sorted((WORK / "levels").glob("*.out.json")):
+        for cid, lv in json.loads(f.read_text())["levels"].items():
+            if cid in by_id and lv in LEVELS:
+                by_id[cid]["level"] = lv
+                n += 1
+            else:
+                bad += 1
+    save_cache(cache)
+    print(f"applied {n} levels ({bad} invalid)")
+
+
+def cmd_paths_prep(args):
+    """Per topic: every published clip with its level, for the path writer -> data/work/paths/<topic>.in.json."""
+    out = WORK / "paths"
+    out.mkdir(parents=True, exist_ok=True)
+    for f in out.glob("*.json"):
+        f.unlink()
+    clips = public_clips()
+    for t in enabled_topics(args.topic):
+        items = [{"id": k["id"], "hook": k["hook"], "about": k.get("summary") or k["why"], "subject": k["subject"],
+                  "level": k.get("level", "intermediate"), "channel": k["channel"], "video": k["title"],
+                  "minutes": round((k["end"] - k["start"]) / 60, 1)} for k in clips if k["topic"] == t["id"]]
+        jsave(out / f"{t['id']}.in.json", {"topic": t["name"], "covers": t["covers"], "clips": items})
+        print(f"{t['id']}: {len(items)} clips -> {out / (t['id'] + '.in.json')} (prompt: prompts/paths.md)")
+
+
+def cmd_paths_apply(args):
+    """data/work/paths/<topic>.out.json -> paths.json (public). Unknown clip ids are dropped; paths need 3+ steps."""
+    clips = {k["id"]: k for k in public_clips()}
+    paths = []
+    for f in sorted((WORK / "paths").glob("*.out.json")):
+        tid = f.name.split(".")[0]
+        for pth in json.loads(f.read_text())["paths"]:
+            steps = list(dict.fromkeys(s for s in pth.get("steps", []) if s in clips and clips[s]["topic"] == tid))
+            if len(steps) < 3 or not pth.get("title") or not pth.get("goal"):
+                continue
+            steps = steps[:10]
+            paths.append({"id": f"{tid}-{slug(pth['title'])}", "topic": tid, "title": pth["title"].strip(),
+                          "goal": pth["goal"].strip(), "steps": steps,
+                          "minutes": round(sum(clips[s]["end"] - clips[s]["start"] for s in steps) / 60)})
+    (ROOT / "paths.json").write_text(json.dumps(paths, indent=1, ensure_ascii=False) + "\n")
+    print(f"wrote {len(paths)} learning paths -> paths.json")
+
+
+def cmd_debates_prep(args):
+    """Stage 1: every clip's position in short form, for finding real disagreements -> debates/propose.in.json."""
+    out = WORK / "debates"
+    out.mkdir(parents=True, exist_ok=True)
+    for f in out.glob("*.json"):
+        f.unlink()
+    items = [{"id": k["id"], "topic": k["topic"], "source": f"{k['channel']} · {k['title']}", "hook": k["hook"],
+              "about": k.get("summary") or k["why"], "points": k.get("points", []),
+              "has_transcript": k.get("source") == "transcript"} for k in public_clips()]
+    jsave(out / "propose.in.json", {"clips": items})
+    print(f"{len(items)} clips -> {out / 'propose.in.json'} (prompt: prompts/debates.md)")
+
+
+def cmd_debates_check_prep(args):
+    """Stage 2: the exact words spoken in each proposed side's clips, for a fact-check -> debates/check.in.json."""
+    out = WORK / "debates"
+    clips = {k["id"]: k for k in public_clips()}
+    proposals = json.loads((out / "propose.out.json").read_text())["debates"]
+    items = []
+    for d in proposals:
+        sides = []
+        for s in d["sides"]:
+            cl = []
+            for cid in s["clips"]:
+                k = clips.get(cid)
+                if k:
+                    cl.append({"id": cid, "channel": k["channel"], "video": k["title"],
+                               "words": clip_text(k["vid"], {"start_sec": k["start"], "end_sec": k["end"]})[:2400]})
+            sides.append({"label": s["label"], "stance": s["stance"], "clips": cl})
+        items.append({"id": d["id"], "question": d["question"], "sides": sides})
+    jsave(out / "check.in.json", {"debates": items})
+    print(f"{len(items)} proposed debates -> {out / 'check.in.json'} (prompt: prompts/debates-check.md)")
+
+
+def cmd_debates_apply(args):
+    """Keep only debates the fact-check passed whose sides each have a clip with a transcript -> debates.json."""
+    out = WORK / "debates"
+    clips = {k["id"]: k for k in public_clips()}
+    proposals = {d["id"]: d for d in json.loads((out / "propose.out.json").read_text())["debates"]}
+    verdicts = json.loads((out / "check.out.json").read_text())["verdicts"]
+    kept = []
+    for did, d in proposals.items():
+        v = verdicts.get(did)
+        ok = v and v.get("fair") and len(v.get("sides_supported", [])) == len(d["sides"]) and all(v["sides_supported"])
+        if not ok:
+            print(f"  dropped {did}: {(v or {}).get('note', 'no verdict')}")
+            continue
+        sides = []
+        for s in d["sides"]:
+            ids = [c for c in dict.fromkeys(s["clips"]) if c in clips][:3]
+            if not any(clips[c].get("source") == "transcript" for c in ids):
+                sides = []
+                break
+            sides.append({"label": s["label"].strip(), "stance": s["stance"].strip(), "clips": ids})
+        if len(sides) >= 2:
+            topics = [clips[c]["topic"] for s in sides for c in s["clips"]]
+            kept.append({"id": slug(d["question"]), "topic": max(set(topics), key=topics.count),
+                         "question": d["question"].strip(), "differ": d.get("differ", "").strip(), "sides": sides})
+    (ROOT / "debates.json").write_text(json.dumps(kept, indent=1, ensure_ascii=False) + "\n")
+    print(f"wrote {len(kept)} debates -> debates.json")
+
+
 # ---------------------------------------------------------------- 3d. select + build feed data
 def cmd_select(args):
     cache = load_cache()
@@ -824,6 +967,7 @@ def cmd_select(args):
                     "subject": subj,
                     **({"summary": r["summary"], "points": r.get("points", [])} if r.get("summary") else {}),
                     **({"quiz": r["quiz"]} if r.get("quiz") else {}),
+                    **({"level": r["level"]} if r.get("level") else {}),
                     **({"more": True} if more else {})}
 
         for adj, _, v, r, boost in pool:
@@ -887,7 +1031,10 @@ def main():
                      ("score-apply", cmd_score_apply), ("subjects-prep", cmd_subjects_prep),
                      ("subjects-apply", cmd_subjects_apply), ("summaries-prep", cmd_summaries_prep),
                      ("summaries-apply", cmd_summaries_apply), ("quiz-prep", cmd_quiz_prep),
-                     ("quiz-apply", cmd_quiz_apply), ("select", cmd_select)]:
+                     ("quiz-apply", cmd_quiz_apply), ("levels-prep", cmd_levels_prep),
+                     ("levels-apply", cmd_levels_apply), ("paths-prep", cmd_paths_prep), ("paths-apply", cmd_paths_apply),
+                     ("debates-prep", cmd_debates_prep), ("debates-check-prep", cmd_debates_check_prep),
+                     ("debates-apply", cmd_debates_apply), ("select", cmd_select)]:
         p = sub.add_parser(name)
         p.add_argument("--topic")
         p.add_argument("--limit", type=int, default=0)

@@ -1,0 +1,48 @@
+[
+ {
+  "id": "can-next-word-prediction-on-text-teach-a-model-h",
+  "topic": "ai",
+  "question": "Can next-word prediction on text teach a model how the world works?",
+  "differ": "One side says next-word prediction at scale forces models to capture the world's structure; the other says text prediction or imitation is too thin to build real understanding.",
+  "sides": [
+   {
+    "label": "Next-word prediction forces world understanding",
+    "stance": "Predicting the next word well requires understanding the universe, and simple objectives at massive scale yield emergent complexity.",
+    "clips": [
+     "ykfQD1_WPBQ-2862"
+    ]
+   },
+   {
+    "label": "Text and imitation alone aren't enough",
+    "stance": "Learning from text and imitation alone doesn't give real understanding of the world.",
+    "clips": [
+     "qvNCVYkHKfg-2301",
+     "ykfQD1_WPBQ-995",
+     "21EYKqUsPfg-148"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "does-reinforcement-learning-give-models-new-stra",
+  "topic": "ai",
+  "question": "Does reinforcement learning give models new strategies or only boost existing skills?",
+  "differ": "One side says RL lets thinking models discover new strategies like backtracking; the other says RL only makes the model more consistent at answers it already sometimes gets right.",
+  "sides": [
+   {
+    "label": "RL discovers new thinking strategies",
+    "stance": "Reinforcement learning lets thinking models discover strategies such as backtracking that are hard to hardcode by hand.",
+    "clips": [
+     "EWvNQjAaOHw-1376"
+    ]
+   },
+   {
+    "label": "RL only boosts existing abilities",
+    "stance": "Quoting a DeepSeek paper, RL only makes a model answer correctly more consistently, and cannot teach rules the model lacks, such as how pieces move.",
+    "clips": [
+     "GEJOB_TFYJ0-1246"
+    ]
+   }
+  ]
+ }
+]

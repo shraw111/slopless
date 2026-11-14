@@ -280,6 +280,56 @@
   .tx h3 { margin: 22px 0 10px; font-size: 13px; letter-spacing: .06em; text-transform: uppercase; color: var(--accent); }
   #tx-in { min-height: 110px; margin-bottom: 12px; }
   .tx-out { min-height: 90px; margin-bottom: 12px; }
+  .chip.lvlchip[aria-pressed="true"] { background: var(--accent); color: var(--accent-text); }
+  .meta-top { flex-wrap: wrap; }
+  .meta-top .lvl { padding: 2px 7px; border-radius: 6px; background: rgba(255,255,255,.14); color: rgba(255,255,255,.85);
+    font-size: 11px; font-weight: 700; letter-spacing: .03em; text-transform: uppercase; }
+  .step-tag { padding: 2px 8px; border-radius: 6px; font-size: 11px; font-weight: 800; letter-spacing: .03em; text-transform: uppercase;
+    background: rgba(255,255,255,.92); color: #0b0b0c; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .step-tag.side0 { background: var(--accent); color: var(--accent-text); }
+  .step-tag.side1 { background: #6bd3ff; color: #06202c; }
+  .step-tag.side2 { background: #ff9b6b; color: #2c1206; }
+  #mode span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 62vw; }
+  .b-tabs { margin: 6px 0 14px; }
+  .pcard, .dcard { padding: 16px; border-radius: 18px; background: var(--chip); margin: 0 0 14px; }
+  .pc-top { display: flex; justify-content: space-between; align-items: center; gap: 10px; color: var(--muted); font-size: 13px; margin-bottom: 6px; }
+  .pcard h3, .dcard h3 { margin: 4px 0 6px; font-size: 19px; line-height: 1.25; text-wrap: balance; }
+  .pc-goal { margin: 0 0 12px; color: rgba(255,255,255,.72); font-size: 14.5px; line-height: 1.4; }
+  .pc-steps { margin: 0 0 12px; padding-left: 20px; display: grid; gap: 5px; font-size: 14px; color: rgba(255,255,255,.88); }
+  .pc-steps li.done { color: var(--muted); text-decoration: line-through; text-decoration-color: rgba(255,255,255,.25); }
+  .pc-steps em { font-style: normal; margin-left: 8px; font-size: 10.5px; font-weight: 800; letter-spacing: .03em; text-transform: uppercase; color: var(--muted); }
+  .pc-bar { height: 4px; border-radius: 2px; background: rgba(255,255,255,.12); margin-bottom: 12px; overflow: hidden; }
+  .pc-bar i { display: block; height: 100%; background: var(--accent); }
+  .d-sides { display: grid; gap: 8px; margin: 8px 0 10px; }
+  .d-side { padding: 10px 12px; border-radius: 12px; background: rgba(255,255,255,.06); display: grid; gap: 3px; border-left: 4px solid var(--accent); }
+  .d-side.s1 { border-left-color: #6bd3ff; } .d-side.s2 { border-left-color: #ff9b6b; }
+  .d-side b { font-size: 15px; } .d-side span { font-size: 13.5px; color: rgba(255,255,255,.75); line-height: 1.35; }
+  .tips-card { max-height: 88vh; overflow-y: auto; }
+  .listen { display: grid; gap: 10px; justify-items: center; text-align: center; padding-top: 4px; }
+  .l-src { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
+  .l-src button { padding: 7px 14px; border-radius: 999px; background: var(--chip); font-size: 13.5px; font-weight: 600; }
+  .l-src button[aria-pressed="true"] { background: var(--accent); color: var(--accent-text); }
+  .l-art { width: min(360px, 88vw); aspect-ratio: 16 / 9; border-radius: 16px; background: #000 center / cover no-repeat; box-shadow: 0 12px 36px rgba(0,0,0,.5); margin-top: 6px; }
+  .l-label { margin: 4px 0 0; color: var(--accent); font-size: 12.5px; font-weight: 800; letter-spacing: .05em; text-transform: uppercase; }
+  .l-hook { margin: 0; font-size: 22px; line-height: 1.2; text-wrap: balance; max-width: 30ch; }
+  .l-meta { margin: 0; color: var(--muted); font-size: 14px; }
+  .l-bar { width: min(360px, 88vw); height: 4px; border-radius: 2px; background: rgba(255,255,255,.14); overflow: hidden; }
+  .l-bar i { display: block; height: 100%; width: 0; background: var(--accent); transition: width .3s; }
+  .l-ctl { display: flex; align-items: center; gap: 22px; margin: 6px 0; }
+  .l-ctl button { width: 52px; height: 52px; border-radius: 50%; background: var(--chip); display: grid; place-items: center; }
+  .l-ctl .l-play { width: 76px; height: 76px; background: var(--accent); color: var(--accent-text); }
+  .l-ctl svg { width: 26px; height: 26px; fill: currentColor; } .l-ctl .l-play svg { width: 34px; height: 34px; }
+  .l-opts { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
+  .l-opts .pill-btn[aria-pressed="true"] { color: var(--accent); }
+  .l-up { justify-self: start; margin: 16px 0 0; font-size: 13px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+  .l-queue { width: 100%; text-align: left; }
+  .l-item { display: grid; grid-template-columns: 96px 1fr; gap: 12px; align-items: center; cursor: pointer; padding: 6px; border-radius: 12px; }
+  .l-item.now { background: rgba(232,255,107,.12); }
+  .l-item img { width: 96px; aspect-ratio: 16 / 9; object-fit: cover; border-radius: 8px; background: #222; }
+  /* a banner (Today, Talk, Path, Debate, Saved…) sits under the top bar: keep the card's first row clear of it */
+  @media not all and (orientation: landscape) and (max-height: 520px) {
+    body.has-mode:not(.immersive) .card[data-i] { padding-top: calc(var(--top) + 48px); }
+  }
   @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
 </style>
 </head>
@@ -293,7 +343,7 @@
 <section id="search" class="panel" hidden aria-label="Search"></section>
 <section id="sheet" hidden></section>
 <button id="recall-pill" hidden></button>
-<div id="keys" aria-hidden="true">↑ ↓ next · Space pause · M sound · F full screen · T today · S save · X remove · / search · B browse · R recall</div>
+<div id="keys" aria-hidden="true">↑ ↓ next · Space pause · M sound · F full screen · T today · S save · X remove · / search · B browse · R recall · L listen</div>
 <div id="toast" role="status"></div>
 
 <script>
@@ -304,6 +354,10 @@ const store = {
   set(k, v) { try { localStorage.setItem("ss:" + k, JSON.stringify(v)); } catch {} },
 };
 const ICON = {
+  headphones: '<svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 0 0-9 9v6a3 3 0 0 0 3 3h1v-7H5v-2a7 7 0 0 1 14 0v2h-2v7h1a3 3 0 0 0 3-3v-6a9 9 0 0 0-9-9z"/></svg>',
+  pause: '<svg viewBox="0 0 24 24"><path d="M7 5h4v14H7V5zm6 0h4v14h-4V5z"/></svg>',
+  next: '<svg viewBox="0 0 24 24"><path d="M6 5l9 7-9 7V5zm10 0h2v14h-2V5z"/></svg>',
+  prev: '<svg viewBox="0 0 24 24"><path d="M18 5v14l-9-7 9-7zM6 5h2v14H6V5z"/></svg>',
   expand: '<svg viewBox="0 0 24 24"><path d="M4 4h6v2H6v4H4V4zm10 0h6v6h-2V6h-4V4zM4 14h2v4h4v2H4v-6zm14 0h2v6h-6v-2h4v-4z"/></svg>',
   shrink: '<svg viewBox="0 0 24 24"><path d="M8 4h2v6H4V8h4V4zm6 0h2v4h4v2h-6V4zM4 14h6v6H8v-4H4v-2zm10 0h6v2h-4v4h-2v-6z"/></svg>',
   grid: '<svg viewBox="0 0 24 24"><path d="M4 4h7v7H4V4zm9 0h7v7h-7V4zM4 13h7v7H4v-7zm9 0h7v7h-7v-7z"/></svg>',
@@ -324,10 +378,9 @@ const fmtViews = (n) => n >= 1e6 ? (n / 1e6).toFixed(1).replace(/\.0$/, "") + "M
 let topics = [], clips = [], seen = new Set(store.get("seen", []).map(String)), selected = store.get("selected", null);
 
 async function load() {
-  const [t, c] = await Promise.all([
-    fetch("topics.json", { cache: "no-cache" }).then((r) => r.json()).catch(() => []),
-    fetch("clips.json", { cache: "no-cache" }).then((r) => r.json()).catch(() => []),
-  ]);
+  const get = (f) => fetch(f, { cache: "no-cache" }).then((r) => r.json()).catch(() => []);
+  const [t, c, pa, de] = await Promise.all([get("topics.json"), get("clips.json"), get("paths.json"), get("debates.json")]);
+  paths = Array.isArray(pa) ? pa : []; debates = Array.isArray(de) ? de : [];
   topics = t.filter((x) => c.some((k) => k.topic === x.id));
   clips = c;
   markNew();
@@ -388,10 +441,16 @@ let flags = store.get("flags", {});                // clip id -> { reason, at, s
 let recall = store.get("recall", {});              // clip id -> { box, due } for daily recall
 let notes = store.get("notes", {});                // clip id -> your own note on a saved clip
 let fiveState = store.get("five", null);           // { day, ids }: Today's five
-let feedMode = null;                               // null | "today" | "talk" | "list" (a custom feed with a banner)
+let paths = [], debates = [];                      // learning paths and debates (paths.json, debates.json)
+let level = store.get("level", "any");             // any | intro | intermediate | advanced
+let tagOf = {};                                    // clip id -> { text, cls }: step / side label on the open path or debate feed
+const LEVELS = ["any", "intro", "intermediate", "advanced"];
+const LEVEL_NAME = { any: "Any level", intro: "Intro", intermediate: "Intermediate", advanced: "Advanced" };
+let feedMode = null;                               // null | "today" | "talk" | "path" | "debate" | "list" (a custom feed with a banner)
 // "more" clips are the reserve: cleared the quality bar but held back from the main feed by the per-subject and
 // per-channel limits. They only appear in the deep dives: More on this subject, Whole talk, Search, Browse, channels.
-const available = (c) => !c.more && !isSeen(c) && !removed.has(c.vid) && !flags[c.id] && (skips[c.id] || 0) < SKIP_LIMIT;
+const levelOk = (c) => level === "any" || !c.level || c.level === level;
+const available = (c) => !c.more && levelOk(c) && !isSeen(c) && !removed.has(c.vid) && !flags[c.id] && (skips[c.id] || 0) < SKIP_LIMIT;
 
 function logHistory(c, kind) {
   history = [{ kind, id: c.id, vid: c.vid, hook: c.hook, title: c.title, channel: c.channel, topic: c.topic,
@@ -407,8 +466,10 @@ function renderChips() {
   $("#chips").innerHTML = todayChip() + (topics.length > 1 ? `<button class="chip" data-id="*" aria-pressed="${all}">Mix</button>` : "") +
     topics.map((t) => `<button class="chip" data-id="${esc(t.id)}" aria-pressed="${!historyOpen && !searchOpen && !sheetOpen && feedMode !== "today" && !all && selected.includes(t.id) && selected.length < topics.length}">
       ${esc(t.name)}<span class="n">${count(t.id)}</span></button>`).join("") +
+    `<button class="chip lvlchip" data-id="level" aria-pressed="${level !== "any"}" aria-label="Level">${esc(LEVEL_NAME[level])}</button>` +
     `<button class="chip hist" data-id="browse" aria-pressed="${sheetOpen === "browse"}" aria-label="Browse">${ICON.grid}</button>` +
     `<button class="chip icon" data-id="search" aria-pressed="${searchOpen}" aria-label="Search">${ICON.search}</button>` +
+    `<button class="chip icon" data-id="listen" aria-pressed="${sheetOpen === "listen"}" aria-label="Listen">${ICON.headphones}</button>` +
     `<button class="chip" data-id="history" aria-pressed="${historyOpen}">History</button>`;
 }
 $("#chips").addEventListener("click", (e) => {
@@ -417,6 +478,8 @@ $("#chips").addEventListener("click", (e) => {
   if (b.dataset.id === "history") { historyOpen ? closeHistory() : openHistory(); return; }
   if (b.dataset.id === "search") { searchOpen ? closeSearch() : openSearch(); return; }
   if (b.dataset.id === "browse") { sheetOpen === "browse" ? closeSheet() : openBrowse(); return; }
+  if (b.dataset.id === "listen") { sheetOpen === "listen" ? closeSheet() : openListen(); return; }
+  if (b.dataset.id === "level") { cycleLevel(); return; }
   if (historyOpen) closeHistory(false);
   if (searchOpen) closeSearch(false);
   if (sheetOpen) closeSheet(false);
@@ -457,8 +520,12 @@ function moreOptions(c, i) {
   const next = inTalk ? 0 : moreFrom(i).length;
   const talk = inTalk ? [] : clips.filter((x) => x.vid === c.vid && clipOk(x));
   const subj = c.subject ? clips.filter((x) => x.subject === c.subject && x.id !== c.id && clipOk(x)) : [];
-  if (!next && talk.length < 2 && !subj.length) return null;
+  const path = feedMode === "path" ? null : paths.find((x) => x.steps.includes(c.id)) || null;
+  const debate = feedMode === "debate" ? null : debates.find((d) => d.sides.some((s) => s.clips.includes(c.id))) || null;
+  if (!next && talk.length < 2 && !subj.length && !path && !debate) return null;
   return { next,
+           path: path && { id: path.id, title: path.title, step: path.steps.indexOf(c.id) + 1, n: path.steps.length },
+           debate: debate && { id: debate.id, question: debate.question },
            talk: talk.length >= 2 ? { n: talk.length, mins: Math.max(1, Math.round(talk.reduce((a, x) => a + (x.end - x.start), 0) / 60)) } : null,
            subject: subj.length };
 }
@@ -470,7 +537,7 @@ function cardHTML(c, i, name) {
   return `
     <article class="card" data-i="${i}">
       <div class="bg" style="background-image:url('https://i.ytimg.com/vi/${esc(c.vid)}/hqdefault.jpg')"></div>
-      <div class="meta-top">${isNew(c) ? `<span class="new">New</span>` : ""}<span class="tag">${esc(name[c.topic])}</span><span>·</span><span>${fmtTime(c.end - c.start)}</span></div>
+      <div class="meta-top">${tagOf[c.id] ? `<span class="step-tag ${tagOf[c.id].cls}">${esc(tagOf[c.id].text)}</span>` : ""}${isNew(c) ? `<span class="new">New</span>` : ""}<span class="tag">${esc(name[c.topic])}</span><span>·</span><span>${fmtTime(c.end - c.start)}</span>${c.level ? `<span>·</span><span class="lvl">${LEVEL_NAME[c.level]}</span>` : ""}</div>
       <h2 class="hook">${esc(c.hook)}</h2>
       <div class="stage" style="background-image:url('https://i.ytimg.com/vi/${esc(c.vid)}/hqdefault.jpg')">
         <div class="slot"></div>
@@ -503,7 +570,7 @@ const todayEndCard = () => `
     <div class="empty card"><h2>Done for today ✓</h2><p>That was today's five. Fresh ones tomorrow, so there's no need to scroll forever.</p>
       <button class="btn ghost" id="back-feed">Keep scrolling anyway</button></div>`;
 const listEndCard = () => `
-    <div class="empty card"><h2>End of the list</h2><p>That's all of them.</p>
+    <div class="empty card"><h2>${{ path: "End of the path", debate: "End of the debate", talk: "End of the talk" }[feedMode] || "End of the list"}</h2><p>That's all of them.</p>
       <button class="btn ghost" id="back-feed">Back to the feed</button></div>`;
 const mainEndCard = () => `
     <div class="empty card"><h2>You're caught up</h2><p>${clips.filter(isSeen).length} clips watched. New clips land when the pipeline runs.
@@ -516,9 +583,11 @@ function wireTail() {
   document.querySelectorAll(".card[data-i]").forEach((el) => io.observe(el));
 }
 
-function renderFeed(custom, label, mode = null) {
+function renderFeed(custom, label, mode = null, tags = null) {
   feedMode = mode || (label ? "list" : null);
+  tagOf = tags || {};
   $("#mode").hidden = !label;
+  document.body.classList.toggle("has-mode", !!label);   // cards leave room for the banner
   if (label) $("#mode").innerHTML = `<span>${esc(label)}</span><button aria-label="Back to the feed">✕</button>`;
   leaveClip(true);
   destroyPlayer();
@@ -834,7 +903,7 @@ function openHistory() {
 }
 function closeHistory(rerender = true) {
   historyOpen = false; $("#history").hidden = true;
-  if (rerender) { renderChips(); }
+  if (rerender) { renderChips(); resumeActive(); }
 }
 function renderHistory() {
   const flagged = Object.entries(flags).map(([id, f]) => ({ ...(f.snap || { id }), id, at: f.at, reason: f.reason, sent: f.sent }))
@@ -982,7 +1051,9 @@ function toggleMore(card) {
   row.insertAdjacentHTML("beforeend", `<div class="more-menu">
     ${o.next ? `<button data-act="next">Next clip from this talk · ${o.next} more</button>` : ""}
     ${o.talk ? `<button data-act="talk">Whole talk in order · ${o.talk.n} clips · ${o.talk.mins} min</button>` : ""}
-    ${o.subject ? `<button data-act="subject">More on ${esc(c.subject)} · ${o.subject}</button>` : ""}</div>`);
+    ${o.subject ? `<button data-act="subject">More on ${esc(c.subject)} · ${o.subject}</button>` : ""}
+    ${o.path ? `<button data-act="path">Learning path · ${esc(o.path.title)} · step ${o.path.step} of ${o.path.n}</button>` : ""}
+    ${o.debate ? `<button data-act="debate">Debate · ${esc(o.debate.question)}</button>` : ""}</div>`);
   btn.setAttribute("aria-expanded", "true");
 }
 function moreAction(act, card) {
@@ -993,6 +1064,8 @@ function moreAction(act, card) {
     const mins = Math.max(1, Math.round(list.reduce((a, x) => a + (x.end - x.start), 0) / 60));
     renderFeed(list, `Talk in order · ${list.length} clips · ${mins} min`, "talk"); renderChips(); return;
   }
+  if (act === "path") { const x = paths.find((q) => q.steps.includes(c.id)); if (x) openPath(x.id, c.id); return; }
+  if (act === "debate") { const x = debates.find((q) => q.sides.some((s) => s.clips.includes(c.id))); if (x) openDebate(x.id, c.id); return; }
   if (act === "subject") {   // the other clips on the same idea: unseen first, best first
     const list = clips.filter((x) => x.subject === c.subject && x.id !== c.id && clipOk(x))
       .sort((a, b) => isSeen(a) - isSeen(b) || b.substance - a.substance);
@@ -1042,10 +1115,11 @@ function showTips() {
     ["↑", "Swipe up", "next clip"], ["←", "Swipe left", "remove this video from your feed"],
     ["♥", "Double-tap the video", "save the clip"], ["♪", "Tap the video", "sound on, or pause"],
     ["⤢", "Turn your phone sideways", "full screen"], ["▾", "More ▾ under a clip", "the whole talk in order, or more on the same idea"],
+    ["▦", "Browse ▦", "learning paths, expert debates and every subject"], ["♫", "Headphones", "hear the clips read aloud, hands-free"],
   ] : [
     ["↑↓", "Arrow keys or J / K", "next and previous clip"], ["␣", "Space", "pause · M for sound"],
     ["S", "S", "save the clip · X removes the video"], ["F", "F", "full screen"],
-    ["/", "/ · B · R · T", "search · browse · recall · today's five"],
+    ["/", "/ · B · R · T · L", "search · browse · recall · today's five · listen"],
   ];
   $("#tips").innerHTML = `<div class="tips-card" role="dialog" aria-label="Quick tips"><h2>Quick tips</h2>
     ${rows.map(([ic, a, b]) => `<div class="tip"><i>${ic}</i><div><b>${esc(a)}</b> — ${esc(b)}</div></div>`).join("")}
@@ -1079,7 +1153,7 @@ function afterSave(c) {
 }
 
 // ---------- Move to another device: one code or file with your history, saves, notes, recall progress, settings
-const TX_KEYS = ["seen", "skips", "removed", "history", "saved", "notes", "rate", "captions", "selected", "watchLog", "flags", "recall", "recallDay"];
+const TX_KEYS = ["seen", "skips", "removed", "history", "saved", "notes", "rate", "captions", "selected", "watchLog", "flags", "recall", "recallDay", "level", "listenRate", "listenPoints", "browseTab"];
 const b64 = (u8) => { let s = ""; for (let i = 0; i < u8.length; i += 0x8000) s += String.fromCharCode.apply(null, u8.subarray(i, i + 0x8000));
   return btoa(s).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, ""); };
 const unb64 = (s) => { s = s.replace(/-/g, "+").replace(/_/g, "/"); while (s.length % 4) s += "=";
@@ -1118,7 +1192,7 @@ function mergeIn(d) {
   if (d.flags) store.set("flags", { ...d.flags, ...cur("flags", {}) });
   if (d.recall) { const m = { ...cur("recall", {}) }; for (const [k, v] of Object.entries(d.recall)) if (!m[k] || (v.due || 0) > (m[k].due || 0)) m[k] = v; store.set("recall", m); }
   if (d.recallDay) store.set("recallDay", [cur("recallDay", ""), d.recallDay].sort().pop());
-  for (const k of ["rate", "captions", "selected"]) if (d[k] !== undefined) store.set(k, d[k]);
+  for (const k of ["rate", "captions", "selected", "level", "listenRate", "listenPoints", "browseTab"]) if (d[k] !== undefined) store.set(k, d[k]);
 }
 function openTransfer() {
   openSheet("transfer", "Move to another device", `<div class="tx">
@@ -1158,17 +1232,161 @@ $("#sheet").addEventListener("change", async (e) => {
   txImport(await e.target.files[0].text());
 });
 
+// ---------- Listen: the phone's own voice reads each clip's summary aloud, hands-free
+const canSpeak = "speechSynthesis" in window && "SpeechSynthesisUtterance" in window;
+const LISTEN_RATES = [0.85, 1, 1.2, 1.4, 1.7];
+let listenRate = store.get("listenRate", 1), listenPoints = store.get("listenPoints", true);
+const listen = { items: [], i: 0, chunk: 0, parts: [], playing: false, done: false, label: "", tags: {}, token: 0, timer: null, wake: null };
+let voice = null;
+function pickVoice() {
+  if (!canSpeak) return;
+  const score = (v) => (/premium|enhanced|natural|neural/i.test(v.name) ? 4 : 0) +
+    (/samantha|daniel|karen|moira|aria|jenny|guy|google (us|uk)/i.test(v.name) ? 2 : 0) + (v.localService ? 1 : 0) + (/^en[-_]us/i.test(v.lang) ? 1 : 0);
+  voice = speechSynthesis.getVoices().filter((v) => /^en/i.test(v.lang)).sort((a, b) => score(b) - score(a))[0] || null;
+}
+if (canSpeak) { pickVoice(); speechSynthesis.addEventListener?.("voiceschanged", pickVoice); }
+const sentencesOf = (t) => (t.replace(/\s+/g, " ").match(/[^.!?]+[.!?]+["')\]]*|[^.!?]+$/g) || [t]).map((s) => s.trim()).filter(Boolean);
+function chunksOf(text) {   // short pieces: some speech engines cut long utterances off
+  const out = []; let cur = "";
+  for (const s of sentencesOf(text)) { if (cur && (cur + " " + s).length > 170) { out.push(cur); cur = s; } else cur = cur ? cur + " " + s : s; }
+  if (cur) out.push(cur);
+  return out;
+}
+function listenText(c) {
+  const t = listen.tags[c.id], pre = t ? (t.cls.startsWith("side") ? `Side: ${t.text}. ` : `${t.text}. `) : "";
+  const pts = listenPoints && (c.points || []).length ? ` Key points: ${c.points.join(". ")}.` : "";
+  return `${pre}${c.channel}. ${c.hook}. ${c.summary || c.why || ""}${pts}`;
+}
+async function keepAwake(on) {   // keep the screen on while it reads
+  try {
+    if (on && "wakeLock" in navigator && !listen.wake) { listen.wake = await navigator.wakeLock.request("screen"); listen.wake.addEventListener?.("release", () => (listen.wake = null)); }
+    else if (!on && listen.wake) { await listen.wake.release(); listen.wake = null; }
+  } catch {}
+}
+function speakFrom(k) {
+  const c = listen.items[listen.i];
+  if (!canSpeak || !c || !listen.playing) return;
+  clearTimeout(listen.timer); speechSynthesis.cancel();
+  listen.parts = chunksOf(listenText(c));
+  const tok = ++listen.token;
+  const run = (n) => {
+    if (tok !== listen.token || !listen.playing) return;
+    if (n >= listen.parts.length) { listen.timer = setTimeout(() => stepListen(1, true), 700); return; }
+    listen.chunk = n; updateListenBar();
+    const u = new SpeechSynthesisUtterance(listen.parts[n]);
+    u.rate = listenRate; u.lang = voice?.lang || "en-US"; if (voice) u.voice = voice;
+    u.onend = () => run(n + 1);
+    u.onerror = (e) => { if (e.error !== "canceled" && e.error !== "interrupted") run(n + 1); };
+    speechSynthesis.speak(u);
+  };
+  run(Math.min(k, listen.parts.length - 1));
+}
+function playListen() {
+  if (!canSpeak || !listen.items.length) return;
+  if (listen.done) { listen.i = 0; listen.chunk = 0; listen.done = false; }
+  listen.playing = true; keepAwake(true); renderListen(); speakFrom(listen.chunk);
+}
+function pauseListen() { listen.playing = false; clearTimeout(listen.timer); if (canSpeak) speechSynthesis.cancel(); keepAwake(false); renderListen(); }
+function stopListen() { listen.playing = false; listen.token++; clearTimeout(listen.timer); if (canSpeak) speechSynthesis.cancel(); keepAwake(false); }
+function stepListen(d, auto = false) {
+  const n = listen.i + d;
+  if (n >= listen.items.length) { if (auto) { listen.playing = false; listen.done = true; keepAwake(false); } renderListen(); return; }
+  listen.i = Math.max(0, n); listen.chunk = 0; listen.done = false; renderListen();
+  if (listen.playing) speakFrom(0);
+}
+function prevListen() {
+  if (listen.chunk > 0 || listen.i === 0) { listen.chunk = 0; if (listen.playing) speakFrom(0); updateListenBar(); }
+  else stepListen(-1);
+}
+function listenSource(kind) {
+  if (kind === "saved") return { label: "Saved", items: saved.map(findClip).filter(Boolean) };
+  if (kind === "feed") { const base = order.length ? order : buildOrder(), from = Math.max(activeIdx, 0); return { label: "This feed", items: base.slice(from, from + 12) }; }
+  const left = todaysFive().filter((c) => !isSeen(c) && clipOk(c));
+  return { label: "Today's five", items: left.length ? left : todaysFive() };
+}
+function startListen(list, label, autoplay = true, tags = {}) {
+  stopListen();
+  const items = list.filter(Boolean);
+  if (!items.length) { toast("Nothing to listen to here yet"); return; }
+  Object.assign(listen, { items, i: 0, chunk: 0, parts: [], label, tags, done: false, playing: false });
+  if (sheetOpen !== "listen") openSheet("listen", "Listen", `<div class="listen"></div>`);
+  renderListen();
+  if (autoplay) playListen();
+}
+function openListen() {
+  if (!listen.items.length || listen.done) {
+    let s = listenSource("today"); if (!s.items.length) s = listenSource("feed");
+    startListen(s.items, s.label, false);
+  } else { if (sheetOpen !== "listen") openSheet("listen", "Listen", `<div class="listen"></div>`); renderListen(); }
+}
+function listenPath(id) { const x = paths.find((q) => q.id === id); if (!x) return; const st = pathSteps(x), tags = {};
+  st.forEach((c, k) => (tags[c.id] = { text: `Step ${k + 1} of ${st.length}`, cls: "step" })); startListen(st, `Path · ${x.title}`, true, tags); }
+function listenDebate(id) { const d = debates.find((q) => q.id === id); if (!d) return; const { list, tags } = debateList(d); startListen(list, `Debate`, true, tags); }
+function renderListen() {
+  const root = $("#sheet .listen"); if (!root || sheetOpen !== "listen") return;
+  const c = listen.items[listen.i];
+  const src = (k, nm) => `<button data-src="${k}" aria-pressed="${listen.label === nm}">${nm}</button>`;
+  root.innerHTML = `
+    <div class="l-src">${src("today", "Today's five")}${src("feed", "This feed")}${src("saved", "Saved")}</div>
+    ${!canSpeak ? `<p class="h-empty">This browser can't read aloud. Try Safari or Chrome.</p>` : ""}
+    ${c ? `<div class="l-art" style="background-image:url('https://i.ytimg.com/vi/${esc(c.vid)}/hqdefault.jpg')"></div>
+      <p class="l-label">${esc(listen.label)} · ${listen.i + 1} of ${listen.items.length}</p>
+      <h3 class="l-hook">${esc(c.hook)}</h3><p class="l-meta">${esc(c.channel)}</p>
+      <div class="l-bar"><i></i></div>
+      <div class="l-ctl"><button class="l-prev" aria-label="Previous">${ICON.prev}</button>
+        <button class="l-play" aria-label="${listen.playing ? "Pause" : "Play"}">${listen.playing ? ICON.pause : ICON.play}</button>
+        <button class="l-next" aria-label="Next">${ICON.next}</button></div>
+      ${listen.done ? `<p class="stats">Finished. Press play to hear it all again.</p>` : ""}
+      <div class="l-opts"><button class="pill-btn l-rate">${listenRate}×</button>
+        <button class="pill-btn l-pts" aria-pressed="${listenPoints}">Key points ${listenPoints ? "on" : "off"}</button>
+        <button class="pill-btn l-watch">Watch this clip</button></div>
+      <p class="stats">Keeps the screen awake while it reads. Some phones pause reading when the screen locks.</p>
+      <h4 class="l-up">Up next</h4>
+      <ul class="h-list l-queue">${listen.items.map((x, k) => `<li class="l-item${k === listen.i ? " now" : ""}" data-k="${k}">
+        <img src="https://i.ytimg.com/vi/${esc(x.vid)}/mqdefault.jpg" alt="" loading="lazy">
+        <div class="h-meta"><b>${esc(x.hook)}</b><span>${esc(x.channel)}</span></div></li>`).join("")}</ul>`
+      : `<p class="h-empty">Nothing to listen to here yet.</p>`}`;
+  updateListenBar();
+}
+function updateListenBar() {
+  const b = $("#sheet .l-bar i");
+  if (b && listen.parts?.length) b.style.width = `${Math.round((100 * (listen.chunk + (listen.playing ? 0.5 : 0))) / listen.parts.length)}%`;
+}
+function listenClick(e) {
+  const t = e.target;
+  const s = t.closest("[data-src]");
+  if (s) { const q = listenSource(s.dataset.src); startListen(q.items, q.label, true); return; }
+  if (t.closest(".l-play")) { listen.playing ? pauseListen() : playListen(); return; }
+  if (t.closest(".l-next")) { stepListen(1); return; }
+  if (t.closest(".l-prev")) { prevListen(); return; }
+  if (t.closest(".l-rate")) {
+    listenRate = LISTEN_RATES[(LISTEN_RATES.indexOf(listenRate) + 1) % LISTEN_RATES.length]; store.set("listenRate", listenRate);
+    if (listen.playing) speakFrom(listen.chunk);
+    renderListen(); return;
+  }
+  if (t.closest(".l-pts")) { listenPoints = !listenPoints; store.set("listenPoints", listenPoints); if (listen.playing) speakFrom(0); renderListen(); return; }
+  if (t.closest(".l-watch")) { const c = listen.items[listen.i]; closeSheet(); if (c) playFirst({ id: c.id }); return; }
+  const it = t.closest("[data-k]");
+  if (it) { listen.i = +it.dataset.k; listen.chunk = 0; listen.done = false; renderListen(); if (listen.playing) speakFrom(0); }
+}
+function resumeActive() { try { if (player && activeCard?.isConnected && !document.hidden) player.playVideo(); } catch {} }
+
 // ---------- Sheet: one full-screen panel used by Browse, channel pages and Recall
 let sheetOpen = null;
 function openSheet(kind, title, html) {
   if (historyOpen) closeHistory(false);
   if (searchOpen) closeSearch(false);
+  if (sheetOpen === "listen" && kind !== "listen") stopListen();
   sheetOpen = kind; player?.pauseVideo?.();
   const s = $("#sheet"); s.hidden = false; s.scrollTop = 0;
   s.innerHTML = `<div class="sheet-head"><h2>${title}</h2><button class="sheet-x" aria-label="Close">✕</button></div>${html}`;
   renderChips();
 }
-function closeSheet(rerender = true) { sheetOpen = null; $("#sheet").hidden = true; if (rerender) renderChips(); }
+function closeSheet(rerender = true) {
+  if (sheetOpen === "listen") stopListen();
+  sheetOpen = null; $("#sheet").hidden = true;
+  if (rerender) { renderChips(); resumeActive(); }
+}
 const itemHTML = (c) => `
   <li class="h-item" data-id="${esc(c.id)}">
     <img src="https://i.ytimg.com/vi/${esc(c.vid)}/mqdefault.jpg" alt="" loading="lazy">
@@ -1187,10 +1405,19 @@ function openChannel(name) {
 }
 
 // ---------- Browse: every clip, by topic and subject
-function openBrowse() {
-  const name = topicName();
+// ---------- Browse: learning paths · expert debates · every subject
+let browseTab = store.get("browseTab", "paths");
+function openBrowse(tab) {
+  if (tab) { browseTab = tab; store.set("browseTab", tab); }
   sheetLists = {};
-  const sections = topics.map((t) => {
+  const n = { paths: paths.length, debates: debates.length };
+  const tabs = `<div class="h-tabs b-tabs">${[["paths", "Paths"], ["debates", "Debates"], ["subjects", "Subjects"]].map(([k, nm]) =>
+    `<button data-btab="${k}" aria-pressed="${browseTab === k}">${nm}${n[k] ? ` · ${n[k]}` : ""}</button>`).join("")}</div>`;
+  openSheet("browse", "Browse", tabs + (browseTab === "paths" ? pathsHTML() : browseTab === "debates" ? debatesHTML() : subjectsHTML()));
+}
+function subjectsHTML() {
+  const name = topicName();
+  return topics.map((t) => {
     const groups = new Map();
     for (const c of clips) if (c.topic === t.id && !removed.has(c.vid)) {
       const g = c.subject || "other"; if (!groups.has(g)) groups.set(g, []); groups.get(g).push(c);
@@ -1208,7 +1435,68 @@ function openBrowse() {
       </section>`;
     }).join("");
   }).join("");
-  openSheet("browse", "Browse", sections);
+}
+const pathSteps = (pth) => pth.steps.map((id) => clips.find((c) => c.id === id)).filter((c) => c && clipOk(c));
+function pathsHTML() {
+  if (!paths.length) return `<p class="h-empty">No learning paths yet.</p>`;
+  const name = topicName();
+  return `<p class="stats">Ordered sequences that build from the basics to depth. Progress counts clips you watched past halfway.</p>` +
+    paths.map((pth) => {
+      const steps = pathSteps(pth); if (steps.length < 2) return "";
+      const done = steps.filter(isSeen).length;
+      return `<article class="pcard">
+        <div class="pc-top"><span class="tag">${esc(name[pth.topic] || pth.topic)}</span><span>${steps.length} clips · ${pth.minutes} min</span></div>
+        <h3>${esc(pth.title)}</h3><p class="pc-goal">${esc(pth.goal)}</p>
+        <ol class="pc-steps">${steps.map((c) => `<li class="${isSeen(c) ? "done" : ""}">${esc(c.hook)}${c.level ? `<em>${LEVEL_NAME[c.level]}</em>` : ""}</li>`).join("")}</ol>
+        <div class="pc-bar"><i style="width:${Math.round((100 * done) / steps.length)}%"></i></div>
+        <div class="h-actions"><button class="btn path-go" data-path="${esc(pth.id)}">${done === steps.length ? "Watch again" : done ? `Continue · ${done} of ${steps.length}` : "Start path"}</button>
+          <button class="btn ghost path-listen" data-path="${esc(pth.id)}">${ICON.headphones}Listen</button></div></article>`;
+    }).join("");
+}
+function debateList(d) {   // the sides take turns: A1, B1, A2, B2…
+  const by = (id) => clips.find((c) => c.id === id), out = [], tags = {};
+  const n = Math.max(...d.sides.map((s) => s.clips.length));
+  for (let k = 0; k < n; k++) d.sides.forEach((s, si) => {
+    const c = by(s.clips[k]); if (c && clipOk(c)) { out.push(c); tags[c.id] = { text: s.label, cls: "side" + si }; }
+  });
+  return { list: out, tags };
+}
+function debatesHTML() {
+  if (!debates.length) return `<p class="h-empty">No debates yet. They appear when the clips contain two experts who really disagree.</p>`;
+  const name = topicName();
+  return `<p class="stats">Questions where experts in these clips disagree. Each side is checked against what is actually said in its clips.</p>` +
+    debates.map((d) => `<article class="dcard">
+      <div class="pc-top"><span class="tag">${esc(name[d.topic] || d.topic)}</span><span>${d.sides.reduce((a, s) => a + s.clips.length, 0)} clips</span></div>
+      <h3>${esc(d.question)}</h3>
+      <div class="d-sides">${d.sides.map((s, k) => `<div class="d-side s${k}"><b>${esc(s.label)}</b><span>${esc(s.stance)}</span></div>`).join("")}</div>
+      ${d.differ ? `<p class="pc-goal">${esc(d.differ)}</p>` : ""}
+      <div class="h-actions"><button class="btn debate-go" data-debate="${esc(d.id)}">Watch the debate</button>
+        <button class="btn ghost debate-listen" data-debate="${esc(d.id)}">${ICON.headphones}Listen</button></div></article>`).join("");
+}
+function openPath(id, focusId) {
+  const pth = paths.find((x) => x.id === id); if (!pth) return;
+  const steps = pathSteps(pth), tags = {};
+  steps.forEach((c, k) => (tags[c.id] = { text: `Step ${k + 1} of ${steps.length}`, cls: "step" }));
+  closeSheet(false);
+  renderFeed(steps, `Path · ${pth.title}`, "path", tags); renderChips();
+  const first = focusId ? steps.findIndex((c) => c.id === focusId) : steps.findIndex((c) => !isSeen(c));
+  if (first > 0) requestAnimationFrame(() => $("#feed").scrollTo({ top: cardAt(first).offsetTop }));
+}
+function openDebate(id, focusId) {
+  const d = debates.find((x) => x.id === id); if (!d) return;
+  const { list, tags } = debateList(d);
+  closeSheet(false);
+  renderFeed(list, `Debate · ${d.question}`, "debate", tags); renderChips();
+  const first = focusId ? list.findIndex((c) => c.id === focusId) : 0;
+  if (first > 0) requestAnimationFrame(() => $("#feed").scrollTo({ top: cardAt(first).offsetTop }));
+}
+
+// ---------- Level filter: cycles Any → Intro → Intermediate → Advanced
+function cycleLevel() {
+  level = LEVELS[(LEVELS.indexOf(level) + 1) % LEVELS.length]; store.set("level", level);
+  renderChips();
+  if (!feedMode && !historyOpen && !searchOpen && !sheetOpen) renderFeed();
+  toast(level === "any" ? "Showing every level" : `${LEVEL_NAME[level]} only · ${clips.filter(available).length} clips`);
 }
 
 // ---------- Export saved clips as notes (paste into Notes, Notion, Obsidian…)
@@ -1315,6 +1603,12 @@ $("#sheet").addEventListener("click", (e) => {
   if (e.target.closest(".tx-copy")) { txCopy(); return; }
   if (e.target.closest(".tx-save")) { txSaveFile(); return; }
   if (e.target.closest(".tx-import")) { txImport($("#tx-in").value); return; }
+  if (e.target.closest(".listen")) { listenClick(e); return; }
+  const bt = e.target.closest("[data-btab]"); if (bt) { openBrowse(bt.dataset.btab); return; }
+  const pg = e.target.closest(".path-go"); if (pg) { openPath(pg.dataset.path); return; }
+  const pls = e.target.closest(".path-listen"); if (pls) { listenPath(pls.dataset.path); return; }
+  const dg = e.target.closest(".debate-go"); if (dg) { openDebate(dg.dataset.debate); return; }
+  const dl = e.target.closest(".debate-listen"); if (dl) { listenDebate(dl.dataset.debate); return; }
   const pl = e.target.closest(".play-list");
   if (pl) { const list = sheetLists[pl.dataset.list]; const t = pl.dataset.list === "all" ? $("#sheet h2").textContent : pl.querySelector("span").textContent;
             closeSheet(); renderFeed(list, `${t} · ${list.length}`); return; }
@@ -1336,11 +1630,11 @@ function openSearch() {
   $("#q").addEventListener("input", runSearch);
   runSearch(); renderChips(); setTimeout(() => $("#q").focus(), 50);
 }
-function closeSearch(rerender = true) { searchOpen = false; $("#search").hidden = true; if (rerender) renderChips(); }
+function closeSearch(rerender = true) { searchOpen = false; $("#search").hidden = true; if (rerender) { renderChips(); resumeActive(); } }
 function runSearch() {
   const terms = $("#q").value.toLowerCase().split(/\s+/).filter(Boolean);
   const name = topicName();
-  const hay = (c) => [c.hook, c.summary, ...(c.points || []), c.title, c.channel, c.subject, name[c.topic]].join(" ").toLowerCase();
+  const hay = (c) => [c.hook, c.summary, ...(c.points || []), c.title, c.channel, c.subject, c.level, name[c.topic]].join(" ").toLowerCase();
   const hits = terms.length ? clips.filter((c) => !removed.has(c.vid) && terms.every((t) => hay(c).includes(t)))
     .sort((a, b) => b.substance - a.substance).slice(0, 60) : [];
   $("#results").innerHTML = !terms.length ? `<p class="h-empty">Search every clip by what's said in it, its title or its channel.</p>`
@@ -1391,7 +1685,7 @@ $("#feed").addEventListener("click", (e) => {
   }, 260);
 });
 document.addEventListener("visibilitychange", () => {
-  if (!document.hidden) return;
+  if (!document.hidden) { if (listen.playing) { keepAwake(true); speakFrom(listen.chunk); } return; }
   player?.pauseVideo?.();
   store.set("watchLog", watchLog);
   const c = watchedClip; if (c && watched >= (c.end - c.start) * 0.5) markSeen(c);   // leaving the app: no skip
@@ -1399,12 +1693,18 @@ document.addEventListener("visibilitychange", () => {
 document.addEventListener("keydown", (e) => {
   if (!$("#tips").hidden) { if (e.key === "Escape" || e.key === "Enter") hideTips(); return; }
   if (searchOpen || e.target.closest?.("input, textarea")) { if (e.key === "Escape") closeSearch(); return; }
+  if (sheetOpen === "listen") {
+    if (e.key === " ") { e.preventDefault(); listen.playing ? pauseListen() : playListen(); return; }
+    if (e.key === "ArrowRight") { stepListen(1); return; }
+    if (e.key === "ArrowLeft") { prevListen(); return; }
+  }
   if (e.key === "Escape") { if (sheetOpen) closeSheet(); if (historyOpen) closeHistory(); return; }
   if (e.key === "/") { e.preventDefault(); openSearch(); return; }
   if (e.key === "b") { openBrowse(); return; }
   if (e.key === "t") { openToday(); return; }
   if (e.key === "f") { toggleImmersive(); return; }
   if (e.key === "r") { openRecall(); return; }
+  if (e.key === "l") { openListen(); return; }
   const feed = $("#feed");
   if (e.key === "ArrowDown" || e.key === "j") { e.preventDefault(); feed.scrollBy({ top: innerHeight, behavior: "smooth" }); }
   if (e.key === "ArrowUp" || e.key === "k") { e.preventDefault(); feed.scrollBy({ top: -innerHeight, behavior: "smooth" }); }

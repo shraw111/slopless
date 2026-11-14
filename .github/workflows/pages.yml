@@ -6,6 +6,8 @@ on:
       - index.html
       - clips.json
       - topics.json
+      - paths.json
+      - debates.json
       - manifest.webmanifest
       - sw.js
       - "*.png"
@@ -30,7 +32,7 @@ jobs:
         with:
           enablement: true
       - name: Collect site files
-        run: mkdir _site && cp index.html clips.json topics.json manifest.webmanifest sw.js *.png _site/ && touch _site/.nojekyll
+        run: mkdir _site && cp index.html clips.json topics.json paths.json debates.json manifest.webmanifest sw.js *.png _site/ && touch _site/.nojekyll
       - uses: actions/upload-pages-artifact@v3
       - id: deployment
         uses: actions/deploy-pages@v4
