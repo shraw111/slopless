@@ -34,7 +34,7 @@ topics:
     exclude: news recaps, hype, "top 10 tools" lists, sponsored walkthroughs
     good_clip: explains a concept or shows a demo clearly enough to stand alone
     hn_boost: true
-    shorts: true
+    shorts: false
 
   - id: ai-product
     name: AI Product
