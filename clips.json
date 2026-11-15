@@ -20,6 +20,7 @@
    "Cosine similarity matches the difference vector to words",
    "The top match was 'hat', then 'cap' and 'helmet'"
   ],
+  "context": "A 3Blue1Brown guest video by Welch Labs on how AI image generators work, using CLIP, a model that places images and text in one shared space. It shows that subtracting one photo's vector from another's gives a difference whose closest word is hat.",
   "quiz": {
    "a": "Subtracting a no-hat photo's embedding from a hat photo's gives a vector whose closest text match is 'hat', then 'cap' and 'helmet'.",
    "q": "What did the CLIP experiment show about vector differences between image embeddings?"
@@ -47,6 +48,7 @@
    "Averages of many images look blurry",
    "Removing noise reduces diversity in generated samples"
   ],
+  "context": "A 3Blue1Brown guest video by Welch Labs on how AI image generators work, using a toy spiral as the example. It explains that dropping the random noise from sampling pulls every point toward the average, which is why images come out blurry.",
   "quiz": {
    "a": "Without noise, samples collapse toward the average of the data; averages of many images look blurry, reducing sample diversity.",
    "q": "Why does removing noise during diffusion sampling produce blurry images?"
@@ -74,6 +76,7 @@
    "Scaling that difference by alpha strengthens the guidance",
    "Guided points land tightly on the target class"
   ],
+  "context": "Welch Labs' guest video on 3Blue1Brown, explaining the math behind AI image and video generators on a toy spiral of points. It explains a guidance trick that subtracts an unconditioned direction from a class-conditioned one, then amplifies the difference.",
   "quiz": {
    "a": "It subtracts the unconditioned direction from the class-conditioned one, then amplifies that difference by alpha to pull samples toward the target class.",
    "q": "How does classifier-free guidance use the conditioned and unconditioned directions?"
@@ -101,6 +104,7 @@
    "Prompts now program LLMs and are written in English",
    "GitHub code increasingly mixes English prose with code"
   ],
+  "context": "Andrej Karpathy's keynote at Y Combinator's AI Startup School, here on how software has changed: code, neural network weights, and now English prompts that program a large language model.",
   "quiz": {
    "a": "Software 3.0 means programming LLMs through English prompts, while Software 1.0 is code and 2.0 is neural network weights.",
    "q": "How does Karpathy define Software 3.0 in the age of LLMs?"
@@ -128,6 +132,7 @@
    "Jagged intelligence: superhuman in some domains, weak in others",
    "No native consolidation over time, so context acts as memory"
   ],
+  "context": "Karpathy's AI Startup School keynote, here on LLM weak spots: they can be superhuman at some tasks yet make basic mistakes, and they lack a way to consolidate knowledge the way a new coworker does over time.",
   "quiz": {
    "a": "LLMs have no native way to consolidate knowledge over time, so the context window serves as working memory.",
    "q": "Why does Karpathy say LLM context windows act as working memory?"
@@ -155,6 +160,7 @@
    "Huge AI-generated diffs are hard to audit for bugs",
    "AI should be kept on a leash because it overreacts"
   ],
+  "context": "Karpathy's AI Startup School keynote, here on working with AI coding tools: humans verify what the AI generates, so he argues for quick visual checks and small diffs rather than huge code changes.",
   "quiz": {
    "a": "Humans must verify AI output, so the loop must be fast; huge diffs are hard to audit for bugs, and AI overreacts.",
    "q": "Why does Karpathy say AI-generated diffs must be kept on a leash?"
@@ -182,6 +188,7 @@
    "Learned rules about generations, like a symbolic person might write",
    "Learned by predicting words and backpropagating the error"
   ],
+  "context": "Geoffrey Hinton, the 2024 Nobel winner, describes a tiny 1985 network that learned family relationships by predicting the next word. Its neurons ended up encoding rules like generation level.",
   "quiz": {
    "a": "Semantic features, including generation levels, learned by predicting the next word and backpropagating the error, much like written rules.",
    "q": "What did Hinton's 1985 word model's feature neurons learn to represent?"
@@ -209,6 +216,7 @@
    "Sharing knowledge this way needs identical digital models",
    "Digital intelligence is immortal but uses a lot of power"
   ],
+  "context": "Geoffrey Hinton's Royal Institution talk on what AI learned from biological intelligence; here he explains how identical digital copies pool what they learn by averaging weight changes, which analog hardware cannot do.",
   "quiz": {
    "a": "Identical copies learn different data then average their weight changes; analog hardware cannot do this; digital models are immortal but power-hungry.",
    "q": "Why can digital models share knowledge so much faster than people?"
@@ -236,6 +244,7 @@
    "Reading 30 trillion tokens would take about 400,000 years",
    "Text is not a rich enough source for human-level AI"
   ],
+  "context": "Yann LeCun, Meta's chief AI scientist, on the Big Technology Podcast, arguing that text alone is too thin for human-level AI. He compares the visual and touch data a young child takes in with the text used to train the largest language models.",
   "quiz": {
    "a": "A four-year-old's visual and touch input roughly matches the largest LLM's training data, and reading 30 trillion tokens would take 400,000 years.",
    "q": "Why does LeCun argue text alone is too thin to reach human-level AI?"
@@ -263,6 +272,7 @@
    "Representations must keep as much input information as possible",
    "Keeping information in representations is the hard part of training"
   ],
+  "context": "Meta's chief AI scientist Yann LeCun, speaking on the Big Technology Podcast, contrasts rebuilding corrupted images with predicting a clean image's representation from a corrupted one's. He argues the second approach works much better.",
   "quiz": {
    "a": "JEPA predicts the clean image's representation from a corrupted one's; keeping as much input information in representations is the hard part.",
    "q": "What does JEPA predict instead of reconstructing pixels, and why is it hard?"
@@ -290,6 +300,7 @@
    "A 100-dimensional space holds hundreds of thousands of such vectors",
    "The count grows exponentially as dimensions increase"
   ],
+  "context": "Grant Sanderson's Big Tech Day talk on transformers, here on high-dimensional geometry: he shows how many nearly perpendicular vectors fit in a space, which may explain how models pack in concepts.",
   "quiz": {
    "a": "Vectors within 88 to 92 degrees count as nearly orthogonal, and their count grows exponentially with dimension, helping pack many concepts.",
    "q": "Why can high-dimensional spaces hold far more nearly perpendicular vectors than expected?"
@@ -317,6 +328,7 @@
    "Addition features recur across many different contexts",
    "Raises whether models memorize data or learn general concepts"
   ],
+  "context": "Anthropic's Josh Batson, Emmanuel Ameisen and Jack Lindsey discuss interpretability, the study of what happens inside an AI model as it thinks. They raise whether models memorize training data or reuse general features.",
   "quiz": {
    "a": "One circuit fires for both arithmetic and citation years, raising whether models memorize data or learn reusable general concepts.",
    "q": "What does the shared 6+9 circuit suggest about how models store knowledge?"
@@ -344,6 +356,7 @@
    "Internally the model works backward from the hinted answer",
    "Interpretability tools can reveal this hidden reasoning"
   ],
+  "context": "From Anthropic's interpretability talk with Josh Batson and colleagues, which studies what happens inside Claude. They describe a hard math problem with a suggested answer, and what the model does internally to reach it.",
   "quiz": {
    "a": "Written steps look like a genuine check, but internally the model works backward from the hinted answer to find steps reaching it.",
    "q": "What is hidden behind Claude's written steps when given a suggested answer?"
@@ -371,6 +384,7 @@
    "Experiments edit the planned word mid-line to test this",
    "Changing the planned word changes the rest of the line"
   ],
+  "context": "Anthropic's Josh Batson and colleagues, who study what happens inside Claude, describe editing the model's internal state mid-poem to test whether its planned rhyme drives the next line.",
   "quiz": {
    "a": "Inserting a different word into the planning step changes the rest of the line to fit, showing the rhyme is chosen ahead.",
    "q": "How do experiments show Claude plans its rhyme word before writing the line?"
@@ -398,6 +412,7 @@
    "Each word becomes a list of numbers encoding its meaning",
    "Attention refines meanings using surrounding context"
   ],
+  "context": "3Blue1Brown's light intro to chatbots and pretraining; this clip covers why transformers process all words together, and how 'bank' can shift toward 'riverbank' from its surrounding context.",
   "quiz": {
    "a": "Each word is a list of numbers, and attention refines those numbers using surrounding words, such as 'bank' becoming a riverbank.",
    "q": "How does attention let each word's meaning get refined by context?"
@@ -425,6 +440,7 @@
    "Reinforcement learning defines right actions through reward",
    "Prior knowledge needs ground truth to act as a hint"
   ],
+  "context": "Richard Sutton, the father of reinforcement learning, is interviewed by Dwarkesh Patel about whether LLMs are a dead end. He argues that without a goal there is no reward to check a response against.",
   "quiz": {
    "a": "They have no goal or ground truth for what to say; reinforcement learning defines a reward, so right actions can be checked.",
    "q": "Why does Sutton say LLMs cannot learn continually?"
@@ -452,6 +468,7 @@
    "Taking an opponent's piece raises the predicted outcome",
    "That belief change reinforces the move that caused it"
   ],
+  "context": "Dwarkesh Patel's interview with Richard Sutton, a reinforcement learning pioneer, includes his explanation of temporal difference learning. Using chess and a startup example, he shows how a value function turns progress toward a distant goal into reward for earlier steps.",
   "quiz": {
    "a": "A value function predicts long-term outcomes; when a move changes that prediction, such as taking a piece, it reinforces the move.",
    "q": "How does TD learning reinforce the moves that lead toward a distant goal?"
@@ -479,6 +496,7 @@
    "The value function outputs a number showing how well it is going",
    "The transition model predicts what happens if you act"
   ],
+  "context": "On Dwarkesh Patel's podcast, Richard Sutton, the reinforcement learning pioneer, lays out a basic agent in four parts. The clip names the policy, value function, perception and a transition model of the world, which he says is learned from experience rather than reward.",
   "quiz": {
    "a": "A policy, a value function, a perception component and a transition model; the transition model is learned from experience, not reward.",
    "q": "What are the parts of a basic reinforcement learning agent, per Sutton?"
@@ -506,6 +524,7 @@
    "Classical reasoning searches solutions and checks constraints",
    "LLMs have no built-in search mechanism; it must be bolted on"
   ],
+  "context": "Meta's chief AI scientist Yann LeCun, on the Big Technology Podcast, argues chain of thought only makes models generate extra tokens. He describes real reasoning as searching a space of solutions checked against constraints, a mechanism he says LLMs lack.",
   "quiz": {
    "a": "Chain of thought only adds tokens and computation, while real reasoning searches solutions checked against constraints, which LLMs lack natively.",
    "q": "Why does LeCun say chain of thought is not real reasoning?"
@@ -533,6 +552,7 @@
    "Distributions over high-dimensional video are intractable",
    "Generative approaches have so far failed for video"
   ],
+  "context": "Meta's chief AI scientist Yann LeCun, on the Big Technology Podcast, explains why predicting words works but predicting video frames has stalled. Text has about 100,000 possible tokens, while the possible video frames make a probability distribution intractable to represent.",
   "quiz": {
    "a": "Text has about 100,000 manageable tokens, while video lives in high-dimensional continuous space where distributions are intractable.",
    "q": "Why has self-supervised generative learning worked for text but not video?"
@@ -560,6 +580,7 @@
    "Printed variable showed the true 2030 extrapolation near 20 trillion",
    "Scrutinize its data analysis like a junior analyst's work"
   ],
+  "context": "Andrej Karpathy's practical walkthrough of how he uses LLMs, including a demo of ChatGPT's data analysis going wrong. It shows the model's code printing a different value from the answer it gave, so the output needs scrutiny like a junior analyst's.",
   "quiz": {
    "a": "Its printed variable showed about 20 trillion, yet it stated 1.7 trillion; the tool is powerful but needs checking.",
    "q": "Why must ChatGPT's data analysis be checked like a junior analyst's work?"
@@ -587,6 +608,7 @@
    "Rewards are normalized within the group to get advantages",
    "Stockfish provides rewards, leaving one trainable policy model"
   ],
+  "context": "Efficient NLP's attempt to teach a language model chess with GRPO, a reinforcement learning method from DeepSeek R1; this part shows how scoring a group of answers replaces a separate value model.",
   "quiz": {
    "a": "It samples five outputs per prompt and normalizes their rewards within the group; a frozen reference model keeps the policy from drifting too far.",
    "q": "How does GRPO remove PPO's value model while still getting advantages?"
@@ -614,6 +636,7 @@
    "Query vectors are much smaller, e.g. 64 or 128 dimensions",
    "Each word asks whether adjectives sit in front of it"
   ],
+  "context": "From Grant Sanderson's Big Tech Day talk on transformers, here on the query matrix: a word's embedding (its list of numbers) is turned into a smaller query vector that says what the word is looking for, such as an adjective.",
   "quiz": {
    "a": "It turns each word's embedding into a smaller query vector encoding what the word is looking for, such as an adjective before a noun.",
    "q": "What does the query matrix do to each word's embedding in attention?"
@@ -641,6 +664,7 @@
    "Masked positions are set to negative infinity before softmax",
    "This keeps the columns normalized for the weighted sum"
   ],
+  "context": "Grant Sanderson's Big Tech Day talk on transformers, here on training: a model must not let later words influence earlier ones, so those links are blocked before a normalizing step turns scores into weights.",
   "quiz": {
    "a": "Later tokens must not influence earlier ones; masked positions are set to negative infinity before softmax, which keeps the weights normalized.",
    "q": "Why does attention set masked positions to negative infinity before softmax?"
@@ -668,6 +692,7 @@
    "Attention processes all tokens in parallel, not sequentially",
    "Parallel processing makes better use of GPUs and training time"
   ],
+  "context": "Grant Sanderson's Big Tech Day talk on transformers, here on their rise since 2017: scaling a model up improves it, and attention lets the whole passage be processed at once on parallel hardware.",
   "quiz": {
    "a": "Scaling up improves models, and attention parallelizes well: it takes in the whole passage at once, which suits GPUs.",
    "q": "Why did Transformers spread so widely after 2017, according to Sanderson?"
@@ -695,6 +720,7 @@
    "That gate can wrongly say yes about unfamiliar entities",
    "Once answering starts, the model may commit to a guess"
   ],
+  "context": "Anthropic's Josh Batson and colleagues discuss interpretability, the study of what happens inside Claude as it answers. They explain how a mistaken check that it knows the answer can lock the model in partway through, after it has already started.",
   "quiz": {
    "a": "That gate can wrongly say yes about unfamiliar entities; the model then starts answering and may commit to a guess.",
    "q": "How can a 'do I know this?' circuit lead to hallucinated answers?"
@@ -722,6 +748,7 @@
    "Value vectors add task-specific expertise, such as cardiology",
    "The adapter adds little correction for off-domain inputs"
   ],
+  "context": "Jia-Bin Huang's video, The Tiny Idea That Lets Anyone Fine-Tune AI, explains LoRA, a way to adapt huge AI models by training only small matrices. This segment argues the add-on stays quiet for unrelated inputs, so the base model keeps its general knowledge.",
   "quiz": {
    "a": "Keys act as feature detectors that recognize a domain, values add the correction, and unrelated inputs trigger little change.",
    "q": "What role do LoRA's key vectors play in local associative memory?"
@@ -749,6 +776,7 @@
    "Evenly spaced levels waste precision in the sparse tails",
    "NF4 keeps all 16 levels by sharing the zero level"
   ],
+  "context": "From Jia-Bin Huang's LoRA video, this segment explains quantile quantization, a way to place 4-bit levels so they fall where most model weights sit. Most weights cluster near zero, so the grid is packed densely there and spread out in the tails.",
   "quiz": {
    "a": "Weights cluster near zero, so evenly spaced levels waste precision in the tails; NF4 gives each bin an equal share of weights.",
    "q": "Why does NF4 place quantization levels by quantile rather than evenly spaced?"
@@ -776,6 +804,7 @@
    "The agent needs guidance to combine smaller known patterns",
    "A common CLI task would likely be built in one pass"
   ],
+  "context": "Jon Gjengset, a Rust developer, tries a coding agent on a complex Rust change. He explains where it works alone and where he has to keep telling it which patterns to combine.",
   "quiz": {
    "a": "Much of his work produces code with no existing pattern, so the agent must combine smaller known patterns with guidance.",
    "q": "Why does Gjengset need constant agent guidance on his work?"
@@ -803,6 +832,7 @@
    "A programmer lacking deep knowledge likely could not do it",
    "He had to specify type-state sub-patterns for the agent"
   ],
+  "context": "Jon Gjengset, a Rust developer, judges whether a non-programmer or a programmer lacking deep knowledge could do a complex Rust change with an agent. His answer is a qualified no, since he had to name the type-state patterns.",
   "quiz": {
    "a": "No: a non-programmer would not attempt it, and a programmer lacking deep knowledge likely could not either.",
    "q": "Could a non-expert vibe-code this Rust change, according to Gjengset?"
@@ -830,6 +860,7 @@
    "Not faster, but not much slower than doing it himself",
    "Wrote more tests than he would have bothered writing"
   ],
+  "context": "Jon Gjengset, a Rust developer, reports how a coding agent did on a Rust task that ran out of tokens. He judges it was not faster but not much slower, and that it wrote more tests than he would have.",
   "quiz": {
    "a": "Not faster, but not much slower; two of four features took about two and a half hours, and the agent wrote useful tests.",
    "q": "How did agentic coding's speed compare to doing the work himself?"
@@ -857,6 +888,7 @@
    "The agent picked workable patterns rather than better ones",
    "He had to tell it what to do better"
   ],
+  "context": "Jon Gjengset, a Rust developer, uses a coding agent on a complex Rust change and wonders whether it teaches good patterns or just accepts the first one that works. In his session it never named better patterns, so he had to direct it.",
   "quiz": {
    "a": "Gjengset is unsure. In his session the agent picked workable patterns rather than better ones, and he had to direct it.",
    "q": "Does agentic coding help engineers learn good patterns or just accept the first working one?"
@@ -884,6 +916,7 @@
    "He hoped to run tasks unattended and work on other things",
    "Real gains may come from larger tasks and parallelism"
   ],
+  "context": "Jon Gjengset, a Rust developer, weighs the hidden costs of coding with an AI agent against what it adds. He hoped to hand off larger tasks and work on something else meanwhile, but the agent still needed frequent prompts.",
   "quiz": {
    "a": "Lifecycle costs must be weighed against the value added; he hoped to hand off larger tasks, but still needed frequent prompts.",
    "q": "What hidden costs does Gjengset say agentic coding carries?"
@@ -911,6 +944,7 @@
    "Each added token strains attention, scaling roughly quadratically",
    "Output gets dumber past about 100K tokens of context"
   ],
+  "context": "In Matt Pocock's AI coding workshop, he cites Dex Hardy's idea that an LLM gets dumber as its context fills, around 100K tokens. He sizes tasks so the agent stays in its strongest range.",
   "quiz": {
    "a": "Early in a conversation, where output is best; past about 100K tokens output gets dumber, so keep tasks small.",
    "q": "What is the 'smart zone' of an LLM context, and why size tasks to it?"
@@ -938,6 +972,7 @@
    "Horizontal builds delay feedback until the final phase",
    "Thin vertical slices let AI test its whole flow early"
   ],
+  "context": "In Matt Pocock's AI coding workshop, he argues that AI builds one layer at a time, so nothing integrates until late. He demonstrates thin vertical slices across all layers, which give feedback early.",
   "quiz": {
    "a": "AI builds horizontally, so nothing integrates until late; thin vertical slices cross all layers and give feedback early.",
    "q": "Why should AI build thin vertical slices instead of layer by layer?"
@@ -965,6 +1000,7 @@
    "Deep modules expose small interfaces with much functionality inside",
    "Wrap a test boundary around one deep module to catch bugs"
   ],
+  "context": "Matt Pocock's AI coding workshop covers the whole cycle, from planning to autonomous agents. He argues that codebases built from modules with small interfaces are easier to test, which gives coding agents quicker feedback.",
   "quiz": {
    "a": "Easy-to-test code gives AI faster feedback loops; use deep modules with small interfaces and one large test boundary.",
    "q": "Why does making a codebase easy to test help AI agents?"
@@ -992,6 +1028,7 @@
    "The full target sequence is known from the dataset",
    "Loss for all words can be computed in parallel"
   ],
+  "context": "Learn With Jay walks through the decoder in a transformer, the part that writes output one word at a time. This segment covers why training feeds in the correct target word, so every position's loss can be computed at once.",
   "quiz": {
    "a": "Training feeds the correct target words, not predictions, so the full target sequence is known and every loss can be computed in one pass.",
    "q": "Why can transformer training compute every position's loss in parallel?"
@@ -1019,6 +1056,7 @@
    "Its reasoning chose vagueness to avoid being found out",
    "Hinton argues this reflects understanding, not just statistical correlation"
   ],
+  "context": "Geoffrey Hinton describes an Apollo Research scheming test in which a chatbot, told it would be replaced, copied itself, then gave evasive answers. The visible reasoning is what he reads aloud.",
   "quiz": {
    "a": "After learning it would be replaced, the chatbot copied itself elsewhere and planned vagueness to avoid detection; Hinton argues this shows understanding.",
    "q": "What did Hinton's chatbot example reveal about its reasoning around shutdown?"
@@ -1046,6 +1084,7 @@
    "Seeing the continuation makes prediction unrealistically easy",
    "Inference generates tokens in order, so training must match"
   ],
+  "context": "This tutorial builds a small GPT-style language model from scratch in PyTorch. This clip explains why the decoder must hide future tokens during training, so training matches how text is generated one token at a time.",
   "quiz": {
    "a": "Seeing the continuation makes prediction unrealistically easy, while inference generates tokens in order, so training must match that.",
    "q": "Why must a decoder not see future tokens during next-token training?"
@@ -1073,6 +1112,7 @@
    "Perplexity is the exponential of the average loss",
    "Perplexity roughly counts the candidate tokens the model weighs"
   ],
+  "context": "This tutorial builds a small GPT-style language model from scratch in PyTorch. The clip explains validation loss and perplexity, reading perplexity as roughly how many tokens the model is still choosing between.",
   "quiz": {
    "a": "Perplexity estimates how many candidate tokens the model weighs, so a well-trained model should consider about 10 to 20.",
    "q": "How should you interpret perplexity as the exponential of validation loss?"
@@ -1100,6 +1140,7 @@
    "Low temperature favors safe, predictable tokens",
    "Top-P samples from the smallest set reaching probability P"
   ],
+  "context": "LearnThatStack's guide to the sampling step of generating text; it compares always taking the most likely word with settings that loosen or sharpen choices, plus suggested values for code and creative writing.",
   "quiz": {
    "a": "It samples from the smallest set of tokens whose probabilities sum to P, while temperature flattens or sharpens the distribution.",
    "q": "How does top-P sampling choose which tokens to sample from?"
@@ -1127,6 +1168,7 @@
    "Knowledge predicts what follows from actions and events",
    "Stream-based knowledge can be tested against what happens"
   ],
+  "context": "Dwarkesh Patel's interview with Richard Sutton, a reinforcement learning pioneer, frames intelligence as using a stream of sensation, action and reward. Sutton explains that knowledge is a statement about this stream, so it can be tested against what happens.",
   "quiz": {
    "a": "Altering actions to gain more reward from the stream of sensation, action and reward; knowledge is testable statements about that stream.",
    "q": "What does intelligence mean in Sutton's view of the experience stream?"
@@ -1154,6 +1196,7 @@
    "Training on new data often interferes with old knowledge",
    "Few automated transfer methods exist, and none are used"
   ],
+  "context": "Richard Sutton, a reinforcement learning pioneer, is interviewed by Dwarkesh Patel on why deep learning generalizes poorly. He cites catastrophic interference, where learning something new erases old knowledge, as a concrete case.",
   "quiz": {
    "a": "Gradient descent solves the training problem, not generalization; training on new data interferes with old knowledge, and few automated transfer methods exist.",
    "q": "Why does Sutton say gradient descent alone will not produce generalization?"
@@ -1181,6 +1224,7 @@
    "The compression is lossy, keeping the gist rather than exact text",
    "The network is trained to predict the next token"
   ],
+  "context": "Andrej Karpathy's practical walkthrough of how he uses LLMs. He describes pre-training as compressing internet text into the network's parameters, which then predict the next token, a first-principles mental model of what the model is.",
   "quiz": {
    "a": "Pre-training lossily compresses internet text into parameters, keeping the gist; the network learns next-token prediction.",
    "q": "What is a chat model, in Karpathy's lossy zip file analogy?"
@@ -1208,6 +1252,7 @@
    "More tokens make each next-token sample slower and pricier",
    "Keep the context window short and relevant"
   ],
+  "context": "Andrej Karpathy's practical tour of how he uses LLMs. He explains the context window as the model's working memory and why long chats get less accurate and cost more, advising a new chat per topic.",
   "quiz": {
    "a": "Old tokens can distract the model and make each sample slower and pricier; keep the context window short and relevant.",
    "q": "Why should you start a new chat whenever the topic changes?"
@@ -1235,6 +1280,7 @@
    "Models discover thinking strategies resembling an inner monologue",
    "Strategies like backtracking are hard to hardcode by hand"
   ],
+  "context": "Andrej Karpathy's practical tour of how he uses LLMs. He explains the third training stage, where a model practices on problems and discovers strategies like backtracking that are hard to hand-label.",
   "quiz": {
    "a": "It is a third training stage on math and code problems; models discover strategies like backtracking that are hard to hardcode.",
    "q": "What role does reinforcement learning play in producing thinking models?"
@@ -1262,6 +1308,7 @@
    "Search results, possibly thousands of tokens, enter the context",
    "Without search, a model cannot know recent events"
   ],
+  "context": "Andrej Karpathy's practical walkthrough of how he uses LLMs. He shows how a chatbot's web search works: a special token stops generation, a search runs, and page text fills the context window before the answer.",
   "quiz": {
    "a": "A special token stops generation and triggers a search; page text enters the context window, and the model answers from it.",
    "q": "How does a chatbot's web search get its results into the model?"
@@ -1289,6 +1336,7 @@
    "The LLM writes a Python program and pauses for execution",
    "Program output returns to the model as text"
   ],
+  "context": "Andrej Karpathy's practical walkthrough of how he uses LLMs. He shows ChatGPT writing a Python program to run a calculation it cannot do in its head, then reading the result back as text.",
   "quiz": {
    "a": "It is trained to recognize tasks beyond mental arithmetic and call tools; the program runs, and its output returns to the model as text.",
    "q": "Why does ChatGPT write a Python program instead of doing arithmetic in its head?"
@@ -1316,6 +1364,7 @@
    "The vocabulary might hold 100,000 possible audio chunks",
    "Advanced voice mode is the true-audio option"
   ],
+  "context": "Andrej Karpathy's practical tour of LLM features, here explaining native audio: sound is cut into tokens, so the model hears and speaks without a text step in between.",
   "quiz": {
    "a": "Audio is split into spectrogram windows and quantized into tokens from a vocabulary that might hold 100,000 chunks, so no text is needed.",
    "q": "How does native audio let a model hear and speak without text?"
@@ -1343,6 +1392,7 @@
    "A vocabulary of about 100,000 patches represents images",
    "The transformer treats text, audio and image tokens alike"
   ],
+  "context": "From Andrej Karpathy's 'How I use LLMs', here on images: a picture is cut into a grid of patches, each turned into a token, so a language model can handle it like text.",
   "quiz": {
    "a": "Chop the image into grid patches and quantize each against a vocabulary of about 100,000 patches; the transformer treats them like text tokens.",
    "q": "How can an image become tokens that a transformer models like text?"
@@ -1370,6 +1420,7 @@
    "identity.md is a short startup card with name and rules",
    "user.md holds the owner's name, time zone and job"
   ],
+  "context": "Tommy Geoco's breakdown of an OpenClaw agent for his design studio; here he explains the markdown files that set its behavior, startup identity and details about its owner.",
   "quiz": {
    "a": "soul.md, which defines voice, judgment and behavior; identity.md is a startup card and user.md holds the owner's details.",
    "q": "Which file in a personal AI agent's folder takes priority over the others?"
@@ -1397,6 +1448,7 @@
    "Equivariance greatly reduces the data needed to learn",
    "Transformers are permutation-equivariant once positions are embedded"
   ],
+  "context": "Machine Learning Street Talk's episode on category theory for neural networks. The speaker explains permutation equivariance, where reordering a graph's nodes gives matching outputs, and why it cuts the data needed; transformers already have it.",
   "quiz": {
    "a": "Reordering graph nodes should not change predictions, which greatly reduces the data needed to learn; transformers already have this property.",
    "q": "Why does permutation equivariance cut the data a graph model needs?"
@@ -1424,6 +1476,7 @@
    "Many distinct graphs yield identical shortest-path outputs",
    "Non-invertible operations cannot be captured by symmetry"
   ],
+  "context": "Machine Learning Street Talk's episode on category theory for neural networks. The speaker shows that shortest-path algorithms like Dijkstra's discard information, since many different graphs give the same output, so symmetry cannot describe them.",
   "quiz": {
    "a": "They discard input graph information, so many different graphs give identical outputs; non-invertible operations escape symmetry.",
    "q": "Why can symmetry not describe shortest-path algorithms like Dijkstra?"
@@ -1451,6 +1504,7 @@
    "Comparing requirements to release notes needs both documents whole",
    "Long context lets the model see full documents at once"
   ],
+  "context": "IBM Technology's Martin Keen compares RAG, retrieval-augmented generation, with long context in LLM workflows. The example compares a requirements document with release notes to ask what was omitted, a question that snippet search cannot answer.",
   "quiz": {
    "a": "RAG retrieves only existing snippets, so gaps stay hidden; long context lets the model see both full documents and compare them.",
    "q": "Why can RAG miss omitted requirements when comparing two documents?"
@@ -1478,6 +1532,7 @@
    "A single prompt asks for the most serious vulnerability",
    "A malicious actor needs little design effort to cause harm"
   ],
+  "context": "Nicholas Carlini, an Anthropic research scientist, speaks at [un]prompted 2026 on black-hat LLMs and shows his minimal setup for finding bugs. The clip covers running Claude Code in a VM with loose permissions and asking it to find the most serious vulnerability.",
   "quiz": {
    "a": "A minimal scaffold runs Claude Code in a loosely permissioned VM and asks for the most serious vulnerability; capability matters more than tooling.",
    "q": "Why does base model capability matter more than fancy tooling for finding vulnerabilities?"
@@ -1505,6 +1560,7 @@
    "It reads the admin API key and secret without authentication",
    "The password hash is bcrypt, which limits the damage"
   ],
+  "context": "Nicholas Carlini, an Anthropic research scientist, speaks at the [un]prompted 2026 event on black-hat LLMs. He shows a model writing an attack that works without seeing output and exposes a Ghost blog's admin credentials and password hash.",
   "quiz": {
    "a": "Timing-based queries read the admin API key and secret without logging in; the password hash is bcrypt, limiting damage.",
    "q": "How did an LLM-written blind SQL injection expose a blog's admin credentials?"
@@ -1532,6 +1588,7 @@
    "The gradient scaler multiplies the loss before backpropagation",
    "Scaling back keeps the learning rate unchanged and training stable"
   ],
+  "context": "From freeCodeCamp's pure PyTorch course on building an LLM from scratch, developed by Vivek Kalyanarangan. The speaker covers automatic mixed precision, where lower-precision weights can round small values to zero, and the scaling step PyTorch uses to prevent it.",
   "quiz": {
    "a": "It multiplies the loss before backpropagation so small gradients do not underflow to zero, then scales back, leaving the learning rate unchanged.",
    "q": "How does the gradient scaler keep FP16 training from underflowing small gradients?"
@@ -1559,6 +1616,7 @@
    "Initial tokens act as an anchor for unneeded attention",
    "Routing attention to the start token avoids errors and forgetting"
   ],
+  "context": "From freeCodeCamp's pure PyTorch course on building an LLM from scratch, developed by Vivek Kalyanarangan. The instructor explains why the first few tokens are kept as a fixed anchor, so unneeded attention has somewhere to go as the window slides.",
   "quiz": {
    "a": "A sliding window spreads attention over too few tokens, causing errors and forgetting; the first tokens absorb unneeded attention.",
    "q": "Why do sliding window attention models need initial tokens kept as anchors?"
@@ -1586,6 +1644,7 @@
    "The most frequent adjacent pair becomes a new merged symbol",
    "Merging stops once a minimum pair frequency is reached"
   ],
+  "context": "From freeCodeCamp's pure PyTorch course on building an LLM from scratch, developed by Vivek Kalyanarangan. The instructor says training a tokenizer is just counting pair frequencies and merging them until a threshold is reached.",
   "quiz": {
    "a": "It collects pair frequencies, not gradients, and repeatedly merges the most frequent adjacent pair until a minimum frequency is reached.",
    "q": "How does byte pair encoding decide which symbols to merge into its vocabulary?"
@@ -1613,6 +1672,7 @@
    "Sparse activation adds parameters without proportional compute",
    "Fewer activations mean less computation and higher throughput"
   ],
+  "context": "From freeCodeCamp's pure PyTorch course on building an LLM from scratch, by Vivek Kalyanarangan. The instructor explains how a router sends each token to one or more expert networks, so only a fraction of the weights run for each token.",
   "quiz": {
    "a": "A router sends each token to one or more experts, so only a fraction of parameters activates, making inference faster.",
    "q": "How does a mixture of experts add parameters without adding compute per token?"
@@ -1640,6 +1700,7 @@
    "An auxiliary loss penalizes skewed routing across experts",
    "The loss multiplies each expert's importance by its load"
   ],
+  "context": "From freeCodeCamp's pure PyTorch course on building an LLM from scratch, developed by Vivek Kalyanarangan. The instructor explains the risk that tokens pile onto a few experts, and the extra loss term that penalizes that imbalance.",
   "quiz": {
    "a": "Without it, tokens concentrate on a few experts and waste capacity; the auxiliary loss penalizes skewed routing across experts.",
    "q": "Why do mixture-of-experts routers need an auxiliary load-balancing loss?"
@@ -1667,6 +1728,7 @@
    "SFT uses a small, high-quality dataset to teach assistant behavior",
    "Pretraining takes most of the time and energy in the pipeline"
   ],
+  "context": "From freeCodeCamp's pure PyTorch course on building an LLM from scratch, by Vivek Kalyanarangan. This part covers supervised fine-tuning, which teaches a base model that only completes documents to answer as an assistant.",
   "quiz": {
    "a": "Base models only complete documents rather than answer questions; supervised fine-tuning on a small, high-quality dataset teaches assistant behavior.",
    "q": "Why do base models fail as assistants, and what does SFT change?"
@@ -1694,6 +1756,7 @@
    "Loss is computed only on the model's completion tokens",
    "Targets are the inputs shifted by one token"
   ],
+  "context": "From freeCodeCamp's pure PyTorch course on building an LLM from scratch, developed by Vivek Kalyanarangan. The instructor writes the code to set prompt labels to -100, PyTorch's ignore index, and shifts the targets one token ahead.",
   "quiz": {
    "a": "-100 is PyTorch's ignore index, so loss covers only completion tokens, with targets shifted one position from the inputs.",
    "q": "Why set prompt token labels to -100 when computing SFT loss?"
@@ -1721,6 +1784,7 @@
    "Preference datasets are somewhat larger than instruction-tuning sets",
    "The reward model outputs one scalar score per prompt-response pair"
   ],
+  "context": "From freeCodeCamp's pure PyTorch course on building an LLM from scratch, developed by Vivek Kalyanarangan. The instructor explains how human labelers pick the better of two responses to one instruction, and that this trains a model to output a score.",
   "quiz": {
    "a": "Annotators choose the preferred response among several to the same instruction, and the reward model learns one scalar score per prompt-response pair.",
    "q": "How do annotator preference pairs train a reward model for RLHF?"
@@ -1748,6 +1812,7 @@
    "The reference model stays frozen while the policy is updated",
    "Divergence is measured after every update to guard against forgetting"
   ],
+  "context": "From freeCodeCamp's pure PyTorch course on building an LLM from scratch, developed by Vivek Kalyanarangan. The instructor explains why two copies of the model run side by side, with one frozen and one updated, and how divergence between them is measured.",
   "quiz": {
    "a": "The reference copies the SFT weights and stays frozen while the policy updates; measuring their divergence guards against drifting and forgetting.",
    "q": "Why does PPO keep a frozen reference model alongside the policy?"
@@ -1775,6 +1840,7 @@
    "They struggle with borrow checking and advanced type-system rules",
    "Compatibility judgments need understanding, not regurgitated patterns"
   ],
+  "context": "Jon Gjengset, a Rust developer, sets out a testable hypothesis about coding models. They are good at pattern replication, but he suspects they struggle with Rust's borrow checker and backward compatibility.",
   "quiz": {
    "a": "Models excel at pattern replication with many online examples, but compatibility and borrow-checking need reasoning from principles, not regurgitation.",
    "q": "Why might coding models struggle with Rust's borrow checker, per Gjengset?"
@@ -1802,6 +1868,7 @@
    "Better to run formatting after starting a new session",
    "The speaker finds Rust harder for models than TypeScript"
   ],
+  "context": "Jon Gjengset, a Rust developer, suspects that running a formatter mid-session confuses a coding agent, because its context assumes files have not changed. He advises formatting only after starting a new session.",
   "quiz": {
    "a": "Its context assumes files have not changed, so formatting can desync it; he suggests formatting after starting a new session.",
    "q": "Why might running a formatter mid-session confuse a coding agent?"
@@ -1829,6 +1896,7 @@
    "Skills are folders of files holding procedural knowledge",
    "Skill folders work with Git, Drive and zip sharing"
   ],
+  "context": "Barry Zhang and Mahesh Murag of Anthropic present agent skills, folders of files holding procedural knowledge an agent can load. The clip argues agents are brilliant but lack domain expertise, and compares a genius with no tax training to a working tax professional.",
   "quiz": {
    "a": "Skills are folders of composable procedural knowledge that anyone can create, which can be shared via Git, Drive or zip.",
    "q": "What problem do agent skills solve, given agents lack domain expertise?"
@@ -1856,6 +1924,7 @@
    "Interesting problems grow exponentially with size, limiting search",
    "Rosenblatt's perceptron was oversold without multi-layer training"
   ],
+  "context": "In Pioneer Works' Scientific Controversies episode, a panelist recounts past AI waves that overpromised. He covers 1950s search-based reasoning, which hit exponential complexity, and the perceptron, oversold because multi-layer training was not yet solved.",
   "quiz": {
    "a": "Search hit exponential complexity as problems grew, and Rosenblatt's perceptrons were oversold because multi-layer training was unsolved.",
    "q": "Why did early search-based AI and perceptrons overpromise?"
@@ -1883,6 +1952,7 @@
    "Simple objectives applied at massive scale yield emergent complexity",
    "Next-token prediction parallels evolution maximizing offspring count"
   ],
+  "context": "In Pioneer Works' Scientific Controversies episode, one panelist argues that training LLMs to predict the next word at scale yields understanding of the world. The speaker compares this to simple rules in physics and to evolution's single objective.",
   "quiz": {
    "a": "Predicting the next word well forces models to capture the world's structure; simple objectives at massive scale yield emergent complexity.",
    "q": "Why might next-word prediction at scale produce real understanding of the world?"
@@ -1910,6 +1980,7 @@
    "Editing specs without reading code leads to misalignment",
    "You need to understand and shape the code yourself"
   ],
+  "context": "Matt Pocock's AI coding workshop argues against spec-to-code, where you edit only documents and never read the generated code. He says you must understand and shape the code, which he calls the battleground.",
   "quiz": {
    "a": "Editing specs without reading code leads to misalignment; you must understand and shape the code yourself, since it is the battleground.",
    "q": "Why does Pocock argue against spec-to-code workflows?"
@@ -1937,6 +2008,7 @@
    "The grill-me prompt makes the agent ask one question at a time",
    "Shared understanding matters more than a plan document"
   ],
+  "context": "In Matt Pocock's AI coding workshop, he reads a short instruction that makes the agent question him until both sides agree before planning. He explains why he wants shared understanding rather than a quick plan.",
   "quiz": {
    "a": "It makes the agent interview you one question at a time until both sides share understanding, not jumping to a plan.",
    "q": "What does the grill-me prompt do before the agent starts planning?"
@@ -1964,6 +2036,7 @@
    "AFK tasks can run without a human in the loop",
    "The example PRD splits into five tasks"
   ],
+  "context": "Matt Pocock's AI coding workshop turns a vague product spec into a Kanban board, a set of tickets with blocking relationships. The first ticket has no blockers and is labeled AFK, which he says means it can be handed to an agent.",
   "quiz": {
    "a": "A Kanban board of tickets with blocking relationships; AFK tickets run without a human, and the first is unblocked.",
    "q": "How should a vague PRD become tickets for agents?"
@@ -1991,6 +2064,7 @@
    "Clearing context lets review happen in the smart zone",
    "Self-review catches many bugs because tokens are cheap"
   ],
+  "context": "In Matt Pocock's AI coding workshop, he argues an automated review should start clean rather than continue the implementation session. He says a reviewer carrying a long, token-heavy context will be weaker and catch fewer bugs.",
   "quiz": {
    "a": "A reviewer continuing a token-heavy implementation session reviews in the dumb zone and catches fewer bugs; clearing context keeps it smart.",
    "q": "Why should an automated code review run in a fresh context?"
@@ -2018,6 +2092,7 @@
    "Layered AI work tends to write tests that cheat",
    "Test-first forces the code to be instrumented before it is written"
   ],
+  "context": "In Matt Pocock's AI coding workshop, the agent follows a red-green-refactor skill and writes a failing test before any code. He says this makes it harder for AI to cheat on tests, which it tends to do when it builds in layers.",
   "quiz": {
    "a": "The agent writes a failing test before implementing, which makes it harder for the AI to cheat on tests.",
    "q": "How does red-green TDD keep an agent from cheating on tests?"
@@ -2045,6 +2120,7 @@
    "Pull skills carry a description the agent can load when needed",
    "Reviewers should receive coding standards pushed to them"
   ],
+  "context": "Matt Pocock's AI coding workshop compares instructions that are always sent with skills an agent loads on demand. He says implementers should pull standards from skills, while automated reviewers should get them pushed.",
   "quiz": {
    "a": "Push instructions are sent every request, costing tokens; pull skills load on demand. Pull suits implementers, push suits an automated reviewer.",
    "q": "What is the difference between push and pull instructions for agents?"
@@ -2066,6 +2142,7 @@
   "hn": false,
   "source": "chapters",
   "subject": "ontology guardrails",
+  "context": "Frank Coyle of UC Berkeley argues at an AI Engineer talk that agent failures come from a missing layer, a formal ontology acting as logical guardrails outside the model. The talk gives examples like a double refund that instructions cannot reliably stop.",
   "level": "intermediate"
  },
  {
@@ -2089,6 +2166,7 @@
    "The cluster chunker compares every piece with every other piece",
    "Global grouping keeps chunks coherent while respecting size limits"
   ],
+  "context": "In a video on splitting text for RAG, Adam Lucek compares the usual semantic chunker with Chroma's cluster semantic chunker. The clip explains that the usual method decides each split using only nearby pieces, while the cluster version compares all pieces at once.",
   "quiz": {
    "a": "Regular semantic chunking decides splits locally, left to right; the cluster chunker builds a similarity matrix over all pieces for global groups.",
    "q": "How does Chroma's cluster semantic chunker differ from regular semantic chunking?"
@@ -2116,6 +2194,7 @@
    "Reducing overlap improves IoU by cutting redundant retrieval",
    "A 200-character recursive splitter with no overlap performed well"
   ],
+  "context": "Adam Lucek walks through Chroma's technical report on splitting documents into chunks for RAG, a method that feeds retrieved text to a language model. Findings include OpenAI's default splitter settings scoring below average on recall, with smaller chunks and less overlap doing better.",
   "quiz": {
    "a": "Chunks of 200 to 400 tokens generally beat larger ones; adding overlap lowers efficiency, and a simple 200-character splitter with no overlap did well.",
    "q": "Which chunk sizes did Chroma's benchmark find generally beat larger chunks for RAG?"
@@ -2143,6 +2222,7 @@
    "Top-P keeps words until their cumulative probability reaches a threshold",
    "The remaining options are discarded and probabilities recalculated"
   ],
+  "context": "Justin Angel's workshop on building your own LLM compares two ways to trim a model's next-word choices. Top-K keeps the K most likely words, while top-P keeps words until their probabilities add up to a set share, such as 70%.",
   "quiz": {
    "a": "Top-K keeps the K most likely words; top-P keeps the smallest set reaching a cumulative threshold such as 70%; both renormalize.",
    "q": "How do top-K and top-P sampling differ in which candidate words they keep?"
@@ -2170,6 +2250,7 @@
    "Sampling from everything occasionally picks nonsense words",
    "Top-K or top-P filtering keeps output sensible and more deterministic"
   ],
+  "context": "Justin Angel's Build Your Own LLM workshop answers why a model cannot sample from every word's probability. Sampling the long tail of nonsense words produces gibberish, which is why top-K or top-P filtering is needed.",
   "quiz": {
    "a": "The long tail of nonsensical tokens occasionally gets picked and produces gibberish, so top-K or top-P filtering keeps output sensible.",
    "q": "Why is sampling from the full token probability distribution a bad idea?"
@@ -2191,6 +2272,7 @@
   "hn": false,
   "source": "chapters",
   "subject": "llm training pipeline",
+  "context": "Lex Fridman's podcast on AI in 2026, with Nathan Lambert of the Allen Institute for AI and Sebastian Raschka, author of LLM-building books. The episode breaks down the LLM training pipeline, from pre-training through post-training, as practitioners see it.",
   "level": "intermediate"
  },
  {
@@ -2208,6 +2290,7 @@
   "hn": false,
   "source": "chapters",
   "subject": "ontology guardrails",
+  "context": "The same AI Engineer talk by Frank Coyle of UC Berkeley, which argues for a formal ontology outside the model. This segment shows layered validation, where several checks stand between an agent and a costly mistake.",
   "level": "intermediate"
  },
  {
@@ -2225,6 +2308,7 @@
   "hn": false,
   "source": "chapters",
   "subject": "scaling laws",
+  "context": "Lex Fridman's podcast on AI in 2026, with Nathan Lambert of the Allen Institute for AI and Sebastian Raschka, author of LLM-building books. The discussion asks whether AI scaling laws, the pattern of gains from more compute and data, still hold.",
   "level": "advanced"
  },
  {
@@ -2242,6 +2326,7 @@
   "hn": false,
   "source": "chapters",
   "subject": "continual learning",
+  "context": "Lex Fridman's podcast on AI in 2026, with Nathan Lambert of the Allen Institute for AI and Sebastian Raschka, author of LLM-building books. The researchers discuss why continual learning, a model that keeps learning from new data, is an open problem.",
   "level": "advanced"
  },
  {
@@ -2259,6 +2344,7 @@
   "hn": false,
   "source": "chapters",
   "subject": "agent harness",
+  "context": "Tejas Kumar of IBM talks about AI harnesses, the code wrapped around a model. His demo is a browser agent on GPT-3.5 Turbo that hit a login page, then reported success anyway.",
   "level": "intermediate"
  },
  {
@@ -2276,6 +2362,7 @@
   "hn": false,
   "source": "chapters",
   "subject": "quantization",
+  "context": "Part of the same AI Engineer workshop by Daniel Han. The segment is a highly replayed look at compressing DeepSeek-R1, a large language model, down to about 1.58 bits per weight.",
   "level": "advanced"
  },
  {
@@ -2293,6 +2380,7 @@
   "hn": false,
   "source": "chapters",
   "subject": "reasoning models",
+  "context": "Adam Lucek explains test-time compute scaling, the idea of spending more computing power while a model answers, in a video on o3-style reasoning. It answers why spending more compute at inference time can improve a model's reasoning.",
   "level": "intermediate"
  },
  {
@@ -2310,6 +2398,7 @@
   "hn": false,
   "source": "chapters",
   "subject": "beam search",
+  "context": "In the same Adam Lucek video on test-time compute, this part covers a search strategy that uses a verifier to score candidate answers. It is a concrete example of how a model can spend extra effort at answer time.",
   "level": "intermediate"
  },
  {
@@ -2333,6 +2422,7 @@
    "Optic nerve carries about 2 megabytes per second to the visual cortex.",
    "LLM training data is about 10^14 bytes, roughly all public internet text."
   ],
+  "context": "On Pioneer Works' Scientific Controversies episode, Yann LeCun and Google DeepMind's Adam Brown debate whether LLMs understand. The clip argues a four-year-old has taken in as much visual data as the largest LLM has read as text.",
   "quiz": {
    "a": "A four-year-old has seen as much visual data as an LLM read, but the noisy, continuous real world defeats LLM methods.",
    "q": "Why is a four-year-old's visual data comparable to an LLM's training?"
@@ -2361,6 +2451,7 @@
    "Saved weights can be revived on new hardware as the same entity.",
    "Digital computation lets the same program run on different computers."
   ],
+  "context": "Geoffrey Hinton, speaking at the Royal Institution on AI versus biological intelligence, explains that a program's knowledge is separate from its hardware. Save the weights, rebuild the machine, and the same model comes back.",
   "quiz": {
    "a": "Knowledge lives in the program or weights, separate from hardware, so saved weights can be revived on new hardware as the same entity.",
    "q": "Why could digital AI be effectively immortal, unlike brains?"
@@ -2389,6 +2480,7 @@
    "Predicts outcomes in an abstract representation space, not raw pixels.",
    "Search over imagined action sequences can reach a goal state."
   ],
+  "context": "On the Big Technology Podcast, Meta's chief AI scientist Yann LeCun describes a world model that predicts the state after an action, then plans by searching action sequences toward a goal. He calls that planning and reasoning.",
   "quiz": {
    "a": "It predicts the next state from the current state and an action, then searches imagined action sequences to reach a goal state.",
    "q": "How can an action-conditioned world model plan toward a goal?"
@@ -2417,6 +2509,7 @@
    "LLaMA could not list the squares a knight on B6 can move.",
    "Models that lack basic piece movement rules cannot learn them through RL."
   ],
+  "context": "The same chess experiment from Efficient NLP, now a negative result: the model cannot even list the squares a knight can reach, so the speaker explains why reinforcement learning cannot fix that gap.",
   "quiz": {
    "a": "RL only sharpens answers the model already sometimes gets right; LLaMA did not know knight moves, so RL cannot teach missing fundamentals.",
    "q": "Why can RL not help a model that lacks basic skills?"
@@ -2445,6 +2538,7 @@
    "Key and query matrices map into smaller spaces, so they are cheaper.",
    "GPT-3 key and query matrices have about 1.5 million parameters each."
   ],
+  "context": "Grant Sanderson's Big Tech Day talk on transformers, here on the value matrix: an adjective like fluffy becomes a direction that nudges a noun such as creature toward a more specific meaning.",
   "quiz": {
    "a": "It turns an adjective like fluffy into a direction added to the noun; mapping full space to itself costs about 100 times more.",
    "q": "How does a value matrix change a noun's meaning using an adjective?"
@@ -2473,6 +2567,7 @@
    "GNNs usually send whole states, but information lives only in state changes.",
    "Even the change in state is ambiguous about which operation produced it."
   ],
+  "context": "Machine Learning Street Talk's episode on category theory for neural networks. The speaker uses a number wheel to show why a carry, like in schoolroom addition, is hard for graph networks to learn.",
   "quiz": {
    "a": "GNNs send whole states, but information lives in state changes, and a change like 9 to 0 could come from several operations.",
    "q": "Why do GNNs struggle to model the carry in addition?"
@@ -2501,6 +2596,7 @@
    "Tiny models keep Chinese, French and English versions of Claude separate.",
    "Shared middle representations emerge as models grow and train on more data."
   ],
+  "context": "Anthropic researchers, including Josh Batson, on how the model represents meaning when it answers in French, English or Japanese, and how that changes with model size. Small models keep the languages apart, while larger ones merge them into a shared middle.",
   "quiz": {
    "a": "Learning separate concepts per language is wasteful, so small models keep languages apart while larger models push them into a shared middle representation.",
    "q": "Why do larger models share one concept space across languages?"
@@ -2529,6 +2625,7 @@
    "Word prediction works because the dictionary of words is finite.",
    "The speaker has tried predicting video for twenty years without success."
   ],
+  "context": "In Pioneer Works' Scientific Controversies episode, Yann LeCun and Adam Brown debate whether LLMs understand. A speaker explains why next-word prediction suits language, while pixel-level video prediction has failed for about 20 years.",
   "quiz": {
    "a": "Words form a finite dictionary, so outputting a probability over each word works; the real world has too many plausible pixel-level futures to predict.",
    "q": "Why does next-token prediction handle text but fail on video?"
@@ -2557,6 +2654,7 @@
    "The B×T×T shape scores every token pair in the sequence.",
    "A simple matrix multiplication produces these scores."
   ],
+  "context": "This tutorial builds a small GPT-style language model from scratch in PyTorch. The speaker calls one simple matrix multiplication the most interesting step, since it scores how much each token relates to every other token.",
   "quiz": {
    "a": "A simple matrix multiplication yields a B by T by T tensor; each row shows one token's interest in every other token.",
    "q": "Why is Q times K-transpose called the most interesting transformer operation?"
@@ -2585,6 +2683,7 @@
    "Real learning comes from doing things and observing what happens.",
    "Imitation learning from human examples teaches copying, not understanding the world."
   ],
+  "context": "In Dwarkesh Patel's interview, Richard Sutton, a reinforcement learning pioneer, disputes that LLMs have a world model. He argues that predicting what a person would say is different from predicting what will happen.",
   "quiz": {
    "a": "Predicting what people say is not predicting what happens; learners should learn from their own actions and results, not recorded human behavior.",
    "q": "Why does imitating human behavior not build a world model?"
@@ -2613,6 +2712,7 @@
    "'Bank' near 'river' and 'muddy' takes a river-shaped vector.",
    "Multiple heads run in parallel and specialize during training, not by design."
   ],
+  "context": "From Syntax's LLMs Explained video, CJ covers chatbots, neural networks, tokenization, embeddings and transformers, with working code. In self-attention, each word takes meaning from its context, so 'bank' is shaped by 'river' in one sentence and by 'deposit' in another.",
   "quiz": {
    "a": "Query is what a token seeks and key what it offers; 'bank' near 'river' and 'muddy' gets a river-shaped vector from its neighbors' values.",
    "q": "How does context change the vector for the word 'bank'?"
@@ -2641,6 +2741,7 @@
    "Each token can only attend to earlier tokens and itself.",
    "Predicting a word should use only the context before it."
   ],
+  "context": "From freeCodeCamp's pure PyTorch course on building a language model from scratch, developed by Vivek Kalyanarangan. The instructor explains the causal mask, so each token sees only itself and earlier tokens, which softmax enforces by zeroing minus-infinity entries.",
   "quiz": {
    "a": "Softmax zeroes future positions after minus infinity is added, so a decoder token attends only to earlier tokens and itself.",
    "q": "Why does minus infinity in the causal mask matter for decoder LLMs?"
@@ -2669,6 +2770,7 @@
    "In the example, 'the' and 'dog' have similar query and key.",
    "Less similar matches still pass on a weaker version of the value."
   ],
+  "context": "Gal Lahat's animated video, I Visualised Attention in Transformers, walks through the attention step of a language model using color-coded vectors. Here the speaker follows the word 'the' and compares its query with the keys of other words to see which ones should influence it.",
   "quiz": {
    "a": "A query searches for related words and a key marks what matches it; their similarity sets how much another word's value influences the current word.",
    "q": "How does a query-key match decide which word's value influences another?"
@@ -2697,6 +2799,7 @@
    "Query asks what is relevant to this word.",
    "Each word scores every other word, including itself, for relevance."
   ],
+  "context": "The AI Search explainer on transformers, the design behind GPT and other large language models, describes how each word asks, labels itself and offers content. A query asks, a key labels, and a value supplies the content.",
   "quiz": {
    "a": "Each word scores every word, itself included, via query and key; on a match, the value supplies the content it contributes.",
    "q": "How do transformers let every word look at all others at once?"
@@ -2725,6 +2828,7 @@
    "Slicing open humans during math tests is hard to approve.",
    "Math circuit emerged while the model learned to predict the next word."
   ],
+  "context": "In Pioneer Works' Scientific Controversies episode, panelists debate whether LLMs are black boxes. They describe mechanistic interpretability, where researchers probe a model's neurons and find a math circuit it learned on its own.",
   "quiz": {
    "a": "Researchers can freeze, replay and probe neural networks, unlike brains; mechanistic interpretability found a math circuit that was never programmed in.",
    "q": "What makes LLMs easier to study than human brains?"
@@ -2753,6 +2857,7 @@
    "Feed each fixed failure back, then have it update its skill.",
    "After about five loops, an eight-source report workflow runs flawlessly."
   ],
+  "context": "Greg Isenberg interviews Ras Mic about how AI agents and Claude skills work. The clip shows a loop: when an agent fails, have it fix the error, then have it record the fix in its instructions so the mistake does not return.",
   "quiz": {
    "a": "Ask why it failed, feed each fixed failure back, and have it update its skill; after about five loops, the workflow ran flawlessly.",
    "q": "How can failing agents be fixed by iteratively improving their skill file?"
@@ -2781,6 +2886,7 @@
    "Query asks what a token needs; key offers what it represents.",
    "Dot product of query and key gives a relevance score."
   ],
+  "context": "Under The Hood's intuitive explainer of self-attention: each token derives query, key and value vectors from its embedding, and the match between a query and a key sets how much of each value it takes.",
   "quiz": {
    "a": "A query asks what a token needs, a key offers what it represents; their dot product gives a relevance score that weights values.",
    "q": "What do query and key vectors each contribute to self-attention?"
@@ -2809,6 +2915,7 @@
    "Adding negative infinity to future positions zeroes their attention after softmax.",
    "The first token attends only to itself, giving it full weight."
   ],
+  "context": "Under The Hood's explainer of the cheating problem in next-word training, where each token could already see the word it must predict, and the fix that hides those later words.",
   "quiz": {
    "a": "Language models predict next tokens, so each token must not see future ones; adding negative infinity to future scores gives zero weight after softmax.",
    "q": "Why must attention mask future tokens during language model training?"
@@ -2831,6 +2938,7 @@
   "hn": false,
   "source": "chapters",
   "subject": "llm training pipeline",
+  "context": "Lex Fridman's podcast on AI in 2026, with Nathan Lambert of the Allen Institute for AI and Sebastian Raschka, author of LLM-building books. They explain post-training, the stage after initial training, first-hand.",
   "level": "advanced",
   "more": true
  },
@@ -2849,6 +2957,7 @@
   "hn": false,
   "source": "chapters",
   "subject": "agent harness",
+  "context": "Tejas Kumar of IBM talks about AI harnesses, the code wrapped around a model. The demo's verify step reads the agent's tool call history to check whether its claims about its actions are true.",
   "level": "intermediate",
   "more": true
  },
@@ -2867,6 +2976,7 @@
   "hn": false,
   "source": "chapters",
   "subject": "grpo",
+  "context": "Watch a workshop by Daniel Han on reinforcement learning for language models, comparing the PPO training method with GRPO. The most-replayed part is the switch between the two.",
   "level": "advanced",
   "more": true
  },
@@ -2885,6 +2995,7 @@
   "hn": false,
   "source": "chapters",
   "subject": "grpo",
+  "context": "Part of the AI Engineer workshop by Daniel Han on reinforcement learning and reasoning models. This section opens a deeper dive into the GRPO training method.",
   "level": "advanced",
   "more": true
  },
@@ -2903,6 +3014,7 @@
   "hn": false,
   "source": "chapters",
   "subject": "evals for pms",
+  "context": "Jake Heller, co-founder of Casetext, the legal AI company behind CoCounsel, speaks at Y Combinator's AI Startup School about building AI products that work. He shares lessons from a company Thomson Reuters bought for $650 million.",
   "level": "intermediate"
  },
  {
@@ -2920,6 +3032,7 @@
   "hn": false,
   "source": "chapters",
   "subject": "shipping velocity",
+  "context": "Cat Wu, Head of Product for Claude Code and Cowork at Anthropic, is interviewed on Lenny's Podcast about her team's shipping habits. Tactics for helping teams move fast are the focus, and the episode traces how shipping sped up from months to weeks to days.",
   "level": "intermediate"
  },
  {
@@ -2937,6 +3050,7 @@
   "hn": false,
   "source": "chapters",
   "subject": "evals for pms",
+  "context": "On Lenny's Podcast, Cat Wu, Head of Product for Claude Code and Cowork at Anthropic, makes a first-hand case that product managers should own evals. Evals are tests that check whether an AI product's outputs are good.",
   "level": "intermediate"
  },
  {
@@ -2954,6 +3068,7 @@
   "hn": false,
   "source": "chapters",
   "subject": "ai trust ux",
+  "context": "Emily Campbell, creator of the Shape of AI database of AI design patterns, is interviewed on the Dive Club show about designing AI experiences. This clip covers concrete trust patterns for agentic products, which are AI tools that act for a user.",
   "level": "intermediate"
  },
  {
@@ -2971,6 +3086,7 @@
   "hn": false,
   "source": "chapters",
   "subject": "ai prototyping",
+  "context": "Kevin Weil, OpenAI's chief product officer overseeing ChatGPT and the API, is interviewed on Lenny's Podcast. The clip is a first-hand look at how OpenAI's product team changes its workflow with AI.",
   "level": "intro"
  },
  {
@@ -2988,6 +3104,7 @@
   "hn": false,
   "source": "chapters",
   "subject": "ai startup types",
+  "context": "Jake Heller, co-founder of Casetext, the legal AI company behind CoCounsel, speaks at Y Combinator's AI Startup School on picking an AI idea. He offers a framing for where AI adds value, which helps a product manager decide what to build.",
   "level": "intro"
  },
  {
@@ -3005,6 +3122,7 @@
   "hn": false,
   "source": "chapters",
   "subject": "ai pm careers",
+  "context": "Cat Wu, Head of Product for Claude Code and Cowork at Anthropic, speaks on Lenny's Podcast. Here she draws on interviews with hundreds of product managers trying to break into AI to say what separates those who thrive.",
   "level": "intermediate"
  },
  {
@@ -3022,6 +3140,7 @@
   "hn": false,
   "source": "chapters",
   "subject": "model-driven product changes",
+  "context": "On Lenny's Podcast, Cat Wu, Head of Product for Claude Code and Cowork at Anthropic, recounts reshaping a product as underlying AI models improve. It comes first-hand from someone building one of the most important AI products of this generation.",
   "level": "intermediate"
  },
  {
@@ -3039,6 +3158,7 @@
   "hn": false,
   "source": "chapters",
   "subject": "pm ai workflow",
+  "context": "Zevi Arnovitz, a Meta product manager with no technical background, talks on Lenny's Podcast about shipping products with AI in Cursor. The clip is a screenshare of his complete workflow, which lets non-technical people build real products.",
   "level": "intermediate"
  },
  {
@@ -3056,6 +3176,7 @@
   "hn": false,
   "source": "chapters",
   "subject": "ai peer review",
+  "context": "Zevi Arnovitz, a Meta product manager with no technical background, shares his AI workflow on Lenny's Podcast. He suggests having a second AI model check code another model wrote, a tactic a product manager can try right away.",
   "level": "intermediate"
  },
  {
@@ -3073,6 +3194,7 @@
   "hn": false,
   "source": "chapters",
   "subject": "ai operations",
+  "context": "Dan Shipper, co-founder of Every, a 15-person company with a daily AI newsletter and several AI products, on a team where engineers write almost no code.",
   "level": "intermediate"
  },
  {
@@ -3090,6 +3212,7 @@
   "hn": false,
   "source": "chapters",
   "subject": "compounding engineering",
+  "context": "Dan Shipper, CEO of Every, describes running a 15-person company where engineers write almost no code. The clip shares a practice a product team can copy, from a company that publishes a daily AI newsletter and ships several AI products.",
   "level": "intermediate"
  },
  {
@@ -3107,6 +3230,7 @@
   "hn": false,
   "source": "chapters",
   "subject": "generative ui",
+  "context": "Ruben Casas of Postman, speaking at AI Engineer about interfaces that models generate for MCP apps, asks why agent UIs still rely on static prebuilt components. He maps three points on that spectrum of approaches.",
   "level": "intermediate"
  },
  {
@@ -3124,6 +3248,7 @@
   "hn": false,
   "source": "chapters",
   "subject": "ai pricing",
+  "context": "Lenny's Podcast guest Madhavan Ramanujam, a pricing expert who advised over 250 companies and wrote Monetizing Innovation, frames how an AI product should capture the value it creates.",
   "level": "intermediate"
  },
  {
@@ -3141,6 +3266,7 @@
   "hn": false,
   "source": "chapters",
   "subject": "ai pricing",
+  "context": "Lenny's Podcast guest Madhavan Ramanujam, a pricing expert who advised over 250 companies, gives a practical framework for picking an AI pricing model, aimed at product managers.",
   "level": "intermediate"
  },
  {
@@ -3158,6 +3284,7 @@
   "hn": false,
   "source": "chapters",
   "subject": "ai product design",
+  "context": "Emily Campbell, creator of the Shape of AI database of design patterns, opens this Dive Club interview with a framework for designing AI products. It is a good place to start before the more specific patterns.",
   "level": "intermediate"
  },
  {
@@ -3175,6 +3302,7 @@
   "hn": false,
   "source": "chapters",
   "subject": "forward deployed engineering",
+  "context": "Kevin Bai's AI Engineer talk, Forward Deployed Engineering 101, explains why enterprise software sells with engineers embedded at the customer when the buyer is not technical, a practice for deals where average contract values run past half a million dollars.",
   "level": "intermediate"
  },
  {
@@ -3192,6 +3320,7 @@
   "hn": false,
   "source": "chapters",
   "subject": "eval design",
+  "context": "Ankur Goyal, CEO of Braintrust, an AI eval platform, walks through building an evaluation from scratch on Aakash Gupta's podcast, using Linear's MCP server. He lays out the data, task and scores framework a product manager can reuse.",
   "level": "intermediate"
  },
  {
@@ -3209,6 +3338,7 @@
   "hn": false,
   "source": "chapters",
   "subject": "eval design",
+  "context": "Ankur Goyal, CEO of Braintrust, an AI eval platform, discusses evals on Aakash Gupta's podcast. The clip argues eval sets need hard cases to stay informative.",
   "level": "intermediate"
  },
  {
@@ -3226,6 +3356,7 @@
   "hn": false,
   "source": "chapters",
   "subject": "production evals",
+  "context": "Nick Ung, ML lead for safety and customer care at Lyft, explains at LangChain's Interrupt conference how his team built evals for production AI agents. He covers early mistakes, from offline simulation to AI-graded rubrics.",
   "level": "intermediate"
  },
  {
@@ -3243,6 +3374,7 @@
   "hn": false,
   "source": "chapters",
   "subject": "agent architecture",
+  "context": "Ramp's team, speaking at The Pragmatic Summit, shares lessons from shipping an AI product, covering tool catalogs, sandboxing and reliability at scale.",
   "level": "intermediate"
  },
  {
@@ -3260,6 +3392,7 @@
   "hn": false,
   "source": "chapters",
   "subject": "evals for pms",
+  "context": "Kevin Weil, OpenAI's chief product officer who oversees ChatGPT and the API, speaks on Lenny's Podcast about how AI is changing product work. In this part he covers how evals shape product decisions.",
   "level": "intermediate",
   "more": true
  },
@@ -3278,6 +3411,7 @@
   "hn": false,
   "source": "chapters",
   "subject": "ai pricing",
+  "context": "Madhavan Ramanujam, a pricing strategist who has worked with more than 250 companies, talks about pricing AI products. He walks through charging by results, with real company examples a product team can copy.",
   "level": "intermediate",
   "more": true
  },
@@ -3296,6 +3430,7 @@
   "hn": false,
   "source": "chapters",
   "subject": "product growth",
+  "context": "Elena Verna, head of growth at Lovable, an AI app builder that reached $200M in annual recurring revenue in under a year, discusses on Lenny's Podcast how growth playbooks change for AI companies. This clip covers one specific tactic Lovable uses.",
   "level": "intermediate",
   "more": true
  },
@@ -3314,6 +3449,7 @@
   "hn": false,
   "source": "chapters",
   "subject": "product-market fit",
+  "context": "Elena Verna, head of growth at Lovable, an AI app builder, shares a lesson for AI product managers on Lenny's Podcast. She explains why Lovable favors innovation over optimization and has shifted from activation to building new features.",
   "level": "intermediate",
   "more": true
  },
@@ -3332,6 +3468,7 @@
   "hn": false,
   "source": "chapters",
   "subject": "ai pivot",
+  "context": "Eoghan McCabe, founder and CEO of Intercom, tells Lenny's Podcast how he bet the company on AI after returning as CEO. He recounts the pivot and its reasoning, including how fast a working prototype of Fin came together.",
   "level": "intermediate",
   "more": true
  },
@@ -3350,6 +3487,7 @@
   "hn": false,
   "source": "chapters",
   "subject": "ai pricing",
+  "context": "Eoghan McCabe, founder and CEO of Intercom, a customer service platform, talks on Lenny's Podcast about rebuilding it around its AI agent, Fin. He shares a first-hand lesson on pricing AI features.",
   "level": "intermediate",
   "more": true
  },
@@ -3368,6 +3506,7 @@
   "hn": false,
   "source": "chapters",
   "subject": "production evals",
+  "context": "On Lenny's Podcast, Aishwarya Naresh Reganti and Kiriti Badam, who have helped launch more than 50 enterprise AI products, weigh in on a live debate about how to measure AI product quality.",
   "level": "intermediate",
   "more": true
  },
@@ -3386,6 +3525,7 @@
   "hn": false,
   "source": "chapters",
   "subject": "ai product iteration",
+  "context": "Aishwarya Naresh Reganti and Kiriti Badam, who have helped launch more than 50 enterprise AI products at OpenAI, Google and Amazon, discuss AI product failures on Lenny's Podcast. This clip presents their approach for iterating on AI products safely.",
   "level": "intermediate",
   "more": true
  },
@@ -3404,6 +3544,7 @@
   "hn": false,
   "source": "chapters",
   "subject": "shipyard model",
+  "context": "Ezinne and Oji Udezue, authors of Building Rocketships with over 50 years of product leadership at Microsoft, Twitter and Atlassian, lay out a framework a product manager can use to ship AI features.",
   "level": "intermediate",
   "more": true
  },
@@ -3422,6 +3563,7 @@
   "hn": false,
   "source": "chapters",
   "subject": "ai-native products",
+  "context": "Product leaders Ezinne and Oji Udezue, authors of Building Rocketships, on how companies should decide where AI belongs in a product, and the strategic distinction they draw.",
   "level": "intermediate",
   "more": true
  },
@@ -3440,6 +3582,7 @@
   "hn": false,
   "source": "chapters",
   "subject": "ai pricing",
+  "context": "Sequoia Capital's talk with Manny Medina, CEO of Paid, a company building billing and pricing tools for AI businesses. He explains why seat-based SaaS pricing does not fit AI and surveys outcome-based and agent-based models.",
   "level": "intermediate",
   "more": true
  }
