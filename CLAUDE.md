@@ -82,6 +82,10 @@ stopping for approval. Topics in `phase: preview` (new topics) are skipped: thos
    History → Flagged tab). Save each issue body to a file, `python pipeline.py flags-apply <file>`, then
    `score-prep --flagged` + Sonnet + `score-apply` to re-cut those videos, then `quiz-prep`/`summaries-prep`
    for the new cuts. Comment on each issue with what changed and close it.
+4b. X posts (only if the topic has `x_accounts` in topics.yaml and the X token exists as a network secret for
+   api.x.com, Authorization: Bearer; skip silently otherwise, no approval): `python pipeline.py x-find`, `x-prep`, ONE Sonnet
+   agent with `prompts/x.md`, `x-apply`. It keeps only posts Sonnet scores 7+ and at most `x_max_per_run` per topic;
+   `select` writes `posts.json`. Report posts added and the API reads used.
 5. Recall questions: `python pipeline.py quiz-prep`, Haiku with `prompts/quiz.md`, `python pipeline.py quiz-apply`.
    New clips also need levels (`levels-prep` / Haiku / `levels-apply`). Rerun paths and debates (step 7) when
    10 or more clips were added or any were re-cut; otherwise leave them.

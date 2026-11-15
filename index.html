@@ -318,6 +318,7 @@
   .b-tabs { margin: 6px 0 14px; }
   .xembed { margin: 10px 0 6px; min-height: 60px; display: flex; justify-content: center; }
   .xwait { color: var(--muted); font-size: 13px; align-self: center; }
+  .xhide { float: right; margin-top: 4px; background: none; border: 0; color: var(--muted); font-size: 13px; padding: 0; }
   .xopen { display: inline-block; margin-top: 4px; font-size: 13px; font-weight: 600; color: var(--accent); }
   .pcard, .dcard { padding: 16px; border-radius: 18px; background: var(--chip); margin: 0 0 14px; }
   .pc-top { display: flex; justify-content: space-between; align-items: center; gap: 10px; color: var(--muted); font-size: 13px; margin-bottom: 6px; }
@@ -408,7 +409,7 @@ let topics = [], clips = [], seen = new Set(store.get("seen", []).map(String)), 
 async function load() {
   const get = (f) => fetch(f, { cache: "no-cache" }).then((r) => r.json()).catch(() => []);
   const [t, c, pa, de, po] = await Promise.all([get("topics.json"), get("clips.json"), get("paths.json"), get("debates.json"), get("posts.json")]);
-  paths = Array.isArray(pa) ? pa : []; debates = Array.isArray(de) ? de : []; posts = Array.isArray(po) ? po : [];
+  paths = Array.isArray(pa) ? pa : []; debates = Array.isArray(de) ? de : []; posts = (Array.isArray(po) ? po : []).filter((x) => !xHidden.has(x.id));
   topics = t.filter((x) => c.some((k) => k.topic === x.id));
   clips = c;
   markNew();
@@ -469,7 +470,7 @@ let flags = store.get("flags", {});                // clip id -> { reason, at, s
 let recall = store.get("recall", {});              // clip id -> { box, due } for daily recall
 let notes = store.get("notes", {});                // clip id -> your own note on a saved clip
 let fiveState = store.get("five", null);           // { day, ids }: Today's five
-let paths = [], debates = [], posts = [];   // X posts: posts.json (link + our own line, no post text)                      // learning paths and debates (paths.json, debates.json)
+let paths = [], debates = [], posts = [], xHidden = new Set(store.get("xhidden", []));   // X posts: posts.json (link + our own line, no post text)                      // learning paths and debates (paths.json, debates.json)
 let level = store.get("level", "any");             // any | intro | intermediate | advanced
 let tagOf = {};                                    // clip id -> { text, cls }: step / side label on the open path or debate feed
 const LEVELS = ["any", "intro", "intermediate", "advanced"];
@@ -1276,7 +1277,7 @@ function afterSave(c) {
 }
 
 // ---------- Move to another device: one code or file with your history, saves, notes, recall progress, settings
-const TX_KEYS = ["seen", "skips", "removed", "history", "saved", "notes", "rate", "captions", "selected", "watchLog", "flags", "recall", "recallDay", "level", "listenRate", "listenPoints", "browseTab"];
+const TX_KEYS = ["seen", "skips", "removed", "history", "saved", "notes", "rate", "captions", "selected", "watchLog", "flags", "recall", "recallDay", "level", "listenRate", "listenPoints", "browseTab", "xhidden"];
 const b64 = (u8) => { let s = ""; for (let i = 0; i < u8.length; i += 0x8000) s += String.fromCharCode.apply(null, u8.subarray(i, i + 0x8000));
   return btoa(s).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, ""); };
 const unb64 = (s) => { s = s.replace(/-/g, "+").replace(/_/g, "/"); while (s.length % 4) s += "=";
@@ -1549,7 +1550,7 @@ function postsHTML() {
       <div class="pc-top"><span class="tag">${esc(name[x.topic] || x.topic)}</span><span>${esc(x.author)} · @${esc(x.handle)}</span></div>
       <p class="pc-goal">${esc(x.context)}</p>
       <div class="xembed"><span class="xwait">Loading post…</span></div>
-      <a class="xopen" href="${esc(x.url)}" target="_blank" rel="noopener">Open on X ↗</a>
+      <a class="xopen" href="${esc(x.url)}" target="_blank" rel="noopener">Open on X ↗</a><button class="xhide" data-xid="${esc(x.id)}">Not useful</button>
     </article>`).join("");
 }
 let xScript = null;
@@ -1766,6 +1767,7 @@ $("#sheet").addEventListener("click", (e) => {
   if (e.target.closest(".tx-save")) { txSaveFile(); return; }
   if (e.target.closest(".tx-import")) { txImport($("#tx-in").value); return; }
   if (e.target.closest(".listen")) { listenClick(e); return; }
+  const xh = e.target.closest(".xhide"); if (xh) { xHidden.add(xh.dataset.xid); store.set("xhidden", [...xHidden]); posts = posts.filter((x) => !xHidden.has(x.id)); toast("Hidden"); openBrowse(posts.length ? "posts" : "paths"); return; }
   const bt = e.target.closest("[data-btab]"); if (bt) { openBrowse(bt.dataset.btab); return; }
   const pg = e.target.closest(".path-go"); if (pg) { openPath(pg.dataset.path); return; }
   const pls = e.target.closest(".path-listen"); if (pls) { listenPath(pls.dataset.path); return; }

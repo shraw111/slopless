@@ -24,6 +24,13 @@ defaults:
   shorts_min_like_ratio: 0.03
   min_substance_short: 7
   max_shorts_per_topic: 15       # a Short can never crowd out the long-form clips
+  # X posts found automatically each week (topics with x_accounts: [handles]); needs the paid X API token.
+  x_posts_per_account: 20
+  x_max_age_days: 10
+  x_min_chars: 140         # long enough to say something
+  x_min_likes: 150
+  x_min_substance: 7       # Sonnet's bar; hand-added posts skip it
+  x_max_per_run: 10        # new auto-found posts per topic per weekly run
   search_pages: 1          # 50 results per page per query; each page costs 100 API units
 
 topics:

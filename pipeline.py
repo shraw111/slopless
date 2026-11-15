@@ -1116,6 +1116,58 @@ def cmd_x_add(args):
     jsave(X_FILE, posts)
 
 
+def xapi(path, **params):
+    """X API v2 GET. Token from X_BEARER_TOKEN, or (cloud) a network secret the proxy adds as the Authorization header."""
+    tok = os.environ.get("X_BEARER_TOKEN")
+    r = requests.get(f"https://api.x.com/2/{path}", params=params, timeout=30,
+                     headers={"Authorization": f"Bearer {tok or 'injected-by-proxy'}"})
+    if r.status_code in (401, 403) and not tok:
+        sys.exit("No X API token: set X_BEARER_TOKEN, or save it as this environment's network secret for api.x.com "
+                 "(Authorization: Bearer). Never commit it.")
+    if r.status_code != 200:
+        sys.exit(f"X API {path} failed: {r.status_code} {r.text[:300]}")
+    return r.json()
+
+
+def cmd_x_find(args):
+    """Weekly: recent text posts from each topic's x_accounts (topics.yaml) -> candidates in data/x/posts.json.
+    Cheap filters here (no replies/reposts/media, long enough, enough likes); Sonnet judges the rest (x-prep/x-apply)."""
+    posts = jload(X_FILE, {})
+    users = jload(X_FILE.parent / "users.json", {})
+    for t in enabled_topics(args.topic):
+        handles = [h.lstrip("@") for h in t.get("x_accounts", [])]
+        if not handles:
+            continue
+        need = [h for h in handles if h.lower() not in users]
+        for i in range(0, len(need), 100):
+            for u in xapi("users/by", usernames=",".join(need[i:i + 100])).get("data", []):
+                users[u["username"].lower()] = {"id": u["id"], "name": u["name"], "username": u["username"]}
+        jsave(X_FILE.parent / "users.json", users)
+        since = (NOW - dt.timedelta(days=int(t["x_max_age_days"]))).strftime("%Y-%m-%dT%H:%M:%SZ")
+        n = 0
+        for h in handles:
+            u = users.get(h.lower())
+            if not u:
+                print(f"  unknown account @{h}")
+                continue
+            res = xapi(f"users/{u['id']}/tweets", max_results=max(5, int(t["x_posts_per_account"])),
+                       exclude="replies,retweets", start_time=since,
+                       **{"tweet.fields": "created_at,public_metrics,attachments"})
+            for tw in res.get("data", []):
+                if tw["id"] in posts or tw.get("attachments"):
+                    continue   # seen before, or has an image/video: text only
+                text = html.unescape(tw["text"]).strip()
+                if len(text) < int(t["x_min_chars"]) or tw["public_metrics"]["like_count"] < int(t["x_min_likes"]):
+                    continue
+                posts[tw["id"]] = {"id": tw["id"], "url": f"https://x.com/{u['username']}/status/{tw['id']}",
+                                   "handle": u["username"], "author": u["name"], "text": text, "has_media": False,
+                                   "topic": t["id"], "added": NOW.strftime("%Y-%m-%d"), "auto": True,
+                                   "likes": tw["public_metrics"]["like_count"]}
+                n += 1
+        print(f"{t['id']}: {len(handles)} accounts, {n} new candidate posts")
+    jsave(X_FILE, posts)
+
+
 def cmd_x_prep(args):
     posts = jload(X_FILE, {})
     out = WORK / "x"
@@ -1123,29 +1175,50 @@ def cmd_x_prep(args):
     for f in out.glob("*.json"):
         f.unlink()
     todo = [{"id": p["id"], "author": p["author"], "handle": p["handle"], "text": p["text"][:1500],
-             "topic": p["topic"]} for p in posts.values() if not p.get("context")]
+             "topic": p["topic"], "needs_substance": bool(p.get("auto"))}
+            for p in posts.values() if not p.get("context") and not p.get("rejected")]
     jsave(out / "batch_000.in.json", {"posts": todo})
     print(f"{len(todo)} posts need a context line -> {out} (prompt: prompts/x.md)")
 
 
 def cmd_x_apply(args):
     posts = jload(X_FILE, {})
-    n = 0
+    topics = {t["id"]: t for t in enabled_topics()}
+    n = rej = 0
     for f in sorted((WORK / "x").glob("*.out.json")):
-        for pid, txt in json.loads(f.read_text())["context"].items():
-            if pid in posts and isinstance(txt, str) and 20 <= len(txt) <= 320:
-                posts[pid]["context"] = txt.strip()
-                n += 1
+        res = json.loads(f.read_text())
+        for pid, txt in res["context"].items():
+            post = posts.get(pid)
+            if not post or not isinstance(txt, str) or not 20 <= len(txt) <= 320:
+                continue
+            if post.get("auto"):   # found by x-find: Sonnet's substance score decides; hand-added posts always stay
+                sub = int(res.get("substance", {}).get(pid, 0))
+                post["substance"] = sub
+                if sub < int(topics[post["topic"]]["x_min_substance"]):
+                    post["rejected"] = True
+                    rej += 1
+                    continue
+            post["context"] = txt.strip()
+            n += 1
     jsave(X_FILE, posts)
-    print(f"applied {n} context lines")
+    print(f"applied {n} context lines, {rej} auto-found posts rejected")
 
 
 def write_posts():
     """Public posts.json: link, author and OUR OWN one-line context; never the post text."""
     posts = jload(X_FILE, {})
+    cfg = {t["id"]: t for t in enabled_topics()}
+    live = [p for p in posts.values() if p.get("context") and not p.get("rejected")]
+    for tid, t in cfg.items():   # cap on auto-found posts per topic per weekly run: best substance first
+        autos = sorted((p for p in live if p["topic"] == tid and p.get("auto")),
+                       key=lambda p: (-p.get("substance", 0), -p.get("likes", 0)))
+        week = {}
+        for p in autos:
+            week[p["added"]] = week.get(p["added"], 0) + 1
+            p["held"] = week[p["added"]] > int(t["x_max_per_run"])
     out = [{"id": p["id"], "url": p["url"], "handle": p["handle"], "author": p["author"], "topic": p["topic"],
             "context": p["context"], "added": p["added"]}
-           for p in sorted(posts.values(), key=lambda p: p["added"], reverse=True) if p.get("context")]
+           for p in sorted(live, key=lambda p: (p["added"], p.get("substance", 10)), reverse=True) if not p.get("held")]
     (ROOT / "posts.json").write_text(json.dumps(out, indent=1, ensure_ascii=False) + "\n")
     print(f"posts.json: {len(out)} X posts")
 
@@ -1199,8 +1272,10 @@ def main():
     p.add_argument("--topic")
     p.add_argument("urls", nargs="+")
     p.set_defaults(fn=cmd_x_add)
-    for name, fn in [("x-prep", cmd_x_prep), ("x-apply", cmd_x_apply)]:
-        sub.add_parser(name).set_defaults(fn=fn)
+    for name, fn in [("x-find", cmd_x_find), ("x-prep", cmd_x_prep), ("x-apply", cmd_x_apply)]:
+        q = sub.add_parser(name)
+        q.add_argument("--topic")
+        q.set_defaults(fn=fn)
     for name, fn in [("approve-queries", cmd_approve), ("promote", cmd_promote), ("flags-apply", cmd_flags_apply)]:
         p = sub.add_parser(name)
         p.add_argument("topic")
