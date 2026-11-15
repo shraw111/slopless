@@ -792,6 +792,43 @@ def cmd_summaries_apply(args):
 
 
 # ---------------------------------------------------------------- 3c''. recall questions (Haiku)
+def cmd_context_prep(args):
+    """Published clips without a `context` line -> data/work/context/batch_NNN.in.json (any source)."""
+    cache = load_cache()
+    out = WORK / "context"
+    out.mkdir(parents=True, exist_ok=True)
+    for f in out.glob("*.json"):
+        f.unlink()
+    published = {k["id"] for k in json.loads((ROOT / "clips.json").read_text())}
+    items = []
+    for v in cache.values():
+        if not v.get("result"):
+            continue
+        for c in result_clips(v["result"]):
+            cid = clip_id(v["vid"], c)
+            if cid in published and not c.get("context"):
+                items.append({"id": cid, "video_title": v["title"], "channel": v["channel"],
+                              "video_description": re.sub(r"https?://\S+", "", v.get("description", ""))[:500],
+                              "hook": c["hook"], "why": c.get("why", ""), "summary": c.get("summary", ""),
+                              "spoken": clip_text(v["vid"], c)[:1800]})
+    for i in range(0, len(items), 25):
+        jsave(out / f"batch_{i // 25:03d}.in.json", {"clips": items[i:i + 25]})
+    print(f"{len(items)} clips need context in {math.ceil(len(items) / 25)} batches -> {out} (prompt: prompts/context.md)")
+
+
+def cmd_context_apply(args):
+    cache = load_cache()
+    by_id = {clip_id(v["vid"], c): c for v in cache.values() if v.get("result") for c in result_clips(v["result"])}
+    n = 0
+    for f in sorted((WORK / "context").glob("*.out.json")):
+        for cid, txt in json.loads(f.read_text())["context"].items():
+            if cid in by_id and isinstance(txt, str) and 20 <= len(txt) <= 320:
+                by_id[cid]["context"] = txt.strip()
+                n += 1
+    save_cache(cache)
+    print(f"applied {n} context lines")
+
+
 def cmd_quiz_prep(args):
     """Published clips with a summary but no recall question -> data/work/quiz/batch_NNN.in.json."""
     cache = load_cache()
@@ -1004,6 +1041,7 @@ def cmd_select(args):
                     "channel": v["channel"], "hn": bool(v.get("hn")), "source": v.get("source"),
                     "subject": subj,
                     **({"summary": r["summary"], "points": r.get("points", [])} if r.get("summary") else {}),
+                    **({"context": r["context"]} if r.get("context") else {}),
                     **({"quiz": r["quiz"]} if r.get("quiz") else {}),
                     **({"level": r["level"]} if r.get("level") else {}),
                     **({"short": True} if v.get("short") else {}),
@@ -1072,7 +1110,7 @@ def main():
                      ("transcripts", cmd_transcripts), ("heatmap", cmd_heatmap), ("score-prep", cmd_score_prep),
                      ("score-apply", cmd_score_apply), ("subjects-prep", cmd_subjects_prep),
                      ("subjects-apply", cmd_subjects_apply), ("summaries-prep", cmd_summaries_prep),
-                     ("summaries-apply", cmd_summaries_apply), ("quiz-prep", cmd_quiz_prep),
+                     ("summaries-apply", cmd_summaries_apply), ("context-prep", cmd_context_prep), ("context-apply", cmd_context_apply), ("quiz-prep", cmd_quiz_prep),
                      ("quiz-apply", cmd_quiz_apply), ("levels-prep", cmd_levels_prep),
                      ("levels-apply", cmd_levels_apply), ("paths-prep", cmd_paths_prep), ("paths-apply", cmd_paths_apply),
                      ("debates-prep", cmd_debates_prep), ("debates-check-prep", cmd_debates_check_prep),
