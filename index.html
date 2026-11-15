@@ -316,6 +316,9 @@
   .step-tag.side2 { background: #ff9b6b; color: #2c1206; }
   #mode span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 62vw; }
   .b-tabs { margin: 6px 0 14px; }
+  .xembed { margin: 10px 0 6px; min-height: 60px; display: flex; justify-content: center; }
+  .xwait { color: var(--muted); font-size: 13px; align-self: center; }
+  .xopen { display: inline-block; margin-top: 4px; font-size: 13px; font-weight: 600; color: var(--accent); }
   .pcard, .dcard { padding: 16px; border-radius: 18px; background: var(--chip); margin: 0 0 14px; }
   .pc-top { display: flex; justify-content: space-between; align-items: center; gap: 10px; color: var(--muted); font-size: 13px; margin-bottom: 6px; }
   .pcard h3, .dcard h3 { margin: 4px 0 6px; font-size: 19px; line-height: 1.25; text-wrap: balance; }
@@ -404,8 +407,8 @@ let topics = [], clips = [], seen = new Set(store.get("seen", []).map(String)), 
 
 async function load() {
   const get = (f) => fetch(f, { cache: "no-cache" }).then((r) => r.json()).catch(() => []);
-  const [t, c, pa, de] = await Promise.all([get("topics.json"), get("clips.json"), get("paths.json"), get("debates.json")]);
-  paths = Array.isArray(pa) ? pa : []; debates = Array.isArray(de) ? de : [];
+  const [t, c, pa, de, po] = await Promise.all([get("topics.json"), get("clips.json"), get("paths.json"), get("debates.json"), get("posts.json")]);
+  paths = Array.isArray(pa) ? pa : []; debates = Array.isArray(de) ? de : []; posts = Array.isArray(po) ? po : [];
   topics = t.filter((x) => c.some((k) => k.topic === x.id));
   clips = c;
   markNew();
@@ -466,7 +469,7 @@ let flags = store.get("flags", {});                // clip id -> { reason, at, s
 let recall = store.get("recall", {});              // clip id -> { box, due } for daily recall
 let notes = store.get("notes", {});                // clip id -> your own note on a saved clip
 let fiveState = store.get("five", null);           // { day, ids }: Today's five
-let paths = [], debates = [];                      // learning paths and debates (paths.json, debates.json)
+let paths = [], debates = [], posts = [];   // X posts: posts.json (link + our own line, no post text)                      // learning paths and debates (paths.json, debates.json)
 let level = store.get("level", "any");             // any | intro | intermediate | advanced
 let tagOf = {};                                    // clip id -> { text, cls }: step / side label on the open path or debate feed
 const LEVELS = ["any", "intro", "intermediate", "advanced"];
@@ -1531,10 +1534,47 @@ let browseTab = store.get("browseTab", "paths");
 function openBrowse(tab) {
   if (tab) { browseTab = tab; store.set("browseTab", tab); }
   sheetLists = {};
-  const n = { paths: paths.length, debates: debates.length };
-  const tabs = `<div class="h-tabs b-tabs">${[["paths", "Paths"], ["debates", "Debates"], ["subjects", "Subjects"]].map(([k, nm]) =>
+  const n = { paths: paths.length, debates: debates.length, posts: posts.length };
+  const tabs = `<div class="h-tabs b-tabs">${[["paths", "Paths"], ["debates", "Debates"], ["subjects", "Subjects"], ...(posts.length ? [["posts", "X posts"]] : [])].map(([k, nm]) =>
     `<button data-btab="${k}" aria-pressed="${browseTab === k}">${nm}${n[k] ? ` · ${n[k]}` : ""}</button>`).join("")}</div>`;
-  openSheet("browse", "Browse", tabs + (browseTab === "paths" ? pathsHTML() : browseTab === "debates" ? debatesHTML() : subjectsHTML()));
+  openSheet("browse", "Browse", tabs + (browseTab === "paths" ? pathsHTML() : browseTab === "debates" ? debatesHTML() : browseTab === "posts" && posts.length ? postsHTML() : subjectsHTML()));
+  if (browseTab === "posts" && posts.length) hydratePosts();
+}
+// ---------- X posts (text only, hand-picked). The post itself is X's own embed, loaded only when it scrolls into view;
+// we keep just the link, the author and a one-line "why read" that we wrote.
+function postsHTML() {
+  const name = topicName();
+  return `<p class="stats">Hand-picked posts from people worth following. They open on X's own embed.</p>` + posts.map((x) => `
+    <article class="pcard xcard" data-url="${esc(x.url)}">
+      <div class="pc-top"><span class="tag">${esc(name[x.topic] || x.topic)}</span><span>${esc(x.author)} · @${esc(x.handle)}</span></div>
+      <p class="pc-goal">${esc(x.context)}</p>
+      <div class="xembed"><span class="xwait">Loading post…</span></div>
+      <a class="xopen" href="${esc(x.url)}" target="_blank" rel="noopener">Open on X ↗</a>
+    </article>`).join("");
+}
+let xScript = null;
+function loadWidgets() {
+  if (window.twttr?.widgets) return Promise.resolve(window.twttr);
+  if (!xScript) xScript = new Promise((ok, no) => {
+    const el = document.createElement("script"); el.src = "https://platform.twitter.com/widgets.js"; el.async = true;
+    el.onload = () => (window.twttr?.ready ? window.twttr.ready(ok) : ok(window.twttr)); el.onerror = () => { xScript = null; no(new Error("blocked")); };
+    document.head.appendChild(el);
+  });
+  return xScript;
+}
+function hydratePosts() {
+  const cards = [...document.querySelectorAll("#sheet .xcard")];
+  const io2 = new IntersectionObserver((entries) => {
+    for (const en of entries) {
+      if (!en.isIntersecting) continue;
+      io2.unobserve(en.target);
+      const box = en.target.querySelector(".xembed"), id = en.target.dataset.url.split("/").pop();
+      loadWidgets().then((tw) => tw.widgets.createTweet(id, box, { theme: "dark", conversation: "none", dnt: true, align: "center", width: 500 }))
+        .then((el) => { if (!el) box.innerHTML = `<span class="xwait">Couldn't load this post here. Use Open on X.</span>`; else box.querySelector(".xwait")?.remove(); })
+        .catch(() => { box.innerHTML = `<span class="xwait">Couldn't load X's embed (a blocker or network may be stopping it). Use Open on X.</span>`; });
+    }
+  }, { root: $("#sheet"), rootMargin: "300px 0px" });
+  cards.forEach((c) => io2.observe(c));
 }
 function subjectsHTML() {
   const name = topicName();

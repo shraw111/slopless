@@ -58,6 +58,14 @@ sub-agent actually ran on (check the `model` field the agents wrote and the sess
 9. Summarize: clips per topic, thresholds used (from topics.yaml), API units (`data/usage.json`) and
    sub-agent models.
 
+## X posts (text only, hand-picked)
+
+When the user sends X/Twitter post links ("add these from X"): `python pipeline.py x-add --topic <id> <url> ...`
+(reads each post through X's free embed service, stored privately in `data/x/posts.json`), then `x-prep`, one Haiku
+sub-agent with `prompts/x.md`, `x-apply`, `select` (writes the public `posts.json`: link, author and OUR one-line
+context only, never the post text), and commit/push as usual. The feed shows them under Browse → X posts using X's own
+embed. No search or scraping of X (paid API / terms); links come from the user. Text posts only, no video.
+
 ## Weekly refresh
 
 When the prompt says **"Run the weekly refresh"** (a scheduled task sends it every week), do this without

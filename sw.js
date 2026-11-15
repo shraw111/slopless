@@ -3,7 +3,7 @@
 // refreshed in the background. When the refresh brings something newer, the page is told and offers a reload.
 const CACHE = "signal-v2";
 const SHELL = ["./", "index.html", "manifest.webmanifest", "icon-192.png", "icon-512.png", "apple-touch-icon.png",
-               "clips.json", "topics.json", "paths.json", "debates.json"];
+               "clips.json", "topics.json", "paths.json", "debates.json", "posts.json"];
 
 self.addEventListener("install", (e) => {
   // addAll fails as a whole if one file is missing, so add them one by one

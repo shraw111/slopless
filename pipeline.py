@@ -1075,8 +1075,79 @@ def cmd_select(args):
               f"{t['min_substance_no_transcript']} without), published {len(chosen)} + {len(reserve)} reserve "
               f"(phase={st['phase']}, limit={limit})")
     jsave(STATE, state)
+    write_posts()
     (ROOT / "clips.json").write_text(json.dumps(clips, indent=1, ensure_ascii=False) + "\n")
     (ROOT / "topics.json").write_text(json.dumps(topics_out, indent=1, ensure_ascii=False) + "\n")
+
+
+# ---------------------------------------------------------------- X posts (text only, hand-picked)
+X_FILE = DATA / "x" / "posts.json"   # private: id -> {url, handle, author, text, topic, context, added}
+X_URL = re.compile(r"https?://(?:www\.|mobile\.)?(?:x|twitter)\.com/([A-Za-z0-9_]{1,15})/status(?:es)?/(\d+)")
+
+
+def cmd_x_add(args):
+    """x-add --topic <id> <url> [<url> ...]: read each post through X's embed service (no key) and queue it."""
+    posts = jload(X_FILE, {})
+    ids = {t["id"] for t in enabled_topics()}
+    if not args.topic or args.topic not in ids:
+        sys.exit(f"--topic must be one of {sorted(ids)}")
+    for url in args.urls:
+        m = X_URL.search(url)
+        if not m:
+            print(f"  skipped (not an X post link): {url}")
+            continue
+        handle, pid = m.groups()
+        if pid in posts:
+            print(f"  already added: {pid}")
+            continue
+        r = requests.get("https://publish.x.com/oembed", timeout=30, allow_redirects=True,
+                         params={"url": f"https://x.com/{handle}/status/{pid}", "omit_script": 1, "dnt": "true"})
+        if r.status_code != 200:
+            print(f"  could not read {url}: {r.status_code} (deleted, protected, or not a post)")
+            continue
+        d = r.json()
+        text = html.unescape(re.sub(r"<[^>]+>", "", d["html"].replace("<br>", "\n").replace("</p>", "\n"))).strip()
+        text = re.sub(r"\s*(?:—|&mdash;)\s*[^\n]*\([^)]*\)\s*\w+ \d+, \d{4}\s*$", "", text).strip()
+        media = bool(re.search(r"pic\.(?:x|twitter)\.com", d["html"]))
+        posts[pid] = {"id": pid, "url": f"https://x.com/{handle}/status/{pid}", "handle": handle,
+                      "author": d.get("author_name", handle), "text": text, "has_media": media,
+                      "topic": args.topic, "added": NOW.strftime("%Y-%m-%d")}
+        print(f"  added {pid} by {posts[pid]['author']}: {text[:80]!r}{' (has an image or video link)' if media else ''}")
+    jsave(X_FILE, posts)
+
+
+def cmd_x_prep(args):
+    posts = jload(X_FILE, {})
+    out = WORK / "x"
+    out.mkdir(parents=True, exist_ok=True)
+    for f in out.glob("*.json"):
+        f.unlink()
+    todo = [{"id": p["id"], "author": p["author"], "handle": p["handle"], "text": p["text"][:1500],
+             "topic": p["topic"]} for p in posts.values() if not p.get("context")]
+    jsave(out / "batch_000.in.json", {"posts": todo})
+    print(f"{len(todo)} posts need a context line -> {out} (prompt: prompts/x.md)")
+
+
+def cmd_x_apply(args):
+    posts = jload(X_FILE, {})
+    n = 0
+    for f in sorted((WORK / "x").glob("*.out.json")):
+        for pid, txt in json.loads(f.read_text())["context"].items():
+            if pid in posts and isinstance(txt, str) and 20 <= len(txt) <= 320:
+                posts[pid]["context"] = txt.strip()
+                n += 1
+    jsave(X_FILE, posts)
+    print(f"applied {n} context lines")
+
+
+def write_posts():
+    """Public posts.json: link, author and OUR OWN one-line context; never the post text."""
+    posts = jload(X_FILE, {})
+    out = [{"id": p["id"], "url": p["url"], "handle": p["handle"], "author": p["author"], "topic": p["topic"],
+            "context": p["context"], "added": p["added"]}
+           for p in sorted(posts.values(), key=lambda p: p["added"], reverse=True) if p.get("context")]
+    (ROOT / "posts.json").write_text(json.dumps(out, indent=1, ensure_ascii=False) + "\n")
+    print(f"posts.json: {len(out)} X posts")
 
 
 def cmd_promote(args):
@@ -1124,6 +1195,12 @@ def main():
         p.add_argument("--refresh", action="store_true", help="find: weekly run, new uploads since the last run")
         p.add_argument("--shorts", action="store_true", help="find: search YouTube Shorts instead (topics with shorts: true)")
         p.set_defaults(fn=fn)
+    p = sub.add_parser("x-add")
+    p.add_argument("--topic")
+    p.add_argument("urls", nargs="+")
+    p.set_defaults(fn=cmd_x_add)
+    for name, fn in [("x-prep", cmd_x_prep), ("x-apply", cmd_x_apply)]:
+        sub.add_parser(name).set_defaults(fn=fn)
     for name, fn in [("approve-queries", cmd_approve), ("promote", cmd_promote), ("flags-apply", cmd_flags_apply)]:
         p = sub.add_parser(name)
         p.add_argument("topic")
