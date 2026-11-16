@@ -42,6 +42,7 @@ topics:
     good_clip: explains a concept or shows a demo clearly enough to stand alone
     hn_boost: true
     shorts: false
+    x_accounts: [karpathy, simonw, swyx, hwchase17, jeremyphoward, fchollet, ylecun, emollick, rasbt, natolambert, lilianweng, DrJimFan, ch402, goodside, _jasonwei, AndrewYNg]
 
   - id: ai-product
     name: AI Product
@@ -49,6 +50,7 @@ topics:
     covers: building and shipping AI products, AI product management, AI UX, pricing AI features, evals in production, case studies
     exclude: generic startup advice with no AI angle, hype
     good_clip: a decision, lesson or tactic a PM could act on
+    x_accounts: [lennysan, joulee, kevinweil, aakashg0, HamelHusain, sh_reya, eugeneyan, jxnlco, benedictevans, OfficialLoganK, alexalbert__]
 
   - id: parenting
     name: Parenting
